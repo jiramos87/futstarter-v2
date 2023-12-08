@@ -22,6 +22,14 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/layout.tsx",
+    "src/config/database.js",
+    "src/config/sequelize.js"
+, "src/models/index.js", "src/models/user_model.js"  ],
   "exclude": ["node_modules"]
 }

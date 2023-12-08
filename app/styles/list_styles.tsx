@@ -1,0 +1,1 @@
+export const mediumSizeTextListStyle = 'text-xl font-bold text-center text-white-600 mb-4'

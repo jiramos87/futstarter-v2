@@ -1,0 +1,1 @@
+export const paleBlueButtonWithDarkBlueTextStyle = 'bg-blue-200 hover:bg-blue-300 text-blue-700 font-bold py-2 px-4 rounded inline-flex items-center'
