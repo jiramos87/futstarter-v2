@@ -10,19 +10,22 @@ class User extends Sequelize.Model {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true,
+        primaryKey: true
       },
       firstName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
+        field: 'first_name'
       },
       lastName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
+        field: 'last_name'
       },
       userName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        field: 'user_name'
       },
       email: {
         type: DataTypes.STRING,
@@ -31,6 +34,12 @@ class User extends Sequelize.Model {
       password: {
         type: DataTypes.STRING,
         allowNull: false
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: Sequelize.NOW,
+        field: 'created_at'
       }
     }, {
       sequelize,

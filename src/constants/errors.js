@@ -1,0 +1,1 @@
+export const USER_ALREADY_EXISTS = 'User already exists. Try again with a different username or email'

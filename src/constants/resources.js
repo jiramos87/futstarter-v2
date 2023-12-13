@@ -25,3 +25,18 @@ export const LOGIN_USER = {
   name: 'Login',
   href: '/login-user'
 }
+
+export const LOGOUT_USER = {
+  name: 'Logout',
+  href: '/logout-user'
+}
+
+export const SIGNUP_USER = {
+  name: 'Sign Up',
+  href: '/signup-user'
+}
+
+export const PLEASE_LOGIN = {
+  name: 'Please Login',
+  href: '/please-login'
+}

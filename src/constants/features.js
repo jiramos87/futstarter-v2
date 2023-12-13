@@ -1,4 +1,4 @@
-export const comingFeatureNames: string[] = [
+export const comingFeatureNames = [
   'Login',
   'Sign up',
   'Create and save a squad',
