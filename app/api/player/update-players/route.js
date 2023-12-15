@@ -1,8 +1,9 @@
 import fs from 'fs'
 
-import { scrapePlayerData } from "../../../lib/scrape"
-import { bulkCreatePlayerItems } from '../../../src/dao/player_item_dao'
-import { bulkCreatePlayerItemStats } from '../../../src/dao/player_item_stats_dao'
+import { getTotalPagesCount, scrapePlayerData } from "../../../../lib/scrape"
+import { bulkCreatePlayerItems } from '../../../../src/dao/player_item_dao'
+import { bulkCreatePlayerItemStats } from '../../../../src/dao/player_item_stats_dao'
+import { sleep } from '../../../../src/utils/time_util'
 
 const parsePlayerItemCreationData = (playersData) => {
   const players = []
@@ -88,19 +89,37 @@ const parsePlayerItemCreationData = (playersData) => {
 }
 
 export async function POST(request) {
-  const response = await scrapePlayerData('https://www.futbin.com/players?page=1')
-
-  if (!response.done) {
-    return Response.json({ error: response.error })
+  const pagesCountResponse = await getTotalPagesCount('https://www.futbin.com/players?version=gold_all')
+  if (!pagesCountResponse.done) {
+    return Response.json({ error: pagesCountResponse.error })
   }
 
-  fs.writeFileSync('players.json', JSON.stringify(response.players, null, 2))
+  const totalPagesCount = pagesCountResponse.totalPagesCount
+  console.log('totalPagesCount', totalPagesCount)
+  await sleep(500)
 
-  const { players, playersStats } = parsePlayerItemCreationData(response.players)
+  const accPlayerDataForJSON = []
 
-  await bulkCreatePlayerItems(players)
+  for (let i = 1; i <= totalPagesCount; i++) {
+    console.log('page ', i)
+    const response = await scrapePlayerData('https://www.futbin.com/players?version=gold_all&page=' + i)
 
-  await bulkCreatePlayerItemStats(playersStats)
+    if (!response.done) {
+      return Response.json({ error: response.error })
+    }
+
+    const { players, playersStats } = parsePlayerItemCreationData(response.players)
+    console.log('playersStats[0].acceleration', playersStats[0].acceleration)
+
+    accPlayerDataForJSON.push(...response.players)
+
+    await bulkCreatePlayerItems(players)
+    await  bulkCreatePlayerItemStats(playersStats)
+
+    await sleep(200)
+  }
+
+  fs.writeFileSync('players.json', JSON.stringify(accPlayerDataForJSON, null, 2))
 
   return Response.json({ message: 'Scraped data successfully' })
 }

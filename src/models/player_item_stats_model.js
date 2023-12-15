@@ -19,130 +19,130 @@ class PlayerItemStats extends Sequelize.Model {
       },
       acceleration: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       sprintSpeed: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'sprint_speed'
       },
       positioning: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       finishing: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       shotPower: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'shot_power'
       },
       longShots: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'long_shots'
       },
       volleys: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       penalties: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       vision: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       crossing: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       freeKickAccuracy: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'free_kick_accuracy'
       },
       shortPassing: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'short_passing'
       },
       longPassing: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'long_passing'
       },
       curve: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       agility: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       balance: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       reactions: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       ballControl: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'ball_control'
       },
       dribbling: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       composure: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       interceptions: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       headingAccuracy: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'heading_accuracy'
       },
       defensiveAwareness: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'defensive_awareness'
       },
       standingTackle: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'standing_tackle'
       },
       slidingTackle: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'sliding_tackle'
       },
       jumping: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       stamina: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       strength: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       aggression: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       }
     }, {
       sequelize,

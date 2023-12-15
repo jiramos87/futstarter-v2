@@ -14,41 +14,41 @@ class PlayerItem extends Sequelize.Model {
       },
       name: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
       },
       club: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
       },
       league: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
       },
       version: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
       },
       rating: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       price: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
       },
       priceChange: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         field: 'price_change'
       },
       accelType: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         field: 'accel_type'
       },
       mainPosition: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         field: 'main_position'
       },
       secondaryPositions: {
@@ -58,12 +58,12 @@ class PlayerItem extends Sequelize.Model {
       },
       attackWorkRate: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         field: 'attack_work_rate'
       },
       defenseWorkRate: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         field: 'defense_work_rate'
       },
       weakFoot: {
@@ -91,50 +91,50 @@ class PlayerItem extends Sequelize.Model {
       },
       PAC: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       SHO: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       PAS: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       DRI: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       DEF: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       PHY: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       popularity: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       totalBaseStats: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'total_base_stats'
       },
       totalInGameStats: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         field: 'total_in_game_stats'
       },
       createdAt: {
         type: DataTypes.DATE,
-        defaultValue: Sequelize.fn('now'),
+        defaultValue: Sequelize.NOW,
         field: 'created_at'
       },
       updatedAt: {
         type: DataTypes.DATE,
-        defaultValue: Sequelize.fn('now'),
+        defaultValue: Sequelize.NOW,
         field: 'updated_at'
       }
     }, {

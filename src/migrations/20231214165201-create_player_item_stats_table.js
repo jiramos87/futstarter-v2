@@ -15,119 +15,119 @@ module.exports = {
       },
       acceleration: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       sprint_speed: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       positioning: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       finishing: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       shot_power: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       long_shots: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       volleys: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       penalties: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       vision: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       crossing: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       free_kick_accuracy: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       short_passing: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       long_passing: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       curve: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       agility: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       balance: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       reactions: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       ball_control: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       dribbling: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       composure: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       interceptions: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       heading_accuracy: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       defensive_awareness: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       standing_tackle: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       sliding_tackle: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       jumping: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       stamina: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       strength: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       aggression: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       }
     })
   },

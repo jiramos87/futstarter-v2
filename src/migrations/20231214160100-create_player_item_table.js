@@ -11,39 +11,39 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       club: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       league: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       version: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       rating: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       price: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       price_change: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       accel_type: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       main_position: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       secondary_positions: {
         type: Sequelize.STRING,
@@ -51,35 +51,35 @@ module.exports = {
       },
       attack_work_rate: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       defense_work_rate: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       PAC: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       SHO: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       PAS: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       DRI: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       DEF: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       PHY: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       weak_foot: {
         type: Sequelize.INTEGER,
@@ -103,15 +103,15 @@ module.exports = {
       },
       popularity: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       total_base_stats: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       total_in_game_stats: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       created_at: {
         type: Sequelize.DATE,

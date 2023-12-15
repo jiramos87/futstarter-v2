@@ -1,8 +1,8 @@
 import { Op } from 'sequelize'
 
-import { findUser } from '../../../src/dao/user_dao'
-import { createUserWithHashedPassword } from '../../../lib/user'
-import { USER_ALREADY_EXISTS } from '../../../src/constants/errors'
+import { findUser } from '../../../../src/dao/user_dao'
+import { createUserWithHashedPassword } from '../../../../lib/user'
+import { USER_ALREADY_EXISTS } from '../../../../src/constants/errors'
 
 export async function POST(request) {
   const req = await request.json()

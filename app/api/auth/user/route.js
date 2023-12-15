@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
-import { getLoginSession } from '../../../lib/auth'
-import { findUser } from '../../../src/dao/user_dao'
+import { getLoginSession } from '../../../../lib/auth'
+import { findUser } from '../../../../src/dao/user_dao'
 
 export async function GET(request) {
   try {
