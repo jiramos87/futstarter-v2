@@ -49,4 +49,11 @@ class User extends Sequelize.Model {
     })
     return User
   }
+
+  static associate (models) {
+    this.hasMany(models.UserSquad, {
+      foreignKey: 'userId',
+      as: 'userSquads'
+    })
+  }
 }

@@ -1,6 +1,6 @@
-import { setLoginSession } from '../../../lib/auth'
-import { findUser } from '../../../src/dao/user_dao'
-import { validatePassword } from '../../../lib/user'
+import { setLoginSession } from '../../../../lib/auth'
+import { findUser } from '../../../../src/dao/user_dao'
+import { validatePassword } from '../../../../lib/user'
 
 export async function POST(request) {
   const req = await request.json()
@@ -20,7 +20,8 @@ export async function POST(request) {
 
     const token = await setLoginSession(session)
 
-    return Response.json({ done: true, token }, { status: 200 })
+    return Response.json({ done: true, token }, { status: 200, headers: { 'Authorization': `${token}` } })  
+
   } catch (error) {
     return Response.error({ error: error.message }, { status: error.status || 500 })
   }

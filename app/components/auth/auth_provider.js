@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
   const getUser = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/user')
+      const response = await axios.get('http://localhost:3000/api/auth/user')
       setUser(response.data.user)
     } catch (error) {
       setUser(null)
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/login-user', credentials)
+      const response = await axios.post('http://localhost:3000/api/auth/login-user', credentials)
 
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token)
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (credentials) => {
     try {
-      const response = await axios.post('http://localhost:3000/api/signup-user', credentials)
+      const response = await axios.post('http://localhost:3000/api/auth/signup-user', credentials)
 
       if (response.status === 200 ) {
         setIsLoggedIn(true)
