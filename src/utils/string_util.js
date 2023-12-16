@@ -9,3 +9,27 @@ export const capitalizeSentence = (sentence, separationChar, joinChar) => {
 
   return capitalizedSentence
 }
+
+export const getStringWithLetterVariations = (string) => {
+  const regexPattern = string
+    .replace(/e/g, '[eèéêëēę]')
+    .replace(/a/g, '[aàáâãäåā]')
+    .replace(/o/g, '[oòóôõöøō]')
+    .replace(/u/g, '[uùúûüū]')
+    .replace(/i/g, '[iìíîïī]')
+    .replace(/c/g, '[cçćč]')
+    .replace(/s/g, '[sśš]')
+    .replace(/n/g, '[nñń]')
+    .replace(/l/g, '[lł]')
+    .replace(/z/g, '[zžźż]')
+    .replace(/y/g, '[yýÿ]')
+    .replace(/d/g, '[dðď]')
+    .replace(/r/g, '[rřŕ]')
+    .replace(/t/g, '[tťţ]')
+    .replace(/g/g, '[gğ]')
+    .replace(/ss/g, '[ssß]')
+    .replace(/ae/g, '[aeæ]')
+    .replace(/oe/g, '[oeœ]')
+
+  return regexPattern
+}
