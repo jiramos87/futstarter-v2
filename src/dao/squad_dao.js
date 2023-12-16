@@ -5,3 +5,12 @@ export const createSquad = async (squad) => {
 
   return newSquad
 }
+
+export const updateSquad = async (squad, squadId) => {
+  const updatedSquad = await models.Squad.update(
+    squad,
+    { where: { id: squadId }}
+  )
+
+  return updatedSquad
+}
