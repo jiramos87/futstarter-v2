@@ -1,66 +1,54 @@
-const SQUAD_FORMATIONS = {
-  '3-4-1-2': {
-      name: '3-4-1-2',
-      positions: {
-          ST: { x: 0.5, y: 0.5 },
-          ST: { x: 0.5, y: 0.25 },
-          CAM: { x: 0.5, y: 0.75 },
-          LWB: { x: 0.25, y: 0.5 },
-          CM: { x: 0.25, y: 0.25 },
-          CM: { x: 0.25, y: 0.75 },
-          RWB: { x: 0.75, y: 0.5 },
-          CB: { x: 0.75, y: 0.25 },
-          CB: { x: 0.75, y: 0.75 },
-          CB: { x: 0.5, y: 0 },
-          GK: { x: 0.5, y: 1 }
-      }
-  },
-  '3-4-3': {
-      name: '3-4-3',
-      positions: [
-          { x: 0.5, y: 0.5 },
-          { x: 0.5, y: 0.25 },
-          { x: 0.5, y: 0.75 },
-          { x: 0.25, y: 0.5 },
-          { x: 0.25, y: 0.25 },
-          { x: 0.25, y: 0.75 },
-          { x: 0.75, y: 0.5 },
-          { x: 0.75, y: 0.25 },
-          { x: 0.75, y: 0.75 },
-          { x: 0.5, y: 0 },
-          { x: 0.5, y: 1 }
-      ]
-  },
-  '4-4-2': {
-      name: '4-4-2',
-      positions: [
-          { x: 0.5, y: 0.5 },
-          { x: 0.5, y: 0.25 },
-          { x: 0.5, y: 0.75 },
-          { x: 0.25, y: 0.5 },
-          { x: 0.25, y: 0.25 },
-          { x: 0.25, y: 0.75 },
-          { x: 0.75, y: 0.5 },
-          { x: 0.75, y: 0.25 },
-          { x: 0.75, y: 0.75 },
-          { x: 0.5, y: 0 },
-          { x: 0.5, y: 1 }
-      ]
-  },
-  '4-3-3': {
-      name: '4-3-3',
-      positions: [
-          { x: 0.5, y: 0.5 },
-          { x: 0.5, y: 0.25 },
-          { x: 0.5, y: 0.75 },
-          { x: 0.25, y: 0.5 },
-          { x: 0.25, y: 0.25 },
-          { x: 0.25, y: 0.75 },
-          { x: 0.75, y: 0.5 },
-          { x: 0.75, y: 0.25 },
-          { x: 0.75, y: 0.75 },
-          { x: 0.5, y: 0 },
-          { x: 0.5, y: 1 }
-      ]
-  }
+export const SQUAD_FORMATIONS_POSITIONS = {
+  '4-4-2': [
+    { name: 'LST', position: { top: '20%', left: '42%' } },
+    { name: 'RST', position: { top: '20%', left: '58%' } },
+    { name: 'LM', position: { top: '45%', left: '24%' } },
+    { name: 'LCM', position: { top: '45%', left: '42%' } },
+    { name: 'RCM', position: { top: '45%', left: '58%' } },
+    { name: 'RM', position: { top: '45%', left: '76%' } },
+    { name: 'LB', position: { top: '70%', left: '24%' } },
+    { name: 'LCB', position: { top: '70%', left: '42%' } },
+    { name: 'RCB', position: { top: '70%', left: '58%' } },
+    { name: 'RB', position: { top: '70%', left: '76%' } },
+    { name: 'GK', position: { top: '90%', left: '50%' } }
+  ],
+  '4-3-3': [
+    { name: 'LW', position: { top: '20%', left: '26%' } },
+    { name: 'ST', position: { top: '20%', left: '50%' } },
+    { name: 'RW', position: { top: '20%', left: '73%' } },
+    { name: 'LCM', position: { top: '45%', left: '26%' } },
+    { name: 'CCM', position: { top: '45%', left: '50%' } },
+    { name: 'RCM', position: { top: '45%', left: '73%' } },
+    { name: 'LB', position: { top: '70%', left: '24%' } },
+    { name: 'LCB', position: { top: '70%', left: '42%' } },
+    { name: 'RCB', position: { top: '70%', left: '58%' } },
+    { name: 'RB', position: { top: '70%', left: '76%' } },
+    { name: 'GK', position: { top: '90%', left: '50%' } }
+  ],
+  '3-4-3': [
+    { name: 'LW', position: { top: '20%', left: '26%' } },
+    { name: 'ST', position: { top: '20%', left: '50%' } },
+    { name: 'RW', position: { top: '20%', left: '73%' } },
+    { name: 'LM', position: { top: '45%', left: '24%' } },
+    { name: 'LCM', position: { top: '45%', left: '42%' } },
+    { name: 'RCM', position: { top: '45%', left: '58%' } },
+    { name: 'RM', position: { top: '45%', left: '76%' } },
+    { name: 'LCB', position: { top: '70%', left: '26%' } },
+    { name: 'CCB', position: { top: '70%', left: '50%' } },
+    { name: 'RCB', position: { top: '70%', left: '73%' } },
+    { name: 'GK', position: { top: '90%', left: '50%' } }
+  ],
+  '3-4-1-2': [
+    { name: 'LST', position: { top: '16%', left: '42%' } },
+    { name: 'RST', position: { top: '16%', left: '58%' } },
+    { name: 'CAM', position: { top: '34%', left: '50%' } },
+    { name: 'LM', position: { top: '50%', left: '24%' } },
+    { name: 'LCM', position: { top: '50%', left: '42%' } },
+    { name: 'RCM', position: { top: '50%', left: '58%' } },
+    { name: 'RM', position: { top: '50%', left: '76%' } },
+    { name: 'LCB', position: { top: '74%', left: '26%' } },
+    { name: 'CCB', position: { top: '74%', left: '50%' } },
+    { name: 'RCB', position: { top: '74%', left: '73%' } },
+    { name: 'GK', position: { top: '90%', left: '50%' } }
+  ]
 }

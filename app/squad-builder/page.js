@@ -5,6 +5,7 @@ import axios from 'axios'
 
 import MainLayout from '../layouts/main_layout'
 import { getLoginSessionFromDocumentToken, getTokenFromDocumentCookie } from '../../lib/client-cookies'
+import { SQUAD_FORMATIONS_POSITIONS } from '../../src/constants/formations'
 
 const SquadBuilderPage = () => {
   const [user, setUser] = useState(null)
@@ -75,11 +76,36 @@ const SquadBuilderPage = () => {
             </div>
           )}
         </div>
-        <div className="flex-2 bg-blue-900" style={{ flexBasis: '50%' }}>
+        <div className="flex-2 bg-blue-900 relative" style={{ flexBasis: '50%' }}>
           <div
             className="bg-center bg-no-repeat bg-contain h-full"
             style={{ backgroundImage: `url('/football-pitch.jpg')` }}
-          ></div>
+          >
+            {user && (
+              <>
+                {SQUAD_FORMATIONS_POSITIONS[formation].map((player, index) => (
+                  <div
+                    key={index}
+                    className="absolute text-white"
+                    style={{
+                      top: `calc(${player.position.top} - 2rem)`, // Adjust based on the size of the player div
+                      left: `calc(${player.position.left} - 2rem)`, // Adjust based on the size of the player div
+                      fontSize: '1.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '4rem', // Width of the player div
+                      height: '4rem', // Height of the player div
+                      borderRadius: '50%', // Ensure the div is circular for players
+                      backgroundColor: 'rgba(255, 255, 255, 0.5)', // Example background color for players
+                    }}
+                  >
+                    {player.name}
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
         </div>
         <div className="flex-1 bg-blue-900 p-4" style={{ flexBasis: '25%', color: 'white' }}>
           {user && (
@@ -91,10 +117,11 @@ const SquadBuilderPage = () => {
                 onChange={(e) => setFormation(e.target.value)}
                 className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white"
               >
-                <option value="4-4-2">4-4-2</option>
-                <option value="4-3-3">4-3-3</option>
-                <option value="3-4-3">3-4-3</option>
-                <option value="3-4-1-2">3-4-1-2</option>
+                {Object.keys(SQUAD_FORMATIONS_POSITIONS).map((formation) => (
+                  <option key={formation} value={formation}>
+                    {formation}
+                  </option>
+                ))}
               </select>
             </div>
           )}
