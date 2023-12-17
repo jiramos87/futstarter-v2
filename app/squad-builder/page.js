@@ -84,10 +84,18 @@ const SquadBuilderPage = () => {
                 placeholder="Search Player"
                 className="border border-gray-700 rounded-md px-3 py-2 w-full mb-2 bg-gray-800 text-white"
               />
-              <ul>
-                {showDropdown && (
-                  <PlayerDropdown players={dropdownPlayers} onItemClick={handleDropdownItemClick} />
-                )}
+             <ul className="dropdown-list">
+              {showDropdown &&
+                dropdownPlayers.map((player, index) => (
+                  <li key={index} className="dropdown-item">
+                    <button
+                      onClick={() => handleDropdownItemClick(player)}
+                      className="dropdown-item-button"
+                    >
+                      {player.name} - {player.rating}
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
           )}
@@ -127,7 +135,7 @@ const SquadBuilderPage = () => {
                       }}
                     >
                       {selectedPlayers[position.name] ? (
-                        <div className="text-white">
+                        <div className="text-white text-xl">
                           <p>{selectedPlayers[position.name].name}</p>
                           <p>{selectedPlayers[position.name].rating}</p>
                         </div>
@@ -168,7 +176,7 @@ const SquadBuilderPage = () => {
         </div>
       </div>
     </MainLayout>
-  );
-};
+  )
+}
 
 export default SquadBuilderPage

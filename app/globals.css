@@ -25,3 +25,39 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.dropdown-list {
+  list-style: none;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  background-color: #001f3f;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #0074d9;
+}
+
+.dropdown-item-button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.1s;
+}
+
+.dropdown-item-button:focus {
+  outline: none;
+}
+
+.dropdown-item-button:active {
+  background-color: #001f3f;
+  transition: background-color 0.05s;
+}
