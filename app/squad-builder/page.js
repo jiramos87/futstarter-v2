@@ -6,13 +6,18 @@ import axios from 'axios'
 import MainLayout from '../layouts/main_layout'
 import { getLoginSessionFromDocumentToken, getTokenFromDocumentCookie } from '../../lib/client-cookies'
 import { SQUAD_FORMATIONS_POSITIONS } from '../../src/constants/formations'
+import { PlayerDropdown } from '../components/player_dropdown'
 
 const SquadBuilderPage = () => {
   const [user, setUser] = useState(null)
   const [error, setError] = useState('')
   const [playerSearchString, setPlayerSearchString] = useState('')
-  const [playerItems, setPlayerItems] = useState([])
   const [formation, setFormation] = useState('4-4-2')
+  const [selectedPosition, setSelectedPosition] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [dropdownPlayers, setDropdownPlayers] = useState([])
+  const [selectedPlayer, setSelectedPlayer] = useState(null)
+  const [selectedPlayers, setSelectedPlayers] = useState({})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,14 +38,32 @@ const SquadBuilderPage = () => {
 
   const handlePlayerSearchChange = async (e) => {
     const inputPlayerName = e.target.value
+
     setPlayerSearchString(inputPlayerName)
+    setShowDropdown(true)
     try {
       const response = await axios.get(`http://localhost:3000/api/players/search?name=${playerSearchString}`)
-      setPlayerItems(response.data.playerItems)
+      setDropdownPlayers(response.data.playerItems)
     } catch (error) {
       console.error('search axios error', error)
-      setPlayerItems([])
+      setDropdownPlayers([])
     }
+  }
+
+  const handlePositionSelection = (position) => {
+    setSelectedPosition(position)
+    if (!selectedPlayers[position]) {
+      setSelectedPlayer(null)
+    } else {
+      setSelectedPlayer(selectedPlayers[position])
+    }
+  }
+
+  const handleDropdownItemClick = (player) => {
+    const updatedSelectedPlayers = { ...selectedPlayers, [selectedPosition]: player }
+    setSelectedPlayers(updatedSelectedPlayers)
+    setSelectedPlayer(player)
+    setShowDropdown(false)
   }
 
   return (
@@ -50,6 +73,9 @@ const SquadBuilderPage = () => {
           {user && (
             <div className="mb-4">
               <h1 className="text-xl mb-2">Welcome {user.userName}</h1>
+              <div className="bg-gray-800 text-white rounded-md p-2 mt-4">
+                Selected Position: {selectedPosition}
+              </div>
               <input
                 type="text"
                 name="playerName"
@@ -59,13 +85,9 @@ const SquadBuilderPage = () => {
                 className="border border-gray-700 rounded-md px-3 py-2 w-full mb-2 bg-gray-800 text-white"
               />
               <ul>
-                {playerItems.map((player) => (
-                  <li key={player.id}>
-                    <p className="text-sm">
-                      {player.name} - {player.rating}
-                    </p>
-                  </li>
-                ))}
+                {showDropdown && (
+                  <PlayerDropdown players={dropdownPlayers} onItemClick={handleDropdownItemClick} />
+                )}
               </ul>
             </div>
           )}
@@ -83,24 +105,42 @@ const SquadBuilderPage = () => {
           >
             {user && (
               <>
-                {SQUAD_FORMATIONS_POSITIONS[formation].map((player, index) => (
+                {SQUAD_FORMATIONS_POSITIONS[formation].map((position, index) => (
                   <div
                     key={index}
-                    className="absolute text-white"
+                    className="absolute text-white flex flex-col items-center"
                     style={{
-                      top: `calc(${player.position.top} - 2rem)`, // Adjust based on the size of the player div
-                      left: `calc(${player.position.left} - 2rem)`, // Adjust based on the size of the player div
-                      fontSize: '1.75rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '4rem', // Width of the player div
-                      height: '4rem', // Height of the player div
-                      borderRadius: '50%', // Ensure the div is circular for players
-                      backgroundColor: 'rgba(255, 255, 255, 0.5)', // Example background color for players
+                      top: `calc(${position.position.top} - 2rem)`,
+                      left: `calc(${position.position.left} - 2rem)`,
                     }}
                   >
-                    {player.name}
+                    <button
+                      onClick={() => handlePositionSelection(position.name)}
+                      className="bg-transparent border-none text-white cursor-pointer"
+                      style={{
+                        width: '4rem',
+                        height: '4rem',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {selectedPlayers[position.name] ? (
+                        <div className="text-white">
+                          <p>{selectedPlayers[position.name].name}</p>
+                          <p>{selectedPlayers[position.name].rating}</p>
+                        </div>
+                      ) : (
+                        <span>+</span>
+                      )}
+                    </button>
+                    <div
+                      className="rounded-md bg-gray-800 text-white py-1 px-2 mt-2"
+                      style={{ fontSize: '0.75rem' }}
+                    >
+                      {position.name}
+                    </div>
                   </div>
                 ))}
               </>
