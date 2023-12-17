@@ -1,5 +1,4 @@
 import models from '../../src/models'
-import { inspect } from 'util'
 
 export const bulkCreatePlayerItems = async (playersData) => {
   const playerData = await models.PlayerItem.bulkCreate(
@@ -35,12 +34,10 @@ export const bulkCreatePlayerItems = async (playersData) => {
 }
 
 export const findAllPlayerItems = async (searchConditions, options) => {
-  console.log('searchConditions', inspect(searchConditions, { depth: 4 }))
   const playersData = await models.PlayerItem.findAll(
     {
       where: searchConditions || {},
-      ...options,
-      logging: console.log
+      ...options
     }
   )
 

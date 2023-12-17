@@ -11,7 +11,7 @@ const MainLayout = ({ children }) => {
 
   return (
     <div className="flex min-h-screen">
-      <VerticalNav isLoggedIn={isLoggedIn} user={user} />
+      <VerticalNav isLoggedIn={isLoggedIn} user={user}  />
       <div className="w-5/6">
         {children}
       </div>

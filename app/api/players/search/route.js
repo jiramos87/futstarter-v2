@@ -1,8 +1,8 @@
 import { Op } from 'sequelize'
 
-import { getLoginSession } from '../../../lib/auth'
-import { findAllPlayerItems } from '../../../src/dao/player_item_dao'
-import { getStringWithLetterVariations } from '../../../src/utils/string_util'
+import { getLoginSession } from '../../../../lib/auth'
+import { findAllPlayerItems } from '../../../../src/dao/player_item_dao'
+import { getStringWithLetterVariations } from '../../../../src/utils/string_util'
 
 const parseSearchParams = (searchParams) => {
   const parsedSearchParams = {}
@@ -51,7 +51,6 @@ const parseSearchParams = (searchParams) => {
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
-    console.log('searchParams', searchParams.get('name'))
 
     const user = await getLoginSession(request)
 
@@ -69,6 +68,7 @@ export async function GET(request) {
     // this parsing is only for testing purposes. We will return the whole object in the future
     // with links to the images.
     const parsedPlayerItems = foundPlayerItems.map(playerItem => ({
+      playerItemId: playerItem.id,
       name: playerItem.name,
       rating: playerItem.rating,
       club: playerItem.club,
