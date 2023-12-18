@@ -46,6 +46,7 @@ const LoginUserPage = () => {
             value={credentials.email}
             onChange={handleChange}
             className="border border-gray-300 rounded-md p-2 m-2"
+            style={{ color: 'black' }}
           />
           <input
             type="password"
@@ -54,6 +55,7 @@ const LoginUserPage = () => {
             value={credentials.password}
             onChange={handleChange}
             className="border border-gray-300 rounded-md p-2 m-2"
+            style={{ color: 'black' }}
           />
           <button type="submit" className="bg-blue-500 text-white rounded-md p-2 m-2">
             Login
