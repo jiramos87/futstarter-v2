@@ -6,6 +6,7 @@ import axios from 'axios'
 import MainLayout from '../layouts/main_layout'
 import { getLoginSessionFromDocumentToken, getTokenFromDocumentCookie } from '../../lib/client-cookies'
 import { SQUAD_FORMATIONS_POSITIONS } from '../../src/constants/formations'
+import { RadarChart } from '../components/radar_chart'
 
 const SquadBuilderPage = () => {
   const [user, setUser] = useState(null)
@@ -24,6 +25,8 @@ const SquadBuilderPage = () => {
   const [squadId, setSquadId] = useState(null)
   const [userSquads, setUserSquads] = useState([])
   const [showLoadSquadDropdown, setShowLoadSquadDropdown] = useState(false)
+  const [playerToCompare, setPlayerToCompare] = useState(null)
+  const [comparing, setComparing] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,10 +76,25 @@ const SquadBuilderPage = () => {
 
   const handleDropdownItemClick = (player) => {
     const updatedSelectedPlayers = { ...selectedPlayers, [selectedPosition]: player }
-    setSelectedPlayers(updatedSelectedPlayers)
-    setSelectedPlayer(player)
+    
+    if (comparing) {
+      setPlayerToCompare(player)
+      setComparing(false)
+    } else {
+      setSelectedPlayers(updatedSelectedPlayers)
+      setSelectedPlayer(player)
+    }
+
     setShowDropdown(false)
   }
+
+  const handleCompareToClick = () => {
+    setComparing(true)
+
+    const input = document.querySelector('input[name="playerName"]')
+    input && input.focus()
+  }
+
 
   const determineFontSize = (name) => {
     if (name.length > 10) {
@@ -174,6 +192,47 @@ const SquadBuilderPage = () => {
     }
   }
 
+  const prepareRadarChartData = () => {
+    console.log('selectedPlayer', selectedPlayer)
+    console.log('playerToCompare', playerToCompare)
+    if (selectedPlayer && playerToCompare) {
+      return {
+        labels: ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"],
+        datasets: [
+          {
+            label: selectedPlayer.name,
+            backgroundColor: "rgba(34, 202, 236, .2)",
+            borderColor: "rgba(34, 202, 236, 1)",
+            // Extract attributes for selected player
+            data: [
+              selectedPlayer.PAC,
+              selectedPlayer.SHO,
+              selectedPlayer.PAS,
+              selectedPlayer.DRI,
+              selectedPlayer.DEF,
+              selectedPlayer.PHY,
+            ],
+          },
+          {
+            label: playerToCompare.name,
+            backgroundColor: "rgba(255, 99, 132, .2)",
+            borderColor: "rgba(255, 99, 132, 1)",
+            // Extract attributes for player to compare
+            data: [
+              playerToCompare.PAC,
+              playerToCompare.SHO,
+              playerToCompare.PAS,
+              playerToCompare.DRI,
+              playerToCompare.DEF,
+              playerToCompare.PHY,
+            ],
+          },
+        ],
+      };
+    }
+    return null;
+  };
+
   return (
     <MainLayout>
       <div className="flex h-full">
@@ -210,44 +269,62 @@ const SquadBuilderPage = () => {
                 </div>
               </div>
               <div className="flex-1 p-4 rounded-md" style={{ height: '50%', backgroundColor: '#111457' }}>
+                {selectedPlayer && playerToCompare
+                  ? (
+                  <div>
+                    {/* RadarChart component */}
+                    <RadarChart radarData={prepareRadarChartData()} />
+                  </div>
+                ): (
+                  selectedPlayer && (
+                <div className="flex flex-col items-center text-white mb-2">
+                  <ul>
+                    <span className="font-bold">Name:</span> {selectedPlayer.name}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">Rating:</span> {selectedPlayer.rating}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">Position:</span> {selectedPlayer.mainPosition}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">Club:</span> {selectedPlayer.club}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">Skill Moves:</span> {selectedPlayer.skillMoves}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">Weak Foot:</span> {selectedPlayer.weakFoot}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">PAC:</span> {selectedPlayer.PAC}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">SHO:</span> {selectedPlayer.SHO}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">PAS:</span> {selectedPlayer.PAS}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">DRI:</span> {selectedPlayer.DRI}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">DEF:</span> {selectedPlayer.DEF}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">PHY:</span> {selectedPlayer.PHY}
+                  </ul>
+                </div>
+                ))}
                 {selectedPlayer && (
-                  <div className="flex flex-col items-center text-white mb-2">
-                    <ul>
-                      <span className="font-bold">Name:</span> {selectedPlayer.name}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">Rating:</span> {selectedPlayer.rating}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">Position:</span> {selectedPlayer.mainPosition}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">Club:</span> {selectedPlayer.club}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">Skill Moves:</span> {selectedPlayer.skillMoves}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">Weak Foot:</span> {selectedPlayer.weakFoot}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">PAC:</span> {selectedPlayer.PAC}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">SHO:</span> {selectedPlayer.SHO}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">PAS:</span> {selectedPlayer.PAS}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">DRI:</span> {selectedPlayer.DRI}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">DEF:</span> {selectedPlayer.DEF}
-                    </ul>
-                    <ul>
-                      <span className="font-bold">PHY:</span> {selectedPlayer.PHY}
-                    </ul>
+                  <div>
+                    <button
+                      className="relative top-0 right-0 mr-2 mt-2 bg-blue-600 text-white px-2 py-1 rounded-md"
+                      onClick={handleCompareToClick}
+                    >
+                      Compare to
+                    </button>
+                    
                   </div>
                 )}
               </div>
