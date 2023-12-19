@@ -27,15 +27,25 @@ const SquadBuilderPage = () => {
   const [showLoadSquadDropdown, setShowLoadSquadDropdown] = useState(false)
   const [playerToCompare, setPlayerToCompare] = useState(null)
   const [comparing, setComparing] = useState(false)
+  const [squadRatings, setSquadRatings] = useState({
+    average: 0,
+    PAC: 0,
+    SHO: 0,
+    PAS: 0,
+    DRI: 0,
+    DEF: 0,
+    PHY: 0
+  })
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         let token = getTokenFromDocumentCookie()
         const session = await getLoginSessionFromDocumentToken(token)
-
+        console.log('session', session)
         if (session) {
           setUser(session)
+          await handleLoadStartSquadClick(session)
         }
       } catch (error) {
         console.error(error)
@@ -74,6 +84,21 @@ const SquadBuilderPage = () => {
     }
   }
 
+  const calculateSquadRating = (initialPlayers = {}) => {
+    const usedPlayers = initialPlayers.values().length > 0 ? initialPlayers : selectedPlayers
+    const players = Object.values(usedPlayers).filter((player) => player !== null)
+  
+    if (players.length === 0) {
+      setSquadRatings({ average: 0, PAC: 0, SHO: 0, PAS: 0, DRI: 0, DEF: 0, PHY: 0 })
+      return
+    }
+  
+    const totalRating = players.reduce((accumulator, player) => accumulator + player.rating, 0)
+    const averageRating = totalRating / players.length
+    const roundedRating = Math.round(averageRating * 100) / 100
+    setSquadRatings({ ...squadRatings, average: roundedRating })
+  };
+
   const handleDropdownItemClick = (player) => {
     const updatedSelectedPlayers = { ...selectedPlayers, [selectedPosition]: player }
     
@@ -84,7 +109,7 @@ const SquadBuilderPage = () => {
       setSelectedPlayers(updatedSelectedPlayers)
       setSelectedPlayer(player)
     }
-
+    calculateSquadRating()
     setShowDropdown(false)
   }
 
@@ -165,6 +190,39 @@ const SquadBuilderPage = () => {
     }
   }
 
+  const handleLoadStartSquadClick = async (session) => {
+    try {
+      const userId = session.id
+      console.log('userId', userId)
+      const response = await axios.get(`http://localhost:3000/api/users/${userId}/squads`)
+      console.log('response', response.data)
+      if (response.data && response.data.squads) {
+        const firstSquad = response.data.squads[0]
+        const filteredSquads = response.data.squads.filter((squad) => squad !== null)
+        setUserSquads(filteredSquads)
+        setSquadId(firstSquad.id)
+        setSquadName(firstSquad.name)
+        setSquadDescription(firstSquad.description)
+        setFormation(firstSquad.formation)
+        setSelectedPlayers(firstSquad.players || {})
+        setInitialState({
+          formation: firstSquad.formation,
+          selectedPlayers: firstSquad.players || {},
+          squadName: firstSquad.name,
+          squadDescription: firstSquad.description
+        })
+        calculateSquadRating(firstSquad.players)
+      }
+    } catch (error) {
+      setSquadId(null)
+      setSquadName('')
+      setSquadDescription('')
+      setFormation('4-4-2')
+      setSelectedPlayers({})
+      setInitialState({})
+    }
+  }
+
   const handleLoadSquad = (squadId) => {
     if (squadId) {
       const selectedSquad = userSquads.find((squad) => squad.id === squadId)
@@ -190,17 +248,18 @@ const SquadBuilderPage = () => {
         setInitialState({})
       }
     }
+
+    calculateSquadRating()
   }
 
   const prepareRadarChartData = () => {
-    console.log('selectedPlayer', selectedPlayer)
-    console.log('playerToCompare', playerToCompare)
     if (selectedPlayer && playerToCompare) {
       return {
         labels: ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"],
         datasets: [
           {
             label: selectedPlayer.name,
+            pointRadius: 7,
             backgroundColor: "rgba(34, 202, 236, .2)",
             borderColor: "rgba(34, 202, 236, 1)",
             // Extract attributes for selected player
@@ -409,7 +468,7 @@ const SquadBuilderPage = () => {
                   </div>
                 )}
                 <div className="mt-4">
-                  <h1 className="text-xl mb-2">Squad Name</h1>
+                  <h1 className="text-lg mb-2">Squad Name</h1>
                   <input
                     type="text"
                     name="squadName"
@@ -418,28 +477,27 @@ const SquadBuilderPage = () => {
                     className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white"
                   />
                 </div>
-                <div className="mt-4">
-                  <h1 className="text-xl mb-2">Squad Description</h1>
-                  <textarea
-                    name="squadDescription"
-                    value={squadDescription}
-                    onChange={(e) => setSquadDescription(e.target.value)}
-                    className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white"
-                  />
+                <div className="mt-4 flex">
+                  <div className="formation-div" style={{ width: '60%' }}>
+                    <h1 className="text-lg mb-2">Formation</h1>
+                    <select
+                      name="formation"
+                      value={formation}
+                      onChange={(e) => setFormation(e.target.value)}
+                      className="border border-gray-700 rounded-md px-3 py-2 w-75 bg-gray-800 text-white"
+                    >
+                      {Object.keys(SQUAD_FORMATIONS_POSITIONS).map((formation) => (
+                        <option key={formation} value={formation}>
+                          {formation}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="rating-div " style={{ width: '40%' }}>
+                    <h1 className="text-lg mb-2">Squad Rating</h1>
+                    <p className='text-2xl flex flex-row justify-center items-center'>{squadRatings.average}</p>
+                  </div>
                 </div>
-                <h1 className="text-xl mb-2">Formation</h1>
-                <select
-                  name="formation"
-                  value={formation}
-                  onChange={(e) => setFormation(e.target.value)}
-                  className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white"
-                >
-                  {Object.keys(SQUAD_FORMATIONS_POSITIONS).map((formation) => (
-                    <option key={formation} value={formation}>
-                      {formation}
-                    </option>
-                  ))}
-                </select>
               </div>
             </>
           )}

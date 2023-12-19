@@ -24,7 +24,7 @@ export const RadarChart = ({ radarData }) => {
     maintainAspectRation: true,
     elements: {
       line: {
-        borderWidth: 1
+        borderWidth: 4
       }
     },
     scales: {
@@ -34,22 +34,35 @@ export const RadarChart = ({ radarData }) => {
           min: 0,
           max: 100,
           stepSize: 10,
-          showLabelBackdrop: true,
-          backdropColor: "rgba(203, 197, 11, 1)",
+          showLabelBackdrop: false,
+          // backdropColor: "rgba(203, 197, 11, 1)",
           font: {
-            size: 6
+            size: 18
           }
         },
-        pointLabels: {
-            fontSize: 20
-        },
+        // pointLabels: {
+        //     fontSize: 20
+        // },
         angleLines: {
-          color: "rgba(255, 255, 255, .3)",
-          lineWidth: 7
+          color: "rgba(230, 244, 208, 0.19)",
+          lineWidth: 2
         },
         gridLines: {
           color: "rgba(166, 245, 39, 0.8)",
-          circular: false
+          circular: true
+        },
+        suggestedMin: 0,
+        suggestedMax: 100
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          // This more specific font property overrides the global property
+          font: {
+            size: 15
+          },
+          color: "rgba(230, 244, 208, 1)"
         }
       }
     }

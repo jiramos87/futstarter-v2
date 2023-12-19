@@ -40,8 +40,15 @@ export async function GET (request, { params: { userId } }) {
     
     const squads = userSquads.map(userSquad => userSquad.squad)
 
-    return Response.json({ squads }, { status: 200 })
+    const filteredSquads = squads.filter(squad => squad !== null)
+
+    const squadsByUpdateDate = filteredSquads.sort((a, b) => {
+      return new Date(b.updatedAt) - new Date(a.updatedAt)
+    })
+
+    return Response.json({ squads: squadsByUpdateDate }, { status: 200 })
   } catch (error) {
+    console.log('error', error)
     return Response.error({ error: error.message }, { status: error.status || 500 })
   }
 }
