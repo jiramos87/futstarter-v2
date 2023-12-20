@@ -3,6 +3,8 @@ import { Op } from 'sequelize'
 import { findAllPlayerItems } from '../../../../src/dao/player_item_dao'
 import { parsePlayerItems } from '../../helpers/player_helper'
 
+import { inspect } from 'util'
+
 const applySquadAttributes = (squad, searchConditions) => {
   if (!squad || Object.values(squad).length === 0) return null
 
@@ -10,6 +12,7 @@ const applySquadAttributes = (squad, searchConditions) => {
 
   Object.values(squad).forEach((player) => {
     if (!player) return null
+
     const { club, league, nation, name } = player
 
     if (club && club !== 'EA FC ICONS') {
@@ -43,11 +46,23 @@ const applySquadAttributes = (squad, searchConditions) => {
   const squadNationsArray = Array.from(squadNationsSet)
   const squadNamesArray = Array.from(squadNamesSet)
 
-  searchConditions[Op.and].push({[Op.or]: [
-    { club: squadClubsArray },
-    { league: squadLeaguesArray },
-    { nation: squadNationsArray }
-  ]})
+  const filters = []
+
+  if (squadClubsArray.length > 0) {
+    filters.push({ club: squadClubsArray })
+  }
+
+  if (squadLeaguesArray.length > 0) {
+    filters.push({ league: squadLeaguesArray })
+  }
+
+  if (squadNationsArray.length > 0) {
+    filters.push({ nation: squadNationsArray })
+  }
+
+  if (filters.length > 0) {
+    searchConditions[Op.and].push({[Op.or]: filters })
+  }
 
   searchConditions[Op.and].push({ name: { [Op.notIn]: squadNamesArray } })
 }
