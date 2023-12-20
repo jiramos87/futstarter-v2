@@ -1,12 +1,84 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { FaLightbulb } from 'react-icons/fa'
 
 import MainLayout from '../layouts/main_layout'
 import { getLoginSessionFromDocumentToken, getTokenFromDocumentCookie } from '../../lib/client-cookies'
 import { SQUAD_FORMATIONS_POSITIONS } from '../../src/constants/formations'
 import { RadarChart } from '../components/radar_chart'
+import { parseHeight } from '../../src/utils/string_util'
+
+const getProcessedWorkRate = (workRates, playerCount) => {
+  let integerWorkRateTotal = 0
+  for (let workRate of workRates) {
+    if (workRate === 'H') {
+      integerWorkRateTotal += 3
+    }
+    if (workRate === 'M') {
+      integerWorkRateTotal += 2
+    }
+    if (workRate === 'L') {
+      integerWorkRateTotal += 1
+    }
+  }
+
+  return parseFloat(integerWorkRateTotal / playerCount).toFixed(1)
+}
+
+const getInitialSquadAttributes = () => ({
+  clubs: [],
+  leagues: [],
+  nations: [],
+  generalAttWorkRate: [],
+  generalDefWorkRate: [],
+  generalSkillMoves: 0,
+  generalWeakFoot: 0,
+  generalHeight: 0,
+  positional: {
+    ATT: {
+      attWorkRate: [],
+      defWorkRate: [],
+      skillMoves: 0,
+      weakFoot: 0
+    },
+    MID: {
+      attWorkRate: [],
+      defWorkRate: [],
+      skillMoves: 0,
+      weakFoot: 0
+    },
+    DEF: {
+      attWorkRate: [],
+      defWorkRate: [],
+      skillMoves: 0,
+      weakFoot: 0
+    },
+    GK: {
+      attWorkRate: [],
+      defWorkRate: [],
+      skillMoves: 0,
+      weakFoot: 0
+    }
+  }
+})
+
+const getParsedPosition = (position) => {
+  if (['ST', 'CST', 'LST', 'RST', 'CF', 'LF', 'RF', 'LW', 'RW', ].includes(position)) {
+    return 'ATT'
+  }
+  if (['CAM', 'LCM', 'RCM', 'CM', 'LAM', 'RAM', 'CDM', 'LDM', 'RDM', 'CCDM', 'LM', 'RM'].includes(position)) {
+    return 'MID'
+  }
+
+  if (['GK'].includes(position)) {
+    return 'GK'
+  }
+
+  return 'DEF'
+}
+
 
 const SquadBuilderPage = () => {
   const [user, setUser] = useState(null)
@@ -36,13 +108,14 @@ const SquadBuilderPage = () => {
     DEF: 0,
     PHY: 0
   })
+  const [squadAttributes, setSquadAttributes] = useState(getInitialSquadAttributes())
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         let token = getTokenFromDocumentCookie()
         const session = await getLoginSessionFromDocumentToken(token)
-        console.log('session', session)
+
         if (session) {
           setUser(session)
           await handleLoadStartSquadClick(session)
@@ -65,10 +138,11 @@ const SquadBuilderPage = () => {
     const inputPlayerName = e.target.value
 
     setPlayerSearchString(inputPlayerName)
-    setShowDropdown(true)
+    
     try {
       const response = await axios.get(`http://localhost:3000/api/players/search?name=${playerSearchString}`)
       setDropdownPlayers(response.data.playerItems)
+      setShowDropdown(true)
     } catch (error) {
       console.error('search axios error', error)
       setDropdownPlayers([])
@@ -85,7 +159,8 @@ const SquadBuilderPage = () => {
   }
 
   const calculateSquadRating = (initialPlayers = {}) => {
-    const usedPlayers = initialPlayers.values().length > 0 ? initialPlayers : selectedPlayers
+    const usedPlayers = Object.values(initialPlayers).length > 0 ? initialPlayers : selectedPlayers
+
     const players = Object.values(usedPlayers).filter((player) => player !== null)
   
     if (players.length === 0) {
@@ -97,7 +172,106 @@ const SquadBuilderPage = () => {
     const averageRating = totalRating / players.length
     const roundedRating = Math.round(averageRating * 100) / 100
     setSquadRatings({ ...squadRatings, average: roundedRating })
-  };
+  }
+
+  const calculateSquadAttributes = (initialPlayers = {}) => {
+    const usedPlayers = Object.values(initialPlayers).length > 0 ? initialPlayers : selectedPlayers
+
+    const players = Object.keys(usedPlayers).filter((key) => key !== null).map((key) => {
+      return {...usedPlayers[key], position: key }
+    })
+
+    const initialSquadAttributes = getInitialSquadAttributes()
+
+    if (players.length === 0) {
+      setSquadAttributes(initialSquadAttributes)
+      return
+    }
+
+    const playersPerGeneralPosition = {
+      ATT: 0,
+      MID: 0,
+      DEF: 0,
+      GK: 0
+    }
+    
+    const squadAttributes = players.reduce((accumulator, player) => {
+      const { clubs, leagues, nations } = accumulator
+
+      const { club, league, nation, attackWorkRate, defenseWorkRate, skillMoves, weakFoot, height } = player
+
+      if (club) {
+        clubs.club = clubs.club || 0
+        clubs.club += 1
+      }
+
+      if (league) {
+        leagues.league = leagues.league || 0
+        leagues.league += 1
+      }
+
+      if (nation) {
+        nations.nation = nations.nation || 0
+        nations.nation += 1
+      }
+
+      accumulator.clubs = clubs
+      accumulator.leagues = leagues
+      accumulator.nations = nations
+
+      accumulator.generalSkillMoves += skillMoves
+      accumulator.generalWeakFoot += weakFoot
+      accumulator.generalHeight += parseHeight(height)
+      accumulator.generalAttWorkRate.push(attackWorkRate)
+      accumulator.generalDefWorkRate.push(defenseWorkRate)
+
+      const { positional } = accumulator
+      const { position } = player
+
+      const parsedPosition = getParsedPosition(position)
+
+      playersPerGeneralPosition[parsedPosition] += 1
+      positional[parsedPosition].attWorkRate.push(attackWorkRate)
+      positional[parsedPosition].defWorkRate.push(defenseWorkRate)
+      positional[parsedPosition].skillMoves += skillMoves
+      positional[parsedPosition].weakFoot += weakFoot
+
+      accumulator.positional = positional
+
+      return accumulator
+    }, initialSquadAttributes)
+
+    const processedSquadAttributes = {
+      ...squadAttributes,
+      generalSkillMoves: parseFloat(squadAttributes.generalSkillMoves / players.length).toFixed(1),
+      generalWeakFoot: parseFloat(squadAttributes.generalWeakFoot / players.length).toFixed(1),
+      generalHeight: parseFloat(squadAttributes.generalHeight / players.length).toFixed(1),
+      generalAttWorkRate: getProcessedWorkRate(squadAttributes.generalAttWorkRate, players.length),
+      generalDefWorkRate: getProcessedWorkRate(squadAttributes.generalDefWorkRate, players.length),
+      positional: {
+        ATT: {
+          attWorkRate: getProcessedWorkRate(squadAttributes.positional.ATT.attWorkRate, playersPerGeneralPosition.ATT),
+          defWorkRate: getProcessedWorkRate(squadAttributes.positional.ATT.defWorkRate, playersPerGeneralPosition.ATT),
+          skillMoves: parseFloat(squadAttributes.positional.ATT.skillMoves / playersPerGeneralPosition.ATT).toFixed(1),
+          weakFoot: parseFloat(squadAttributes.positional.ATT.weakFoot / playersPerGeneralPosition.ATT).toFixed(1)
+        },
+        MID: {
+          attWorkRate: getProcessedWorkRate(squadAttributes.positional.MID.attWorkRate, playersPerGeneralPosition.MID),
+          defWorkRate: getProcessedWorkRate(squadAttributes.positional.MID.defWorkRate, playersPerGeneralPosition.MID),
+          skillMoves: parseFloat(squadAttributes.positional.MID.skillMoves / playersPerGeneralPosition.MID).toFixed(1),
+          weakFoot: parseFloat(squadAttributes.positional.MID.weakFoot / playersPerGeneralPosition.MID).toFixed(1)
+        },
+        DEF: {
+          attWorkRate: getProcessedWorkRate(squadAttributes.positional.DEF.attWorkRate, playersPerGeneralPosition.DEF),
+          defWorkRate: getProcessedWorkRate(squadAttributes.positional.DEF.defWorkRate, playersPerGeneralPosition.DEF),
+          skillMoves: parseFloat(squadAttributes.positional.DEF.skillMoves / playersPerGeneralPosition.DEF).toFixed(1),
+          weakFoot: parseFloat(squadAttributes.positional.DEF.weakFoot / playersPerGeneralPosition.DEF).toFixed(1)
+        }
+      }
+    }
+
+    setSquadAttributes(processedSquadAttributes)
+  }
 
   const handleDropdownItemClick = (player) => {
     const updatedSelectedPlayers = { ...selectedPlayers, [selectedPosition]: player }
@@ -110,6 +284,7 @@ const SquadBuilderPage = () => {
       setSelectedPlayer(player)
     }
     calculateSquadRating()
+    calculateSquadAttributes()
     setShowDropdown(false)
   }
 
@@ -193,9 +368,8 @@ const SquadBuilderPage = () => {
   const handleLoadStartSquadClick = async (session) => {
     try {
       const userId = session.id
-      console.log('userId', userId)
       const response = await axios.get(`http://localhost:3000/api/users/${userId}/squads`)
-      console.log('response', response.data)
+
       if (response.data && response.data.squads) {
         const firstSquad = response.data.squads[0]
         const filteredSquads = response.data.squads.filter((squad) => squad !== null)
@@ -212,6 +386,7 @@ const SquadBuilderPage = () => {
           squadDescription: firstSquad.description
         })
         calculateSquadRating(firstSquad.players)
+        calculateSquadAttributes(firstSquad.players)
       }
     } catch (error) {
       setSquadId(null)
@@ -220,12 +395,23 @@ const SquadBuilderPage = () => {
       setFormation('4-4-2')
       setSelectedPlayers({})
       setInitialState({})
+      setSquadRatings({
+        average: 0,
+        PAC: 0,
+        SHO: 0,
+        PAS: 0,
+        DRI: 0,
+        DEF: 0,
+        PHY: 0
+      })
+      setSquadAttributes(getInitialSquadAttributes())
     }
   }
 
   const handleLoadSquad = (squadId) => {
     if (squadId) {
       const selectedSquad = userSquads.find((squad) => squad.id === squadId)
+
       if (selectedSquad) {
         setSquadId(selectedSquad.id)
         setSquadName(selectedSquad.name)
@@ -250,6 +436,31 @@ const SquadBuilderPage = () => {
     }
 
     calculateSquadRating()
+    calculateSquadAttributes()
+  }
+
+  const handleSuggestionClick = async (position) => {
+    try {
+      const response = await axios.post(`http://localhost:3000/api/players/suggestions`, {
+        squad: selectedPlayers,
+        playerPosition: position
+      })
+
+      if (response.data && response.data.playerItems) {
+        setDropdownPlayers(response.data.playerItems)
+        setShowDropdown(true)
+      }
+    } catch (error) {
+      console.error('Error getting suggestion:', error)
+    }
+  }
+
+  const handleRemovePlayer = (position) => {
+    const updatedSelectedPlayers = { ...selectedPlayers, [position]: null }
+    setSelectedPlayers(updatedSelectedPlayers)
+    setSelectedPlayer(null)
+    calculateSquadRating(updatedSelectedPlayers)
+    calculateSquadAttributes(updatedSelectedPlayers)
   }
 
   const prepareRadarChartData = () => {
@@ -336,7 +547,7 @@ const SquadBuilderPage = () => {
                   </div>
                 ): (
                   selectedPlayer && (
-                <div className="flex flex-col items-center text-white mb-2">
+                <div className="flex flex-col items-center text-white mb-2 text-sm">
                   <ul>
                     <span className="font-bold">Name:</span> {selectedPlayer.name}
                   </ul>
@@ -350,10 +561,25 @@ const SquadBuilderPage = () => {
                     <span className="font-bold">Club:</span> {selectedPlayer.club}
                   </ul>
                   <ul>
+                    <span className="font-bold">League:</span> {selectedPlayer.league}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">Nation:</span> {selectedPlayer.nation}
+                  </ul>
+                  <ul>
                     <span className="font-bold">Skill Moves:</span> {selectedPlayer.skillMoves}
                   </ul>
                   <ul>
                     <span className="font-bold">Weak Foot:</span> {selectedPlayer.weakFoot}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">Height:</span> {selectedPlayer.height}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">Att Work Rate:</span> {selectedPlayer.attackWorkRate}
+                  </ul>
+                  <ul>
+                    <span className="font-bold">Def Work Rate:</span> {selectedPlayer.defenseWorkRate}
                   </ul>
                   <ul>
                     <span className="font-bold">PAC:</span> {selectedPlayer.PAC}
@@ -413,17 +639,50 @@ const SquadBuilderPage = () => {
                   }}
                   onClick={() => handlePositionSelection(position.name)}
                 >
-                  <div className="card-container" style={{ width: '5rem', height: '6rem' }}>
-                    <button className={"plus-button"}>
-                      {selectedPlayers[position.name] ? (
-                        <div className="text-black">
+                  <div className="card-container" style={{ width: '5rem', height: '6rem', position: 'relative' }}>
+                    {selectedPlayers[position.name] ? (
+                      <>
+                        <button className="plus-button">
                           <p style={{ fontSize: determineFontSize(selectedPlayers[position.name].name) }}>{selectedPlayers[position.name].name}</p>
                           <p className="text-xl">{selectedPlayers[position.name].rating}</p>
+                        </button>
+                        {/* Display delete button when player exists */}
+                        <div
+                          className="delete-button"
+                          onClick={() => handleRemovePlayer(position.name)}
+                          style={{
+                            position: 'absolute',
+                            bottom: '-10px',
+                            right: '-10px',
+                            width: '30px',
+                            height: '30px',
+                            borderRadius: '50%',
+                            backgroundColor: 'red',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <span style={{ color: 'black', fontSize: '1.2rem' }}>x</span>
                         </div>
-                      ) : (
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          className="empty-card-button z-10"
+                          onClick={() => handleSuggestionClick(position.name)}
+                          style={{
+                            position: 'absolute',
+                            top: '-20px',
+                            right: '-20px',
+                          }}
+                        >
+                          <FaLightbulb size={40} color="yellow" />
+                        </button>
                         <span>+</span>
-                      )}
-                    </button>
+                      </>
+                    )}
                   </div>
                   <div className="rounded-md bg-gray-800 text-white py-1 px-2 mt-2" style={{ fontSize: '0.75rem' }}>
                     {position.name}
@@ -437,7 +696,7 @@ const SquadBuilderPage = () => {
         <div className="flex-1 bg-blue-900 p-4" style={{ flexBasis: '25%', color: 'white' }}>
           {user && (
             <>
-              <div>
+              <div style={{ height: '40%' }}>
                 <button onClick={squadId ? handleUpdateSquadClick : handleSaveSquadClick} className="bg-blue-600 text-white px-4 py-2 rounded-md mt-4">
                   Save Squad
                 </button>
@@ -449,23 +708,23 @@ const SquadBuilderPage = () => {
                   Load Squad
                 </button>
                 {showLoadSquadDropdown && (
-                  <div className="dropdown-menu">
-                    <select
-                      className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white mt-4"
-                      onChange={(e) => handleLoadSquad(parseInt(e.target.value))}
-                    >
-                      <option value="">Select Squad</option>
-                      {userSquads.length > 0 ? (
-                        userSquads.map((squad) => (
-                          <option key={squad.id} value={squad.id}>
-                            {squad.name}
-                          </option>
-                        ))
-                      ) : (
-                        <option value="">No Squads</option>
-                      )}
-                    </select>
-                  </div>
+                <div className="dropdown-menu">
+                  <select
+                    className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white mt-4"
+                    onChange={(e) => handleLoadSquad(parseInt(e.target.value))}
+                  >
+                    <option value="">Select Squad</option>
+                    {userSquads.length > 0 ? (
+                      userSquads.map((squad) => (
+                        <option key={squad.id} value={squad.id}>
+                          {squad.name}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">No Squads</option>
+                    )}
+                  </select>
+                </div>
                 )}
                 <div className="mt-4">
                   <h1 className="text-lg mb-2">Squad Name</h1>
@@ -496,6 +755,98 @@ const SquadBuilderPage = () => {
                   <div className="rating-div " style={{ width: '40%' }}>
                     <h1 className="text-lg mb-2">Squad Rating</h1>
                     <p className='text-2xl flex flex-row justify-center items-center'>{squadRatings.average}</p>
+                  </div>
+                </div>
+              </div>
+              <div style={{ height: '60%', backgroundColor: '#111457' }}>
+                <div className="mt-2">
+                  <div className="text-xl mt-4 mb-4 flex flex-row justify-center">Squad Attributes</div>
+                </div>
+                <div className="flex flex-row justify-center">
+                  <div className="flex flex-col items-center">
+                    <div className="text-lg mt-2 mb-2">General</div>
+                    <div className="flex flex-row justify-center">
+                      <div className="flex flex-col items-center">
+                        <div className="text-sm">Skill Moves</div>
+                        <div className="text-2xl">{squadAttributes.generalSkillMoves}</div>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className="text-sm">Weak Foot</div>
+                        <div className="text-2xl">{squadAttributes.generalWeakFoot}</div>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className="text-sm">Height</div>
+                        <div className="text-2xl">{squadAttributes.generalHeight}</div>
+                      </div>
+                    </div>
+                    <div className="flex flex-row justify-center">
+                      <div className="flex flex-col items-center">
+                        <div className="text-sm">ATT Work Rate</div>
+                        <div className="text-2xl">{squadAttributes.generalAttWorkRate}</div>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className="text-sm">DEF Work Rate</div>
+                        <div className="text-2xl">{squadAttributes.generalDefWorkRate}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="text-lg mt-2 mb-2">Clubs</div>
+                    <div className="flex flex-row justify-center">
+                      <div className="flex flex-col items-center">
+                        <div className="text-2xl">{squadAttributes.clubs.club}</div>
+                      </div>
+                    </div>
+                    <div className="text-lg mt-2 mb-2">Leagues</div>
+                    <div className="flex flex-row justify-center">
+                      <div className="flex flex-col items-center">
+                        <div className="text-2xl">{squadAttributes.leagues.league}</div>
+                      </div>
+                    </div>
+                    <div className="text-lg mt-2 mb-2">Nations</div>
+                    <div className="flex flex-row justify-center">
+                      <div className="flex flex-col items-center">
+                        <div className="text-2xl">{squadAttributes.nations.nation}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="text-lg mt-2 mb-2">Positional</div>
+                     <div className="flex flex-row justify-center">
+                      <div className="flex flex-col items-center">
+                        <div className="text-sm">ATT</div>
+                        <div className="text-sm">ATT Work Rate</div>
+                        <div className="text-2xl">{squadAttributes.positional.ATT.attWorkRate}</div>
+                        <div className="text-sm">DEF Work Rate</div>
+                        <div className="text-2xl">{squadAttributes.positional.ATT.defWorkRate}</div>
+                        <div className="text-sm">Skill Moves</div>
+                        <div className="text-2xl">{squadAttributes.positional.ATT.skillMoves}</div>
+                        <div className="text-sm">Weak Foot</div>
+                        <div className="text-2xl">{squadAttributes.positional.ATT.weakFoot}</div>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className="text-sm">MID</div>
+                        <div className="text-sm">ATT Work Rate</div>
+                        <div className="text-2xl">{squadAttributes.positional.MID.attWorkRate}</div>
+                        <div className="text-sm">DEF Work Rate</div>
+                        <div className="text-2xl">{squadAttributes.positional.MID.defWorkRate}</div>
+                        <div className="text-sm">Skill Moves</div>
+                        <div className="text-2xl">{squadAttributes.positional.MID.skillMoves}</div>
+                        <div className="text-sm">Weak Foot</div>
+                        <div className="text-2xl">{squadAttributes.positional.MID.weakFoot}</div>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className="text-sm">DEF</div>
+                        <div className="text-sm">ATT Work Rate</div>
+                        <div className="text-2xl">{squadAttributes.positional.DEF.attWorkRate}</div>
+                        <div className="text-sm">DEF Work Rate</div>
+                        <div className="text-2xl">{squadAttributes.positional.DEF.defWorkRate}</div>
+                        <div className="text-sm">Skill Moves</div>
+                        <div className="text-2xl">{squadAttributes.positional.DEF.skillMoves}</div>
+                        <div className="text-sm">Weak Foot</div>
+                        <div className="text-2xl">{squadAttributes.positional.DEF.weakFoot}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

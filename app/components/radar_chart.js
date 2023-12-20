@@ -16,8 +16,7 @@ ChartJS.register(
   Filler,
   Tooltip,
   Legend
-);
-
+)
 
 export const RadarChart = ({ radarData }) => {
   const radarOptions = {
@@ -32,17 +31,13 @@ export const RadarChart = ({ radarData }) => {
         ticks: {
           beginAtZero: true,
           min: 0,
-          max: 100,
+          max: 99,
           stepSize: 10,
           showLabelBackdrop: false,
-          // backdropColor: "rgba(203, 197, 11, 1)",
           font: {
             size: 18
           }
         },
-        // pointLabels: {
-        //     fontSize: 20
-        // },
         angleLines: {
           color: "rgba(230, 244, 208, 0.19)",
           lineWidth: 2

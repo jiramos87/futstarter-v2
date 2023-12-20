@@ -20,6 +20,10 @@ class PlayerItem extends Sequelize.Model {
         type: DataTypes.STRING,
         allowNull: true
       },
+      nation: {
+        type: DataTypes.STRING,
+        allowNull: true
+      },
       league: {
         type: DataTypes.STRING,
         allowNull: true

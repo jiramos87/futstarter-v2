@@ -14,6 +14,7 @@ const parsePlayerItemCreationData = (playersData) => {
       id: playerData.playerItemId,
       name: playerData.playerName,
       club: playerData.playerClub,
+      nation: playerData.playerNation,
       league: playerData.playerLeague,
       version: playerData.playerVersion,
       rating: playerData.playerRating,

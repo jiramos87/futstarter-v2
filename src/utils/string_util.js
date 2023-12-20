@@ -33,3 +33,12 @@ export const getStringWithLetterVariations = (string) => {
 
   return regexPattern
 }
+
+export const parseHeight = (heightString) => {
+  const regex = /(\d+)cm/
+  const match = heightString.match(regex)
+  if (match && match[1]) {
+    return parseInt(match[1], 10)
+  }
+  return null
+}

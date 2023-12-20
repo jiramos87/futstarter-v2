@@ -3,6 +3,7 @@ import { Op } from 'sequelize'
 import { getLoginSession } from '../../../../lib/auth'
 import { findAllPlayerItems } from '../../../../src/dao/player_item_dao'
 import { getStringWithLetterVariations } from '../../../../src/utils/string_util'
+import { parsePlayerItems } from '../../helpers/player_helper'
 
 const parseSearchParams = (searchParams) => {
   const parsedSearchParams = {}
@@ -65,24 +66,7 @@ export async function GET(request) {
       { limit: 20, order: [['rating', 'DESC']] }
     )
 
-    // this parsing is only for testing purposes. We will return the whole object in the future
-    // with links to the images.
-    const parsedPlayerItems = foundPlayerItems.map(playerItem => ({
-      playerItemId: playerItem.id,
-      name: playerItem.name,
-      rating: playerItem.rating,
-      club: playerItem.club,
-      league: playerItem.league,
-      mainPosition: playerItem.mainPosition,
-      skillMoves: playerItem.skillMoves,
-      weakFoot: playerItem.weakFoot,
-      PAC: playerItem.PAC,
-      SHO: playerItem.SHO,
-      PAS: playerItem.PAS,
-      DRI: playerItem.DRI,
-      DEF: playerItem.DEF,
-      PHY: playerItem.PHY
-    }))
+    const parsedPlayerItems = foundPlayerItems.map(playerItem => parsePlayerItems(playerItem))
 
     return Response.json({ playerItems: parsedPlayerItems }, { status: 200 })
   } catch (error) {

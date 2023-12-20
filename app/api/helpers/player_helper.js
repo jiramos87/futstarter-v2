@@ -1,0 +1,20 @@
+export const parsePlayerItems = (playerItem) => ({
+  playerItemId: playerItem.id,
+  name: playerItem.name,
+  rating: playerItem.rating,
+  club: playerItem.club,
+  nation: playerItem.nation,
+  league: playerItem.league,
+  mainPosition: playerItem.mainPosition,
+  skillMoves: playerItem.skillMoves,
+  weakFoot: playerItem.weakFoot,
+  height: playerItem.height,
+  attackWorkRate: playerItem.attackWorkRate,
+  defenseWorkRate: playerItem.defenseWorkRate,
+  PAC: playerItem.PAC,
+  SHO: playerItem.SHO,
+  PAS: playerItem.PAS,
+  DRI: playerItem.DRI,
+  DEF: playerItem.DEF,
+  PHY: playerItem.PHY
+})
