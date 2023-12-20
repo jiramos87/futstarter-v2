@@ -48,7 +48,6 @@ export async function GET (request, { params: { userId } }) {
 
     return Response.json({ squads: squadsByUpdateDate }, { status: 200 })
   } catch (error) {
-    console.log('error', error)
     return Response.error({ error: error.message }, { status: error.status || 500 })
   }
 }

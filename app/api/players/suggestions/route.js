@@ -10,14 +10,14 @@ const applySquadAttributes = (squad, searchConditions) => {
 
   Object.values(squad).forEach((player) => {
     if (!player) return null
-    const { club, league, nation } = player
+    const { club, league, nation, name } = player
 
-    if (club) {
+    if (club && club !== 'EA FC ICONS') {
       squadAttributes.club = squadAttributes.club || []
       squadAttributes.club.push(club)
     }
 
-    if (league) {
+    if (league && league !== 'Icons') {
       squadAttributes.league = squadAttributes.league || []
       squadAttributes.league.push(league)
     }
@@ -26,21 +26,30 @@ const applySquadAttributes = (squad, searchConditions) => {
       squadAttributes.nation = squadAttributes.nation || []
       squadAttributes.nation.push(nation)
     }
+
+    if (name) {
+      squadAttributes.name = squadAttributes.name || []
+      squadAttributes.name.push(name)
+    }
   })
 
   const squadClubsSet = new Set(squadAttributes.club)
   const squadLeaguesSet = new Set(squadAttributes.league)
   const squadNationsSet = new Set(squadAttributes.nation)
+  const squadNamesSet = new Set(squadAttributes.name)
 
   const squadClubsArray = Array.from(squadClubsSet)
   const squadLeaguesArray = Array.from(squadLeaguesSet)
   const squadNationsArray = Array.from(squadNationsSet)
+  const squadNamesArray = Array.from(squadNamesSet)
 
   searchConditions[Op.and].push({[Op.or]: [
     { club: squadClubsArray },
     { league: squadLeaguesArray },
     { nation: squadNationsArray }
   ]})
+
+  searchConditions[Op.and].push({ name: { [Op.notIn]: squadNamesArray } })
 }
 
 const parsePlayerPosition = (playerPosition) => {

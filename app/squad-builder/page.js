@@ -28,9 +28,9 @@ const getProcessedWorkRate = (workRates, playerCount) => {
 }
 
 const getInitialSquadAttributes = () => ({
-  clubs: [],
-  leagues: [],
-  nations: [],
+  clubs: {},
+  leagues: {},
+  nations: {},
   generalAttWorkRate: [],
   generalDefWorkRate: [],
   generalSkillMoves: 0,
@@ -196,23 +196,24 @@ const SquadBuilderPage = () => {
     }
     
     const squadAttributes = players.reduce((accumulator, player) => {
+      if (!player.playerItemId) return accumulator
       const { clubs, leagues, nations } = accumulator
 
       const { club, league, nation, attackWorkRate, defenseWorkRate, skillMoves, weakFoot, height } = player
 
       if (club) {
-        clubs.club = clubs.club || 0
-        clubs.club += 1
+        clubs[club] = clubs[club] || 0
+        clubs[club] += 1
       }
 
       if (league) {
-        leagues.league = leagues.league || 0
-        leagues.league += 1
+        leagues[league] = leagues[league] || 0
+        leagues[league] += 1
       }
 
       if (nation) {
-        nations.nation = nations.nation || 0
-        nations.nation += 1
+        nations[nation] = nations[nation]|| 0
+        nations[nation] += 1
       }
 
       accumulator.clubs = clubs
@@ -221,7 +222,7 @@ const SquadBuilderPage = () => {
 
       accumulator.generalSkillMoves += skillMoves
       accumulator.generalWeakFoot += weakFoot
-      accumulator.generalHeight += parseHeight(height)
+      if (height) accumulator.generalHeight += parseHeight(height)
       accumulator.generalAttWorkRate.push(attackWorkRate)
       accumulator.generalDefWorkRate.push(defenseWorkRate)
 
@@ -459,8 +460,8 @@ const SquadBuilderPage = () => {
     const updatedSelectedPlayers = { ...selectedPlayers, [position]: null }
     setSelectedPlayers(updatedSelectedPlayers)
     setSelectedPlayer(null)
-    calculateSquadRating(updatedSelectedPlayers)
-    calculateSquadAttributes(updatedSelectedPlayers)
+    calculateSquadRating()
+    calculateSquadAttributes()
   }
 
   const prepareRadarChartData = () => {
@@ -696,7 +697,7 @@ const SquadBuilderPage = () => {
         <div className="flex-1 bg-blue-900 p-4" style={{ flexBasis: '25%', color: 'white' }}>
           {user && (
             <>
-              <div style={{ height: '40%' }}>
+              <div style={{ height: '30%' }}>
                 <button onClick={squadId ? handleUpdateSquadClick : handleSaveSquadClick} className="bg-blue-600 text-white px-4 py-2 rounded-md mt-4">
                   Save Squad
                 </button>
@@ -758,97 +759,127 @@ const SquadBuilderPage = () => {
                   </div>
                 </div>
               </div>
-              <div style={{ height: '60%', backgroundColor: '#111457' }}>
-                <div className="mt-2">
-                  <div className="text-xl mt-4 mb-4 flex flex-row justify-center">Squad Attributes</div>
+              <div className="pt-1 px-2 rounded" style={{ height: '70%', backgroundColor: '#111457' }}>
+                <div>
+                  <div className="text-xl mt-1 mb-1 flex flex-row justify-center">Squad Attributes</div>
                 </div>
-                <div className="flex flex-row justify-center">
-                  <div className="flex flex-col items-center">
-                    <div className="text-lg mt-2 mb-2">General</div>
-                    <div className="flex flex-row justify-center">
+                <table className="w-full">
+                  {/* General */}
+                  <tr>
+                    <td colSpan="3" className="squad-attribute-type-text mt-2 mb-2">General</td>
+                  </tr>
+                  <tr>
+                    <td>
                       <div className="flex flex-col items-center">
-                        <div className="text-sm">Skill Moves</div>
-                        <div className="text-2xl">{squadAttributes.generalSkillMoves}</div>
+                        <div className="squad-attributes-stats-text">Skill Moves</div>
+                        <div className="squad-attributes-stats">{squadAttributes.generalSkillMoves}</div>
                       </div>
+                    </td>
+                    <td>
                       <div className="flex flex-col items-center">
-                        <div className="text-sm">Weak Foot</div>
-                        <div className="text-2xl">{squadAttributes.generalWeakFoot}</div>
+                        <div className="squad-attributes-stats-text">Weak Foot</div>
+                        <div className="squad-attributes-stats">{squadAttributes.generalWeakFoot}</div>
                       </div>
+                    </td>
+                    <td>
                       <div className="flex flex-col items-center">
-                        <div className="text-sm">Height</div>
-                        <div className="text-2xl">{squadAttributes.generalHeight}</div>
+                        <div className="squad-attributes-stats-text">Height</div>
+                        <div className="squad-attributes-stats">{squadAttributes.generalHeight} cm</div>
                       </div>
-                    </div>
-                    <div className="flex flex-row justify-center">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
                       <div className="flex flex-col items-center">
-                        <div className="text-sm">ATT Work Rate</div>
-                        <div className="text-2xl">{squadAttributes.generalAttWorkRate}</div>
+                        <div className="squad-attributes-stats-text">Att WR</div>
+                        <div className="squad-attributes-stats">{squadAttributes.generalAttWorkRate}</div>
                       </div>
+                    </td>
+                    <td>
                       <div className="flex flex-col items-center">
-                        <div className="text-sm">DEF Work Rate</div>
-                        <div className="text-2xl">{squadAttributes.generalDefWorkRate}</div>
+                        <div className="squad-attributes-stats-text">Def WR</div>
+                        <div className="squad-attributes-stats">{squadAttributes.generalDefWorkRate}</div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <div className="text-lg mt-2 mb-2">Clubs</div>
-                    <div className="flex flex-row justify-center">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="squad-attribute-type-text mt-2 mb-2">Clubs</td>
+                    <td className="squad-attribute-type-text mt-2 mb-2">Leagues</td>
+                    <td className="squad-attribute-type-text mt-2 mb-2">Nations</td>
+                  </tr>
+                  <tr className="text-sm">
+                    <td>
                       <div className="flex flex-col items-center">
-                        <div className="text-2xl">{squadAttributes.clubs.club}</div>
+                        {Object.keys(squadAttributes.clubs).map((club) => (
+                          <div className="squad-attributes-stats-text" key={club}>{club}: {squadAttributes.clubs[club]}</div>
+                        ))}
                       </div>
-                    </div>
-                    <div className="text-lg mt-2 mb-2">Leagues</div>
-                    <div className="flex flex-row justify-center">
+                    </td>
+                    <td>
                       <div className="flex flex-col items-center">
-                        <div className="text-2xl">{squadAttributes.leagues.league}</div>
+                        {Object.keys(squadAttributes.leagues).map((league) => (
+                          <div className="squad-attributes-stats-text" key={league}>{league}: {squadAttributes.leagues[league]}</div>
+                        ))}
                       </div>
-                    </div>
-                    <div className="text-lg mt-2 mb-2">Nations</div>
-                    <div className="flex flex-row justify-center">
+                    </td>
+                    <td>
                       <div className="flex flex-col items-center">
-                        <div className="text-2xl">{squadAttributes.nations.nation}</div>
+                        {Object.keys(squadAttributes.nations).map((nation) => (
+                          <div className="squad-attributes-stats-text" key={nation}>{nation}: {squadAttributes.nations[nation]}</div>
+                        ))}
                       </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <div className="text-lg mt-2 mb-2">Positional</div>
-                     <div className="flex flex-row justify-center">
+                    </td>
+                  </tr>
+
+                  {/* Positional */}
+                  <tr>
+                    <td colSpan="3" className="squad-attribute-type-text mt-2 mb-2">Positional</td>
+                  </tr>
+                  <tr>
+                    <td>
                       <div className="flex flex-col items-center">
+                        {/* ATT Data */}
                         <div className="text-sm">ATT</div>
-                        <div className="text-sm">ATT Work Rate</div>
-                        <div className="text-2xl">{squadAttributes.positional.ATT.attWorkRate}</div>
-                        <div className="text-sm">DEF Work Rate</div>
-                        <div className="text-2xl">{squadAttributes.positional.ATT.defWorkRate}</div>
-                        <div className="text-sm">Skill Moves</div>
-                        <div className="text-2xl">{squadAttributes.positional.ATT.skillMoves}</div>
-                        <div className="text-sm">Weak Foot</div>
-                        <div className="text-2xl">{squadAttributes.positional.ATT.weakFoot}</div>
+                        <div className="squad-attributes-stats-text">Skill Moves</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.ATT.skillMoves}</div>
+                        <div className="squad-attributes-stats-text">Weak Foot</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.ATT.weakFoot}</div>
+                        <div className="squad-attributes-stats-text">Att WR</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.ATT.attWorkRate}</div>
+                        <div className="squad-attributes-stats-text">Def WR</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.ATT.defWorkRate}</div>
                       </div>
+                    </td>
+                    <td>
                       <div className="flex flex-col items-center">
+                        {/* MID Data */}
                         <div className="text-sm">MID</div>
-                        <div className="text-sm">ATT Work Rate</div>
-                        <div className="text-2xl">{squadAttributes.positional.MID.attWorkRate}</div>
-                        <div className="text-sm">DEF Work Rate</div>
-                        <div className="text-2xl">{squadAttributes.positional.MID.defWorkRate}</div>
-                        <div className="text-sm">Skill Moves</div>
-                        <div className="text-2xl">{squadAttributes.positional.MID.skillMoves}</div>
-                        <div className="text-sm">Weak Foot</div>
-                        <div className="text-2xl">{squadAttributes.positional.MID.weakFoot}</div>
+                        <div className="squad-attributes-stats-text">Skill Moves</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.MID.skillMoves}</div>
+                        <div className="squad-attributes-stats-text">Weak Foot</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.MID.weakFoot}</div>
+                        <div className="squad-attributes-stats-text">Att WR</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.MID.attWorkRate}</div>
+                        <div className="squad-attributes-stats-text">Def WR</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.MID.defWorkRate}</div>
                       </div>
+                    </td>
+                    <td>
                       <div className="flex flex-col items-center">
+                        {/* DEF Data */}
                         <div className="text-sm">DEF</div>
-                        <div className="text-sm">ATT Work Rate</div>
-                        <div className="text-2xl">{squadAttributes.positional.DEF.attWorkRate}</div>
-                        <div className="text-sm">DEF Work Rate</div>
-                        <div className="text-2xl">{squadAttributes.positional.DEF.defWorkRate}</div>
-                        <div className="text-sm">Skill Moves</div>
-                        <div className="text-2xl">{squadAttributes.positional.DEF.skillMoves}</div>
-                        <div className="text-sm">Weak Foot</div>
-                        <div className="text-2xl">{squadAttributes.positional.DEF.weakFoot}</div>
+                        <div className="squad-attributes-stats-text">Skill Moves</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.DEF.skillMoves}</div>
+                        <div className="squad-attributes-stats-text">Weak Foot</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.DEF.weakFoot}</div>
+                        <div className="squad-attributes-stats-text">Att WR</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.DEF.attWorkRate}</div>
+                        <div className="squad-attributes-stats-text">Def WR</div>
+                        <div className="squad-attributes-stats">{squadAttributes.positional.DEF.defWorkRate}</div>
                       </div>
-                    </div>
-                  </div>
-                </div>
+                    </td>
+                  </tr>
+                </table>
               </div>
             </>
           )}
