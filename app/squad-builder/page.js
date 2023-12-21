@@ -1,550 +1,69 @@
 'use client'
 
-import axios from 'axios'
-import { useEffect, useState } from 'react'
 import { FaLightbulb } from 'react-icons/fa'
 
 import MainLayout from '../layouts/main_layout'
-import { getLoginSessionFromDocumentToken, getTokenFromDocumentCookie } from '../../lib/client-cookies'
 import { SQUAD_FORMATIONS_POSITIONS } from '../../src/constants/formations'
 import { RadarChart } from '../components/radar_chart'
-import { parseHeight } from '../../src/utils/string_util'
-import { COMMON_NATIONS, LEAGUES, LEAGUE_CLUBS, POSITIONS, SKILL_MOVES, WEAK_FOOT, getInitialPlayerSearchFilters } from '../../src/constants/player_search_filters'
+import {
+  COMMON_NATIONS,
+  LEAGUES,
+  LEAGUE_CLUBS,
+  POSITIONS,
+  SKILL_MOVES,
+  WEAK_FOOT
+} from '../../src/constants/player_search_filters'
+import { determineFontSize } from '../../src/utils/font_util'
 
-const getProcessedWorkRate = (workRates, playerCount) => {
-  let integerWorkRateTotal = 0
-  for (let workRate of workRates) {
-    if (workRate === 'H') {
-      integerWorkRateTotal += 3
-    }
-    if (workRate === 'M') {
-      integerWorkRateTotal += 2
-    }
-    if (workRate === 'L') {
-      integerWorkRateTotal += 1
-    }
-  }
-
-  return parseFloat(integerWorkRateTotal / playerCount).toFixed(1)
-}
-
-const getInitialSquadAttributes = () => ({
-  clubs: {},
-  leagues: {},
-  nations: {},
-  generalAttWorkRate: [],
-  generalDefWorkRate: [],
-  generalSkillMoves: 0,
-  generalWeakFoot: 0,
-  generalHeight: 0,
-  positional: {
-    ATT: {
-      attWorkRate: [],
-      defWorkRate: [],
-      skillMoves: 0,
-      weakFoot: 0
-    },
-    MID: {
-      attWorkRate: [],
-      defWorkRate: [],
-      skillMoves: 0,
-      weakFoot: 0
-    },
-    DEF: {
-      attWorkRate: [],
-      defWorkRate: [],
-      skillMoves: 0,
-      weakFoot: 0
-    },
-    GK: {
-      attWorkRate: [],
-      defWorkRate: [],
-      skillMoves: 0,
-      weakFoot: 0
-    }
-  }
-})
-
-const getParsedPosition = (position) => {
-  if (['ST', 'CST', 'LST', 'RST', 'CF', 'LF', 'RF', 'LW', 'RW', ].includes(position)) {
-    return 'ATT'
-  }
-  if (['CAM', 'LCM', 'RCM', 'CM', 'LAM', 'RAM', 'CDM', 'LDM', 'RDM', 'CCDM', 'LM', 'RM'].includes(position)) {
-    return 'MID'
-  }
-
-  if (['GK'].includes(position)) {
-    return 'GK'
-  }
-
-  return 'DEF'
-}
+import { useSquadBuilderState } from './state'
+import {
+  handlePlayerSearchChange,
+  handlePositionSelection,
+  toggleUseSearchFilters,
+  handleSeePlayerDetailsClick,
+  handleSaveSquadClick,
+  handleLoadSquadClick,
+  handleLoadSquad,
+  handleSuggestionClick,
+  handleRemovePlayer,
+  handleDropdownItemClick,
+  handleCompareToClick,
+  prepareRadarChartData,
+} from './helper'
+import { useSquadBuilderEffects } from './effect'
 
 const SquadBuilderPage = () => {
-  const [user, setUser] = useState(null)
-  const [error, setError] = useState('')
-  const [playerSearchString, setPlayerSearchString] = useState('')
-  const [formation, setFormation] = useState('4-4-2')
-  const [selectedPosition, setSelectedPosition] = useState('')
-  const [showDropdown, setShowDropdown] = useState(false)
-  const [dropdownPlayers, setDropdownPlayers] = useState([])
-  const [selectedPlayer, setSelectedPlayer] = useState(null)
-  const [selectedPlayers, setSelectedPlayers] = useState({})
-  const [squadName, setSquadName] = useState('')
-  const [squadDescription, setSquadDescription] = useState('')
-  const [isSquadSaved, setIsSquadSaved] = useState(false)
-  const [initialState, setInitialState] = useState({})
-  const [squadId, setSquadId] = useState(null)
-  const [userSquads, setUserSquads] = useState([])
-  const [showLoadSquadDropdown, setShowLoadSquadDropdown] = useState(false)
-  const [playerToCompare, setPlayerToCompare] = useState(null)
-  const [comparing, setComparing] = useState(false)
-  const [squadRatings, setSquadRatings] = useState({
-    average: 0,
-    PAC: 0,
-    SHO: 0,
-    PAS: 0,
-    DRI: 0,
-    DEF: 0,
-    PHY: 0
-  })
-  const [squadAttributes, setSquadAttributes] = useState(getInitialSquadAttributes())
-  const [playerSearchFilters, setPlayerSearchFilters] = useState(getInitialPlayerSearchFilters())
-  const [useSearchFilters, setUseSearchFilters] = useState(false)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let token = getTokenFromDocumentCookie()
-        const session = await getLoginSessionFromDocumentToken(token)
-
-        if (session) {
-          setUser(session)
-          await handleLoadStartSquadClick(session)
-        }
-      } catch (error) {
-        console.error(error)
-        setError(error.message)
-      }
-    }
-    fetchData()
-  }, [])
-
-  const hasSquadChanged = () => {
-    return (
-      JSON.stringify(initialState) !== JSON.stringify({ formation, selectedPlayers, squadName, squadDescription })
-    )
-  }
-
-  const handlePlayerSearchChange = async (e) => {
-    const inputPlayerName = e.target.value
-
-    setPlayerSearchString(inputPlayerName)
-    
-    try {
-      const response = await axios.get(`http://localhost:3000/api/players/search?name=${playerSearchString}`)
-      setDropdownPlayers(response.data.playerItems)
-      setShowDropdown(true)
-    } catch (error) {
-      console.error('search axios error', error)
-      setDropdownPlayers([])
-    }
-  }
-
-  const handlePositionSelection = (position) => {
-    setSelectedPosition(position)
-    if (!selectedPlayers[position]) {
-      setSelectedPlayer(null)
-    } else {
-      setSelectedPlayer(selectedPlayers[position])
-    }
-  }
-
-  const calculateSquadRating = (initialPlayers = {}) => {
-    const usedPlayers = Object.values(initialPlayers).length > 0 ? initialPlayers : selectedPlayers
-
-    const players = Object.values(usedPlayers).filter((player) => player !== null)
-  
-    if (players.length === 0) {
-      setSquadRatings({ average: 0, PAC: 0, SHO: 0, PAS: 0, DRI: 0, DEF: 0, PHY: 0 })
-      return
-    }
-  
-    const totalRating = players.reduce((accumulator, player) => accumulator + player.rating, 0)
-    const averageRating = totalRating / players.length
-    const roundedRating = Math.round(averageRating * 100) / 100
-    setSquadRatings({ ...squadRatings, average: roundedRating })
-  }
-
-  const calculateSquadAttributes = (initialPlayers = {}) => {
-    const usedPlayers = Object.values(initialPlayers).length > 0 ? initialPlayers : selectedPlayers
-
-    const players = Object.keys(usedPlayers).filter((key) => key !== null).map((key) => {
-      return {...usedPlayers[key], position: key }
-    })
-
-    const initialSquadAttributes = getInitialSquadAttributes()
-
-    if (players.length === 0) {
-      setSquadAttributes(initialSquadAttributes)
-      return
-    }
-
-    const playersPerGeneralPosition = {
-      ATT: 0,
-      MID: 0,
-      DEF: 0,
-      GK: 0
-    }
-    
-    const squadAttributes = players.reduce((accumulator, player) => {
-      if (!player.playerItemId) return accumulator
-      const { clubs, leagues, nations } = accumulator
-
-      const { club, league, nation, attackWorkRate, defenseWorkRate, skillMoves, weakFoot, height } = player
-
-      if (club) {
-        clubs[club] = clubs[club] || 0
-        clubs[club] += 1
-      }
-
-      if (league) {
-        leagues[league] = leagues[league] || 0
-        leagues[league] += 1
-      }
-
-      if (nation) {
-        nations[nation] = nations[nation]|| 0
-        nations[nation] += 1
-      }
-
-      accumulator.clubs = clubs
-      accumulator.leagues = leagues
-      accumulator.nations = nations
-
-      accumulator.generalSkillMoves += skillMoves
-      accumulator.generalWeakFoot += weakFoot
-      if (height) accumulator.generalHeight += parseHeight(height)
-      accumulator.generalAttWorkRate.push(attackWorkRate)
-      accumulator.generalDefWorkRate.push(defenseWorkRate)
-
-      const { positional } = accumulator
-      const { position } = player
-
-      const parsedPosition = getParsedPosition(position)
-
-      playersPerGeneralPosition[parsedPosition] += 1
-      positional[parsedPosition].attWorkRate.push(attackWorkRate)
-      positional[parsedPosition].defWorkRate.push(defenseWorkRate)
-      positional[parsedPosition].skillMoves += skillMoves
-      positional[parsedPosition].weakFoot += weakFoot
-
-      accumulator.positional = positional
-
-      return accumulator
-    }, initialSquadAttributes)
-
-    const processedSquadAttributes = {
-      ...squadAttributes,
-      generalSkillMoves: parseFloat(squadAttributes.generalSkillMoves / players.length).toFixed(1),
-      generalWeakFoot: parseFloat(squadAttributes.generalWeakFoot / players.length).toFixed(1),
-      generalHeight: parseFloat(squadAttributes.generalHeight / players.length).toFixed(1),
-      generalAttWorkRate: getProcessedWorkRate(squadAttributes.generalAttWorkRate, players.length),
-      generalDefWorkRate: getProcessedWorkRate(squadAttributes.generalDefWorkRate, players.length),
-      positional: {
-        ATT: {
-          attWorkRate: getProcessedWorkRate(squadAttributes.positional.ATT.attWorkRate, playersPerGeneralPosition.ATT),
-          defWorkRate: getProcessedWorkRate(squadAttributes.positional.ATT.defWorkRate, playersPerGeneralPosition.ATT),
-          skillMoves: parseFloat(squadAttributes.positional.ATT.skillMoves / playersPerGeneralPosition.ATT).toFixed(1),
-          weakFoot: parseFloat(squadAttributes.positional.ATT.weakFoot / playersPerGeneralPosition.ATT).toFixed(1)
-        },
-        MID: {
-          attWorkRate: getProcessedWorkRate(squadAttributes.positional.MID.attWorkRate, playersPerGeneralPosition.MID),
-          defWorkRate: getProcessedWorkRate(squadAttributes.positional.MID.defWorkRate, playersPerGeneralPosition.MID),
-          skillMoves: parseFloat(squadAttributes.positional.MID.skillMoves / playersPerGeneralPosition.MID).toFixed(1),
-          weakFoot: parseFloat(squadAttributes.positional.MID.weakFoot / playersPerGeneralPosition.MID).toFixed(1)
-        },
-        DEF: {
-          attWorkRate: getProcessedWorkRate(squadAttributes.positional.DEF.attWorkRate, playersPerGeneralPosition.DEF),
-          defWorkRate: getProcessedWorkRate(squadAttributes.positional.DEF.defWorkRate, playersPerGeneralPosition.DEF),
-          skillMoves: parseFloat(squadAttributes.positional.DEF.skillMoves / playersPerGeneralPosition.DEF).toFixed(1),
-          weakFoot: parseFloat(squadAttributes.positional.DEF.weakFoot / playersPerGeneralPosition.DEF).toFixed(1)
-        }
-      }
-    }
-
-    setSquadAttributes(processedSquadAttributes)
-  }
-
-  const handleDropdownItemClick = (player) => {
-    const updatedSelectedPlayers = { ...selectedPlayers, [selectedPosition]: player }
-    
-    if (comparing) {
-      setPlayerToCompare(player)
-      setComparing(false)
-    } else {
-      setSelectedPlayers(updatedSelectedPlayers)
-      setSelectedPlayer(player)
-    }
-    calculateSquadRating()
-    calculateSquadAttributes()
-    setShowDropdown(false)
-  }
-
-  const handleCompareToClick = () => {
-    setComparing(true)
-
-    const input = document.querySelector('input[name="playerName"]')
-    input && input.focus()
-  }
-
-  const handleSeePlayerDetailsClick = () => {
-    setComparing(false)
-
-    setPlayerToCompare(null)
-  }
-
-  const toggleUseSearchFilters = () => {
-    setUseSearchFilters(!useSearchFilters)
-  }
-
-
-  const determineFontSize = (name) => {
-    if (name.length > 10) {
-      return '0.8rem'
-    } else {
-      return '1rem'
-    }
-  }
-
-  const handleSaveSquadClick = async () => {
-    try {
-      const userId = user.id
-      const squadData = {
-        name: squadName,
-        description: squadDescription,
-        formation,
-        players: selectedPlayers
-      }
-
-      const response = await axios.post(`http://localhost:3000/api/users/${userId}/squads`, squadData)
-      if (response.data.done && response.data.squad && response.data.squad.squadId) {
-        setSquadId(response.data.squad.squadId)
-        setIsSquadSaved(true)
-        setInitialState({ formation, selectedPlayers, squadName, squadDescription })
-      }
-    } catch (error) {
-      console.error('Error saving squad:', error)
-    }
-  }
-
-  const handleUpdateSquadClick = async () => {
-    try {
-      const userId = user.id;
-      const squadData = {
-        name: squadName,
-        description: squadDescription,
-        formation,
-        players: selectedPlayers,
-      };
-
-      if (squadId) {
-        await axios.put(`http://localhost:3000/api/users/${userId}/squads/${squadId}`, squadData)
-        setIsSquadSaved(true)
-        setInitialState({ formation, selectedPlayers, squadName, squadDescription })
-      }
-    } catch (error) {
-      console.error('Error updating squad:', error)
-    }
-  };
-
-  useEffect(() => {
-    if (hasSquadChanged() && squadId) {
-      setIsSquadSaved(false)
-    }
-  }, [formation, selectedPlayers, squadName, squadDescription])
-
-  const handleLoadSquadClick = async () => {
-    try {
-      const userId = user.id
-      const response = await axios.get(`http://localhost:3000/api/users/${userId}/squads`)
-      if (response.data && response.data.squads) {
-        const filteredSquads = response.data.squads.filter((squad) => squad !== null)
-        setUserSquads(filteredSquads)
-        setShowLoadSquadDropdown(!showLoadSquadDropdown) // Toggle the display
-      }
-    } catch (error) {
-      console.error('Error loading squads:', error)
-    }
-  }
-
-  const handleLoadStartSquadClick = async (session) => {
-    try {
-      const userId = session.id
-      const response = await axios.get(`http://localhost:3000/api/users/${userId}/squads`)
-
-      if (response.data && response.data.squads) {
-        const firstSquad = response.data.squads[0]
-        const filteredSquads = response.data.squads.filter((squad) => squad !== null)
-        setUserSquads(filteredSquads)
-        setSquadId(firstSquad.id)
-        setSquadName(firstSquad.name)
-        setSquadDescription(firstSquad.description)
-        setFormation(firstSquad.formation)
-        setSelectedPlayers(firstSquad.players || {})
-        setInitialState({
-          formation: firstSquad.formation,
-          selectedPlayers: firstSquad.players || {},
-          squadName: firstSquad.name,
-          squadDescription: firstSquad.description
-        })
-        calculateSquadRating(firstSquad.players)
-        calculateSquadAttributes(firstSquad.players)
-      }
-    } catch (error) {
-      setSquadId(null)
-      setSquadName('')
-      setSquadDescription('')
-      setFormation('4-4-2')
-      setSelectedPlayers({})
-      setInitialState({})
-      setSquadRatings({
-        average: 0,
-        PAC: 0,
-        SHO: 0,
-        PAS: 0,
-        DRI: 0,
-        DEF: 0,
-        PHY: 0
-      })
-      setSquadAttributes(getInitialSquadAttributes())
-    }
-  }
-
-  const handleLoadSquad = (squadId) => {
-    if (squadId) {
-      const selectedSquad = userSquads.find((squad) => squad.id === squadId)
-
-      if (selectedSquad) {
-        setSquadId(selectedSquad.id)
-        setSquadName(selectedSquad.name)
-        setSquadDescription(selectedSquad.description)
-        setFormation(selectedSquad.formation)
-        setSelectedPlayers(selectedSquad.players || {})
-        setInitialState({
-          formation: selectedSquad.formation,
-          selectedPlayers: selectedSquad.players || {},
-          squadName: selectedSquad.name,
-          squadDescription: selectedSquad.description
-        })
-        setShowLoadSquadDropdown(false)
-      } else {
-        setSquadId(null)
-        setSquadName('')
-        setSquadDescription('')
-        setFormation('4-4-2')
-        setSelectedPlayers({})
-        setInitialState({})
-      }
-    }
-
-    calculateSquadRating()
-    calculateSquadAttributes()
-  }
-
-  const handleSuggestionClick = async (position) => {
-    try {
-      const response = await axios.post(`http://localhost:3000/api/players/suggestions`, {
-        squad: selectedPlayers,
-        playerPosition: position
-      })
-
-      console.log('response', response.data.playerItems)
-
-      if (response.data && response.data.playerItems) {
-        setDropdownPlayers(response.data.playerItems)
-        setShowDropdown(true)
-      }
-    } catch (error) {
-      console.error('Error getting suggestion:', error)
-    }
-  }
-
-  const handleRemovePlayer = (position) => {
-    const updatedSelectedPlayers = { ...selectedPlayers, [position]: null }
-    setSelectedPlayers(updatedSelectedPlayers)
-    setSelectedPlayer(null)
-    calculateSquadRating()
-    calculateSquadAttributes()
-  }
-
-  const prepareRadarChartData = () => {
-    if (selectedPlayer && playerToCompare) {
-      return {
-        labels: ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"],
-        datasets: [
-          {
-            label: selectedPlayer.name,
-            pointRadius: 7,
-            backgroundColor: "rgba(34, 202, 236, .2)",
-            borderColor: "rgba(34, 202, 236, 1)",
-            // Extract attributes for selected player
-            data: [
-              selectedPlayer.PAC,
-              selectedPlayer.SHO,
-              selectedPlayer.PAS,
-              selectedPlayer.DRI,
-              selectedPlayer.DEF,
-              selectedPlayer.PHY,
-            ],
-          },
-          {
-            label: playerToCompare.name,
-            backgroundColor: "rgba(255, 99, 132, .2)",
-            borderColor: "rgba(255, 99, 132, 1)",
-            // Extract attributes for player to compare
-            data: [
-              playerToCompare.PAC,
-              playerToCompare.SHO,
-              playerToCompare.PAS,
-              playerToCompare.DRI,
-              playerToCompare.DEF,
-              playerToCompare.PHY,
-            ],
-          },
-        ],
-      };
-    }
-    return null;
-  };
+  const stateSetters = useSquadBuilderState()
+  useSquadBuilderEffects(stateSetters)
+  const { state, setters } = stateSetters
 
   return (
     <MainLayout>
       <div className="flex h-full">
         <div className="flex-1 bg-blue-900 p-4" style={{ flexBasis: '25%', color: 'white' }}>
-          {user && (
+          {state.user && (
             <>
               <div className="flex-1 p-1" style={{ height: '50%'}}>
                 <div className="flex flex-row mb-1 align-center justify-around" style={{ height: '10%' }}>
                   <div className="flex flex-row bg-gray-800 text-white rounded-md p-2">
-                    POS: {selectedPosition}
+                    POS: {state.selectedPosition}
                   </div>
                   <input
                     type="text"
                     name="playerName"
-                    value={playerSearchString}
-                    onChange={handlePlayerSearchChange}
+                    value={state.playerSearchString}
+                    onChange={(e) => handlePlayerSearchChange(e, stateSetters)}
                     placeholder="Search Player"
                     className="border border-gray-700 rounded-md w-8/12 bg-gray-800 text-white p-2"
                   />
                 </div>
 
-                <ul className='dropdown-list' style={{ display: showDropdown ? 'block' : 'none' }}>
-                    {showDropdown &&
-                      dropdownPlayers.map((player, index) => (
+                <ul className='dropdown-list' style={{ display: state.showDropdown ? 'block' : 'none' }}>
+                    {state.showDropdown &&
+                      state.dropdownPlayers.map((player, index) => (
                         <li key={index} className="dropdown-item">
                           <button
-                            onClick={() => handleDropdownItemClick(player)}
+                            onClick={() => handleDropdownItemClick(player, stateSetters)}
                             className="dropdown-item-button"
                           >
                             {player.name} - {player.rating}
@@ -552,287 +71,292 @@ const SquadBuilderPage = () => {
                         </li>
                       ))}
                 </ul>
-                <div className="flex flex-col squad-player-search-filters" style={{ height: '90%' }}>
+                <div className="flex flex-col" style={{ height: '90%' }}>
                   <div style={{ height: '10%' }}>
                     <input
                       type='checkbox'
                       id='use-search-filters'
                       name='use-search-filters'
                       className='mr-2'
-                      onClick={toggleUseSearchFilters}
+                      onClick={() => toggleUseSearchFilters(stateSetters)}
                     />
                     <label htmlFor='use-search-filters' className='ml-2'>Use search filters</label>
                   </div>
-                  <div className='border rounded-md p-2 my-1 h-full' style={{ display: useSearchFilters ? 'block' : 'none', backgroundColor: '#111457', height: '90%' }}>
+                  <div className='border rounded-md p-2 my-1 h-full squad-player-search-filters' style={{ display: state.useSearchFilters ? 'block' : 'none', backgroundColor: '#111457', height: '90%' }}>
                     <table className='w-full'>
                       <tbody className='squad-attributes-stats-text'>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>league</div>
-                          <select
-                            className='text-black'
-                            name='league'
-                            value={playerSearchFilters.league}
-                            onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, league: e.target.value })}
-                          >
-                            <option value=''>--</option>
-                            {LEAGUES.map((league) => (
-                              <option key={league} value={league}>{league}</option>
-                            ))}
-                          </select>
-                        </tr>
-                        <tr className='grid grid-cols-2 mb-1'>
-                          <div>club</div>
-                          <select
-                            className='text-black'
-                            name='club'
-                            value={playerSearchFilters.club}
-                            onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, club: e.target.value })}
-                          >
-                            <option value=''>--</option>
-                            {playerSearchFilters.league.length > 1 &&
-                            LEAGUE_CLUBS[playerSearchFilters.league].map((club) => (
-                              <option key={club} value={club}>{club}</option>
-                            ))}
-                          </select>
-                        </tr>
-                        <tr className='grid grid-cols-2 mb-1'>
-                          <div>nation</div>
-                          <select
-                            className='text-black'
-                            name='nation'
-                            value={playerSearchFilters.nation}
-                            onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, nation: e.target.value })}
-                          >
-                            <option value=''>--</option>
-                           {COMMON_NATIONS.map((nation) => (
-                              <option key={nation} value={nation}>{nation}</option>
-                            ))}
-                          </select>
-                        </tr>
-                        <tr className='grid grid-cols-2 mb-1'>
-                          <div>position</div>
+                          <td>league</td>
+                          <td>
                             <select
                               className='text-black'
-                              name='position'
-                              value={playerSearchFilters.position}
-                              onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, position: e.target.value })}
+                              name='league'
+                              value={state.playerSearchFilters.league[0]}
+                              onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, league: e.target.value })}
                             >
                               <option value=''>--</option>
+                              {LEAGUES.map((league) => (
+                                <option key={league} value={league}>{league}</option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                        <tr className='grid grid-cols-2 mb-1'>
+                          <td>club</td>
+                          <td><select
+                              className='text-black'
+                              name='club'
+                              value={state.playerSearchFilters.club[0]}
+                              onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, club: e.target.value })}
+                            >
+                              <option value=''>--</option>
+                              {state.playerSearchFilters.league.length > 1 &&
+                              LEAGUE_CLUBS[state.playerSearchFilters.league].map((club) => (
+                                <option key={club} value={club}>{club}</option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                        <tr className='grid grid-cols-2 mb-1'>
+                          <td>nation</td>
+                          <td><select
+                              className='text-black'
+                              name='nation'
+                              value={state.playerSearchFilters.nation[0]}
+                              onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, nation: e.target.value })}
+                            >
+                              <option value=''>--</option>
+                            {COMMON_NATIONS.map((nation) => (
+                                <option key={nation} value={nation}>{nation}</option>
+                              ))}
+                            </select>
+                          </td>
+                        </tr>
+                        <tr className='grid grid-cols-2 mb-1'>
+                          <td>position</td>
+                          <td><select
+                                className='text-black'
+                                name='position'
+                                value={state.playerSearchFilters.position[0]}
+                                onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, position: e.target.value })}
+                              >
+                                <option value=''>--</option>
                               {POSITIONS.map((position) => (
                                 <option key={position} value={position}>{position}</option>
                               ))}
                             </select>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>rating</div>
-                          <div className='flex flex-row'>
+                          <td>rating</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>
+                              min
                               <input
                                 type='number'
                                 name='minRating'
                                 className='text-black w-10'
-                                value={playerSearchFilters.minRating}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minRating: e.target.value })}
+                                value={state.playerSearchFilters.minRating}
+                                onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, minRating: e.target.value })}
                               />
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <input
                                 type='number'
                                 name='maxRating'
                                 className='text-black w-10'
-                                value={playerSearchFilters.maxRating}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxRating: e.target.value })}
+                                value={state.playerSearchFilters.maxRating}
+                                onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, maxRating: e.target.value })}
                               />
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>price</div>
-                          <div className='flex flex-row'>
+                          <td>price</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>
+                              min
                               <input
                                 type='number'
                                 name='minPrice'
                                 className='text-black w-10'
-                                value={playerSearchFilters.minPrice}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minPrice: e.target.value })}
+                                value={state.playerSearchFilters.minPrice}
+                                onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, minPrice: e.target.value })}
                               />
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <input
                                 type='number'
                                 name='maxPrice'
                                 className='text-black w-20'
-                                value={playerSearchFilters.maxPrice}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxPrice: e.target.value })}
+                                value={state.playerSearchFilters.maxPrice}
+                                onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, maxPrice: e.target.value })}
                               />
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>PAC</div>
-                          <div className='flex flex-row'>
+                          <td>PAC</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>
+                              min
                               <input
                                 type='number'
                                 name='minPAC'
                                 className='text-black w-10'
-                                value={playerSearchFilters.minPAC}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minPAC: e.target.value })}
+                                value={state.playerSearchFilters.minPAC}
+                                onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, minPAC: e.target.value })}
                               />
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <input
                                 type='number'
                                 name='maxPAC'
                                 className='text-black w-10'
-                                value={playerSearchFilters.maxPAC}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxPAC: e.target.value })}
+                                value={state.playerSearchFilters.maxPAC}
+                                onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, maxPAC: e.target.value })}
                               />
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>SHO</div>
-                          <div className='flex flex-row'>
+                          <td>SHO</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>
+                              min
                               <input
                                 type='number'
                                 name='minSHO'
                                 className='text-black w-10'
-                                value={playerSearchFilters.minSHO}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minSHO: e.target.value })}
+                                value={state.playerSearchFilters.minSHO}
+                                onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, minSHO: e.target.value })}
                               />
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <input
                                 type='number'
                                 name='maxSHO'
                                 className='text-black w-10'
-                                value={playerSearchFilters.maxSHO}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxSHO: e.target.value })}
+                                value={state.playerSearchFilters.maxSHO}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, maxSHO: e.target.value })}
                               />
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>PAS</div>
-                          <div className='flex flex-row'>
+                          <td>PAS</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>
+                              min
                               <input
                                 type='number'
                                 name='minPAS'
                                 className='text-black w-10'
-                                value={playerSearchFilters.minPAS}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minPAS: e.target.value })}
+                                value={state.playerSearchFilters.minPAS}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, minPAS: e.target.value })}
                               />
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <input
                                 type='number'
                                 name='maxPAS'
                                 className='text-black w-10'
-                                value={playerSearchFilters.maxPAS}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxPAS: e.target.value })}
+                                value={state.playerSearchFilters.maxPAS}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, maxPAS: e.target.value })}
                               />
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>DRI</div>
-                          <div className='flex flex-row'>
+                          <td>DRI</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>
+                              min
                               <input
                                 type='number'
                                 name='minDRI'
                                 className='text-black w-10'
-                                value={playerSearchFilters.minDRI}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minDRI: e.target.value })}
+                                value={state.playerSearchFilters.minDRI}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, minDRI: e.target.value })}
                               />
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <input
                                 type='number'
                                 name='maxDRI'
                                 className='text-black w-10'
-                                value={playerSearchFilters.maxDRI}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxDRI: e.target.value })}
+                                value={state.playerSearchFilters.maxDRI}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, maxDRI: e.target.value })}
                               />
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>DEF</div>
-                          <div className='flex flex-row'>
+                          <td>DEF</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>
+                              min
                               <input
                                 type='number'
                                 name='minDEF'
                                 className='text-black w-10'
-                                value={playerSearchFilters.minDEF}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minDEF: e.target.value })}
+                                value={state.playerSearchFilters.minDEF}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, minDEF: e.target.value })}
                               />
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <input
                                 type='number'
                                 name='maxDEF'
                                 className='text-black w-10'
-                                value={playerSearchFilters.maxDEF}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxDEF: e.target.value })}
+                                value={state.playerSearchFilters.maxDEF}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, maxDEF: e.target.value })}
                               />
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>PHY</div>
-                          <div className='flex flex-row'>
+                          <td>PHY</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>
+                              min
                               <input
                                 type='number'
                                 name='minPHY'
                                 className='text-black w-10'
-                                value={playerSearchFilters.minPHY}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minPHY: e.target.value })}
+                                value={state.playerSearchFilters.minPHY}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, minPHY: e.target.value })}
                               />
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <input
                                 type='number'
                                 name='maxPHY'
                                 className='text-black w-10'
-                                value={playerSearchFilters.maxPHY}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxPHY: e.target.value })}
+                                value={state.playerSearchFilters.maxPHY}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, maxPHY: e.target.value })}
                               />
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>Skill Moves</div>
-                          <div className='flex flex-row'>
+                          <td>Skill Moves</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>  
+                              min
                               <select
                                 className='text-black'
                                 name='minSkillMoves'
-                                value={playerSearchFilters.minSkillMoves}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minSkillMoves: e.target.value })}
+                                value={state.playerSearchFilters.minSkillMoves}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, minSkillMoves: e.target.value })}
                               >
                                 {SKILL_MOVES.map((skillMove) => (
                                   <option key={skillMove} value={skillMove}>{skillMove}</option>
@@ -840,30 +364,30 @@ const SquadBuilderPage = () => {
                               </select>
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <select
                                 className='text-black'
                                 name='maxSkillMoves'
-                                value={playerSearchFilters.maxSkillMoves}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxSkillMoves: e.target.value })}
+                                value={state.playerSearchFilters.maxSkillMoves}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, maxSkillMoves: e.target.value })}
                               >
                                 {SKILL_MOVES.map((skillMove) => (
                                   <option key={skillMove} value={skillMove}>{skillMove}</option>
                                 ))}
                               </select>
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>Weak Foot</div>
-                          <div className='flex flex-row'>
+                          <td>Weak Foot</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>  
+                              min
                               <select
                                 className='text-black'
                                 name='minWeakFoot'
-                                value={playerSearchFilters.minWeakFoot}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minWeakFoot: e.target.value })}
+                                value={state.playerSearchFilters.minWeakFoot}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, minWeakFoot: e.target.value })}
                               >
                                 {WEAK_FOOT.map((weakFoot) => (
                                   <option key={weakFoot} value={weakFoot}>{weakFoot}</option>
@@ -871,44 +395,44 @@ const SquadBuilderPage = () => {
                               </select>
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <select
                                 className='text-black'
                                 name='maxWeakFoot'
-                                value={playerSearchFilters.maxWeakFoot}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxWeakFoot: e.target.value })}
+                                value={state.playerSearchFilters.maxWeakFoot}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, maxWeakFoot: e.target.value })}
                               >
                                 {WEAK_FOOT.map((weakFoot) => (
                                   <option key={weakFoot} value={weakFoot}>{weakFoot}</option>
                                 ))}
                               </select>
                             </div>
-                          </div>
+                          </td>
                         </tr>
                         <tr className='grid grid-cols-2 mb-1'>
-                          <div>Height</div>
-                          <div className='flex flex-row'>
+                          <td>Height</td>
+                          <td className='flex flex-row'>
                             <div className='flex flex-row'>
-                              <div>min</div>
+                              min
                               <input
                                 type='number'
                                 name='minHeight'
                                 className='text-black w-10'
-                                value={playerSearchFilters.minHeight}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, minHeight: e.target.value })}
+                                value={state.playerSearchFilters.minHeight}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, minHeight: e.target.value })}
                               />
                             </div>
                             <div className='flex flex-row'>
-                              <div>max</div>
+                              max
                               <input
                                 type='number'
                                 name='maxHeight'
                                 className='text-black w-10'
-                                value={playerSearchFilters.maxHeight}
-                                onChange={(e) => setPlayerSearchFilters({ ...playerSearchFilters, maxHeight: e.target.value })}
+                                value={state.playerSearchFilters.maxHeight}
+                                onChange={(e) => setter.setPlayerSearchFilters({ ...state.playerSearchFilters, maxHeight: e.target.value })}
                               />
                             </div>
-                          </div>
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -917,27 +441,27 @@ const SquadBuilderPage = () => {
               </div>
               
               <div className="flex-1 p-4 rounded-md" style={{ height: '50%', backgroundColor: '#111457' }}>
-                {selectedPlayer && playerToCompare
+                {state.selectedPlayer && state.playerToCompare
                   ? (
                   <div>
                     {/* RadarChart component */}
-                    <RadarChart radarData={prepareRadarChartData()} />
+                    <RadarChart radarData={prepareRadarChartData(state.selectedPlayer, state.playerToCompare)}/>
                   </div>
                 ): (
-                  selectedPlayer && (
+                  state.selectedPlayer && (
                 <div className="flex flex-col items-center mb-2 squad-attributes-stats-text">
                   <div className='flex flex-row items-center mb-2 justify-between w-full'>
                     <div className='flex flex-col justify-center items-center' style={{ width: '30%' }}>
-                      <div className='squad-player-big-rating'>{selectedPlayer.rating}</div>
-                      <div className='squad-player-big-position'>{selectedPlayer.mainPosition}</div>
-                      <div>{selectedPlayer.secondaryPositions}</div>
+                      <div className='squad-player-big-rating'>{state.selectedPlayer.rating}</div>
+                      <div className='squad-player-big-position'>{state.selectedPlayer.mainPosition}</div>
+                      <div>{state.selectedPlayer.secondaryPositions}</div>
                     </div>
                     <div className='flex flex-col justify-center items-center' style={{ width: '70%' }}>
-                      <div className='squad-div-title-text'>{selectedPlayer.name}</div>
+                      <div className='squad-div-title-text'>{state.selectedPlayer.name}</div>
                       <div className='flex flex-row justify-between'>
-                        <div>{selectedPlayer.nation}</div>
-                        <div>{selectedPlayer.club}</div>
-                        <div>{selectedPlayer.league}</div>
+                        <div>{state.selectedPlayer.nation}</div>
+                        <div>{state.selectedPlayer.club}</div>
+                        <div>{state.selectedPlayer.league}</div>
                       </div>
                     </div>
                   </div>
@@ -947,25 +471,25 @@ const SquadBuilderPage = () => {
                         <td>
                           <div className="flex flex-col items-center">
                             <div className="squad-attributes-stats-text">Skill Moves</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.skillMoves}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.skillMoves}</div>
                             <div className="squad-attributes-stats-text">Weak Foot</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.weakFoot}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.weakFoot}</div>
                           </div>
                         </td>
                         <td>
                           <div className="flex flex-col items-center">
                             <div className="squad-attributes-stats-text">Att WR</div> 
-                            <div className="squad-attributes-stats">{selectedPlayer.attackWorkRate}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.attackWorkRate}</div>
                             <div className="squad-attributes-stats-text">Def WR</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.defenseWorkRate}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.defenseWorkRate}</div>
                           </div>
                         </td>
                         <td>
                           <div className="flex flex-col items-center">
                             <div className="squad-attributes-stats-text">Height</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.height}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.height}</div>
                             <div className="squad-attributes-stats-text">Weight</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.weight}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.weight}</div>
                           </div>
                         </td>
                       </tr>
@@ -977,19 +501,19 @@ const SquadBuilderPage = () => {
                         <td>
                           <div className="flex flex-col items-center">
                             <div className="squad-attributes-stats-text">PAC</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.PAC}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.PAC}</div>
                           </div>
                         </td>
                         <td>
                           <div className="flex flex-col items-center">
                             <div className="squad-attributes-stats-text">SHO</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.SHO}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.SHO}</div>
                           </div>
                         </td>
                         <td>
                           <div className="flex flex-col items-center">
                             <div className="squad-attributes-stats-text">PAS</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.PAS}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.PAS}</div>
                           </div>
                         </td>
                       </tr>
@@ -997,19 +521,19 @@ const SquadBuilderPage = () => {
                         <td>
                           <div className="flex flex-col items-center">
                             <div className="squad-attributes-stats-text">DRI</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.DRI}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.DRI}</div>
                           </div>
                         </td>
                         <td>
                           <div className="flex flex-col items-center">
                             <div className="squad-attributes-stats-text">DEF</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.DEF}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.DEF}</div>
                           </div>
                         </td>
                         <td>
                           <div className="flex flex-col items-center">
                             <div className="squad-attributes-stats-text">PHY</div>
-                            <div className="squad-attributes-stats">{selectedPlayer.PHY}</div>
+                            <div className="squad-attributes-stats">{state.selectedPlayer.PHY}</div>
                           </div>
                         </td>
                       </tr>
@@ -1017,17 +541,17 @@ const SquadBuilderPage = () => {
                   </table>
                 </div>
                 ))}
-                {selectedPlayer && (
+                {state.selectedPlayer && (
                   <div className='mt-10'>
                     <button
                       className="relative top-0 right-0 mr-2 mt-2 bg-blue-600 text-white px-2 py-1 rounded-md"
-                      onClick={handleCompareToClick}
+                      onClick={() => handleCompareToClick(document, stateSetters)}
                     >
                       Compare to
                     </button>
                     <button
                       className="relative top-0 right-0 mr-2 mt-2 bg-blue-600 text-white px-2 py-1 rounded-md"
-                      onClick={handleSeePlayerDetailsClick}
+                      onClick={() => handleSeePlayerDetailsClick(stateSetters)}
                     >
                       Player details
                     </button>
@@ -1037,7 +561,7 @@ const SquadBuilderPage = () => {
               </div>
             </>
           )}
-          {!user && (
+          {!state.user && (
             <div>
               <h1 className="text-5xl">Welcome to Futstarter ⚽</h1>
               <h2 className="text-3xl">Please login to continue</h2>
@@ -1049,9 +573,9 @@ const SquadBuilderPage = () => {
             className="bg-center bg-no-repeat bg-contain h-full"
             style={{ backgroundImage: `url('/football-pitch.jpg')` }}
           >
-            {user && (
+            {state.user && (
             <>
-              {SQUAD_FORMATIONS_POSITIONS[formation].map((position, index) => (
+              {SQUAD_FORMATIONS_POSITIONS[state.formation].map((position, index) => (
                 <div
                   key={index}
                   className="absolute text-white flex flex-col items-center"
@@ -1059,19 +583,19 @@ const SquadBuilderPage = () => {
                     top: `calc(${position.position.top} - 3rem)`,
                     left: `calc(${position.position.left} - 2.5rem)`,
                   }}
-                  onClick={() => handlePositionSelection(position.name)}
+                  onClick={() => handlePositionSelection(position.name, stateSetters)}
                 >
                   <div className="card-container" style={{ width: '5rem', height: '6rem', position: 'relative' }}>
-                    {selectedPlayers[position.name] ? (
+                    {state.selectedPlayers[position.name] ? (
                       <>
                         <button className="plus-button">
-                          <p style={{ fontSize: determineFontSize(selectedPlayers[position.name].name) }}>{selectedPlayers[position.name].name}</p>
-                          <p className="text-xl">{selectedPlayers[position.name].rating}</p>
+                          <p style={{ fontSize: determineFontSize(state.selectedPlayers[position.name].name) }}>{state.selectedPlayers[position.name].name}</p>
+                          <p className="text-xl">{state.selectedPlayers[position.name].rating}</p>
                         </button>
                         {/* Display delete button when player exists */}
                         <div
                           className="delete-button"
-                          onClick={() => handleRemovePlayer(position.name)}
+                          onClick={() => handleRemovePlayer(position.name, stateSetters)}
                           style={{
                             position: 'absolute',
                             bottom: '-10px',
@@ -1093,7 +617,7 @@ const SquadBuilderPage = () => {
                       <>
                         <button
                           className="empty-card-button z-10"
-                          onClick={() => handleSuggestionClick(position.name)}
+                          onClick={() => handleSuggestionClick(position.name, stateSetters)}
                           style={{
                             position: 'absolute',
                             top: '-20px',
@@ -1116,28 +640,28 @@ const SquadBuilderPage = () => {
           </div>
         </div>
         <div className="flex-1 bg-blue-900 p-4" style={{ flexBasis: '25%', color: 'white' }}>
-          {user && (
+          {state.user && (
             <>
               <div style={{ height: '30%' }}>
-                <button onClick={squadId ? handleUpdateSquadClick : handleSaveSquadClick} className="bg-blue-600 text-white px-4 py-2 rounded-md mt-4">
+                <button onClick={() => { state.squadId ? handleUpdateSquadClick(stateSetters) : handleSaveSquadClick(stateSetters)}} className="bg-blue-600 text-white px-4 py-2 rounded-md mt-4">
                   Save Squad
                 </button>
-                {isSquadSaved && squadId && <span className="text-green-500 ml-2">✔</span>}
+                {state.isSquadSaved && state.squadId && <span className="text-green-500 ml-2">✔</span>}
                 <button
-                  onClick={handleLoadSquadClick}
+                  onClick={() => handleLoadSquadClick(stateSetters)}
                   className="bg-yellow-500 text-white px-4 py-2 rounded-md mt-4"
                 >
                   Load Squad
                 </button>
-                {showLoadSquadDropdown && (
+                {state.showLoadSquadDropdown && (
                 <div className="dropdown-menu">
                   <select
                     className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white mt-4"
-                    onChange={(e) => handleLoadSquad(parseInt(e.target.value))}
+                    onChange={(e) => handleLoadSquad(parseInt(e.target.value), stateSetters)}
                   >
                     <option value="">Select Squad</option>
-                    {userSquads.length > 0 ? (
-                      userSquads.map((squad) => (
+                    {state.userSquads.length > 0 ? (
+                      state.userSquads.map((squad) => (
                         <option key={squad.id} value={squad.id}>
                           {squad.name}
                         </option>
@@ -1153,7 +677,7 @@ const SquadBuilderPage = () => {
                   <input
                     type="text"
                     name="squadName"
-                    value={squadName}
+                    value={state.squadName}
                     onChange={(e) => setSquadName(e.target.value)}
                     className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white"
                   />
@@ -1163,7 +687,7 @@ const SquadBuilderPage = () => {
                     <h1 className="text-lg mb-2">Formation</h1>
                     <select
                       name="formation"
-                      value={formation}
+                      value={state.formation}
                       onChange={(e) => setFormation(e.target.value)}
                       className="border border-gray-700 rounded-md px-3 py-2 w-75 bg-gray-800 text-white"
                     >
@@ -1176,7 +700,7 @@ const SquadBuilderPage = () => {
                   </div>
                   <div className="rating-div " style={{ width: '40%' }}>
                     <h1 className="text-lg mb-2">Squad Rating</h1>
-                    <p className='text-2xl flex flex-row justify-center items-center'>{squadRatings.average}</p>
+                    <p className='text-2xl flex flex-row justify-center items-center'>{state.squadRatings.average}</p>
                   </div>
                 </div>
               </div>
@@ -1194,19 +718,19 @@ const SquadBuilderPage = () => {
                       <td>
                         <div className="flex flex-col items-center">
                           <div className="squad-attributes-stats-text">Skill Moves</div>
-                          <div className="squad-attributes-stats">{squadAttributes.generalSkillMoves}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.generalSkillMoves}</div>
                         </div>
                       </td>
                       <td>
                         <div className="flex flex-col items-center">
                           <div className="squad-attributes-stats-text">Weak Foot</div>
-                          <div className="squad-attributes-stats">{squadAttributes.generalWeakFoot}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.generalWeakFoot}</div>
                         </div>
                       </td>
                       <td>
                         <div className="flex flex-col items-center">
                           <div className="squad-attributes-stats-text">Height</div>
-                          <div className="squad-attributes-stats">{squadAttributes.generalHeight} cm</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.generalHeight} cm</div>
                         </div>
                       </td>
                     </tr>
@@ -1214,13 +738,13 @@ const SquadBuilderPage = () => {
                       <td>
                         <div className="flex flex-col items-center">
                           <div className="squad-attributes-stats-text">Att WR</div>
-                          <div className="squad-attributes-stats">{squadAttributes.generalAttWorkRate}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.generalAttWorkRate}</div>
                         </div>
                       </td>
                       <td>
                         <div className="flex flex-col items-center">
                           <div className="squad-attributes-stats-text">Def WR</div>
-                          <div className="squad-attributes-stats">{squadAttributes.generalDefWorkRate}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.generalDefWorkRate}</div>
                         </div>
                       </td>
                     </tr>
@@ -1232,22 +756,22 @@ const SquadBuilderPage = () => {
                     <tr className="text-sm">
                       <td>
                         <div className="flex flex-col items-center">
-                          {Object.keys(squadAttributes.clubs).map((club) => (
-                            <div className="squad-attributes-stats-text" key={club}>{club}: {squadAttributes.clubs[club]}</div>
+                          {Object.keys(state.squadAttributes.clubs).map((club) => (
+                            <div className="squad-attributes-stats-text" key={club}>{club}: {state.squadAttributes.clubs[club]}</div>
                           ))}
                         </div>
                       </td>
                       <td>
                         <div className="flex flex-col items-center">
-                          {Object.keys(squadAttributes.leagues).map((league) => (
-                            <div className="squad-attributes-stats-text" key={league}>{league}: {squadAttributes.leagues[league]}</div>
+                          {Object.keys(state.squadAttributes.leagues).map((league) => (
+                            <div className="squad-attributes-stats-text" key={league}>{league}: {state.squadAttributes.leagues[league]}</div>
                           ))}
                         </div>
                       </td>
                       <td>
                         <div className="flex flex-col items-center">
-                          {Object.keys(squadAttributes.nations).map((nation) => (
-                            <div className="squad-attributes-stats-text" key={nation}>{nation}: {squadAttributes.nations[nation]}</div>
+                          {Object.keys(state.squadAttributes.nations).map((nation) => (
+                            <div className="squad-attributes-stats-text" key={nation}>{nation}: {state.squadAttributes.nations[nation]}</div>
                           ))}
                         </div>
                       </td>
@@ -1263,13 +787,13 @@ const SquadBuilderPage = () => {
                           {/* ATT Data */}
                           <div className="text-sm">ATT</div>
                           <div className="squad-attributes-stats-text">Skill Moves</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.ATT.skillMoves}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.ATT.skillMoves}</div>
                           <div className="squad-attributes-stats-text">Weak Foot</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.ATT.weakFoot}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.ATT.weakFoot}</div>
                           <div className="squad-attributes-stats-text">Att WR</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.ATT.attWorkRate}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.ATT.attWorkRate}</div>
                           <div className="squad-attributes-stats-text">Def WR</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.ATT.defWorkRate}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.ATT.defWorkRate}</div>
                         </div>
                       </td>
                       <td>
@@ -1277,13 +801,13 @@ const SquadBuilderPage = () => {
                           {/* MID Data */}
                           <div className="text-sm">MID</div>
                           <div className="squad-attributes-stats-text">Skill Moves</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.MID.skillMoves}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.MID.skillMoves}</div>
                           <div className="squad-attributes-stats-text">Weak Foot</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.MID.weakFoot}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.MID.weakFoot}</div>
                           <div className="squad-attributes-stats-text">Att WR</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.MID.attWorkRate}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.MID.attWorkRate}</div>
                           <div className="squad-attributes-stats-text">Def WR</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.MID.defWorkRate}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.MID.defWorkRate}</div>
                         </div>
                       </td>
                       <td>
@@ -1291,13 +815,13 @@ const SquadBuilderPage = () => {
                           {/* DEF Data */}
                           <div className="text-sm">DEF</div>
                           <div className="squad-attributes-stats-text">Skill Moves</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.DEF.skillMoves}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.DEF.skillMoves}</div>
                           <div className="squad-attributes-stats-text">Weak Foot</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.DEF.weakFoot}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.DEF.weakFoot}</div>
                           <div className="squad-attributes-stats-text">Att WR</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.DEF.attWorkRate}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.DEF.attWorkRate}</div>
                           <div className="squad-attributes-stats-text">Def WR</div>
-                          <div className="squad-attributes-stats">{squadAttributes.positional.DEF.defWorkRate}</div>
+                          <div className="squad-attributes-stats">{state.squadAttributes.positional.DEF.defWorkRate}</div>
                         </div>
                       </td>
                     </tr>
