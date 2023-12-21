@@ -92,3 +92,96 @@ export const LEAGUES = [
   'MLS',
   'Saudi Pro League'
 ]
+
+export const LEAGUE_CLUBS = {
+  'Premier League': PREMIER_LEAGUE_CLUBS,
+  'LaLiga': LA_LIGA_CLUBS,
+  'Serie A': SERIE_A_CLUBS,
+  'Bundesliga': BUNDESLIGA_CLUBS,
+  'Ligue 1': LIGUE_1_CLUBS,
+  'Eredivisie': EREDIVISIE_CLUBS,
+  'Liga NOS': LIGA_NOS_CLUBS,
+  'CSL': CSL_CLUBS,
+  'MLS': MLS_CLUBS,
+  'Saudi Pro League': SAUDI_PRO_LEAGUE_CLUBS
+}
+
+export const COMMON_NATIONS = [
+  'Argentina',
+  'Brazil',
+  'England',
+  'France',
+  'Germany',
+  'Italy',
+  'Netherlands',
+  'Portugal',
+  'Spain'
+]
+
+export const POSITIONS = [
+  'GK',
+  'Defenders',
+  'Midfielders',
+  'Attackers',
+  'CB',
+  'LB',
+  'LWB',
+  'RB',
+  'RWB',
+  'CDM',
+  'CM',
+  'CAM',
+  'CF',
+  'LF',
+  'RF',
+  'ST',
+  'LW',
+  'RW',
+  'LM',
+  'RM'
+]
+
+export const getInitialPlayerSearchFilters = () => ({
+  league: [],
+  club: [],
+  nation: [],
+  position: [],
+  minRating: 0,
+  maxRating: 99,
+  minPrice: 0,
+  maxPrice: 15000000,
+  minPAC: 0,
+  maxPAC: 99,
+  minSHO: 0,
+  maxSHO: 99,
+  minPAS: 0,
+  maxPAS: 99,
+  minDRI: 0,
+  maxDRI: 99,
+  minDEF: 0,
+  maxDEF: 99,
+  minPHY: 0,
+  maxPHY: 99,
+  minSkillMoves: 1,
+  maxSkillMoves: 5,
+  minWeakFoot: 1,
+  maxWeakFoot: 5,
+  minHeight: 0,
+  maxHeight: 99
+})
+
+export const SKILL_MOVES = [
+  1,
+  2,
+  3,
+  4,
+  5
+]
+
+export const WEAK_FOOT = [
+  1,
+  2,
+  3,
+  4,
+  5
+]
