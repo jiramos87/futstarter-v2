@@ -6,11 +6,9 @@ import { handlePositionSelection, handleRemovePlayer, handleSuggestionClick } fr
 
 export const PlayerPitch = ({ stateSetters }) => {
   const { state } = stateSetters
+
   return (
-    <div
-      className="bg-center bg-no-repeat bg-contain h-full"
-      style={{ backgroundImage: `url('/football-pitch.jpg')` }}
-    >
+    <div className="bg-center">
       {state.user && (
       <>
         {SQUAD_FORMATIONS_POSITIONS[state.formation].map((position, index) => (

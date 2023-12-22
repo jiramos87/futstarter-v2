@@ -223,9 +223,10 @@ export const toggleUseSearchFilters = (stateSetters) => {
 
 export  const handleCompareToClick = (document, stateSetters) => {
   const { setters } = stateSetters
-  const { setComparing } = setters
+  const { setComparing, setShowSearchField } = setters
   setComparing(true)
-
+  toggleSearchField(stateSetters)
+  setShowSearchField(true)
   const input = document.querySelector('input[name="playerName"]')
   input && input.focus()
 }
@@ -382,7 +383,7 @@ export const handleLoadStartSquadClick = async (session, stateSetters) => {
 export const handleSuggestionClick = async (position, stateSetters) => {
   const { state, setters } = stateSetters
   const { selectedPlayers } = state
-  const { setDropdownPlayers, setShowDropdown } = setters
+  const { setDropdownPlayers, setShowDropdown, setShowSearchField } = setters
   try {
     const response = await axios.post(`http://localhost:3000/api/players/suggestions`, {
       squad: selectedPlayers,
@@ -392,6 +393,8 @@ export const handleSuggestionClick = async (position, stateSetters) => {
     console.log('response', response.data.playerItems)
 
     if (response.data && response.data.playerItems) {
+      toggleSearchField(stateSetters)
+      setShowSearchField(true)
       setDropdownPlayers(response.data.playerItems)
       setShowDropdown(true)
     }
@@ -448,4 +451,28 @@ export const prepareRadarChartData = (selectedPlayer, playerToCompare) => {
     }
   }
   return null
+}
+
+export const toggleSearchField = (stateSetters) => {
+  const { setters } = stateSetters
+  const { setShowSearchField, setShowSquadActions, setShowSquadAttributes } = setters
+  setShowSquadAttributes(false)
+  setShowSquadActions(false)
+  setShowSearchField(prevState => !prevState)
+}
+
+export const toggleSquadActions = (stateSetters) => {
+  const { setters } = stateSetters
+  const { setShowSquadActions, setShowSearchField, setShowSquadAttributes } = setters
+  setShowSquadAttributes(false)
+  setShowSearchField(false)
+  setShowSquadActions(prevState => !prevState)
+}
+
+export const toggleSquadAttributes = (stateSetters) => {
+  const { setters } = stateSetters
+  const { setShowSquadAttributes, setShowSquadActions, setShowSearchField } = setters
+  setShowSearchField(false)
+  setShowSquadActions(false)
+  setShowSquadAttributes(prevState => !prevState)
 }

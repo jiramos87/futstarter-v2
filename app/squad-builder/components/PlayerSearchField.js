@@ -12,8 +12,8 @@ export const PlayerSearchField = ({ stateSetters }) => {
   const { state, setters } = stateSetters
   return (
     <div className="flex-1 p-1" style={{ height: '50%'}}>
-      <div className="flex flex-row mb-1 align-center justify-around" style={{ height: '10%' }}>
-        <div className="flex flex-row bg-gray-800 text-white rounded-md p-2">
+      <div className="flex flex-row mb-1 align-center justify-around">
+        <div className="flex flex-row bg-gray-800 text-white rounded-md p-1 align-center justify-center h-[30px]">
           POS: {state.selectedPosition}
         </div>
         <input
@@ -22,25 +22,12 @@ export const PlayerSearchField = ({ stateSetters }) => {
           value={state.playerSearchString}
           onChange={(e) => handlePlayerSearchChange(e, stateSetters)}
           placeholder="Search Player"
-          className="border border-gray-700 rounded-md w-8/12 bg-gray-800 text-white p-2"
+          className="border border-gray-700 rounded-md w-8/12 bg-gray-800 text-white p-1 h-[30px]"
         />
       </div>
 
-      <ul className='dropdown-list' style={{ display: state.showDropdown ? 'block' : 'none' }}>
-          {state.showDropdown &&
-            state.dropdownPlayers.map((player, index) => (
-              <li key={index} className="dropdown-item">
-                <button
-                  onClick={() => handleDropdownItemClick(player, stateSetters)}
-                  className="dropdown-item-button"
-                >
-                  {player.name} - {player.rating}
-                </button>
-              </li>
-            ))}
-      </ul>
-      <div className="flex flex-col" style={{ height: '90%' }}>
-        <div style={{ height: '10%' }}>
+      <div className="flex flex-col">
+        <div>
           <input
             type='checkbox'
             id='use-search-filters'
@@ -50,11 +37,11 @@ export const PlayerSearchField = ({ stateSetters }) => {
           />
           <label htmlFor='use-search-filters' className='ml-2'>Use search filters</label>
         </div>
-        <div className='border rounded-md p-2 my-1 h-full squad-player-search-filters' style={{ display: state.useSearchFilters ? 'block' : 'none', backgroundColor: '#111457', height: '90%' }}>
+        <div className='border-b-2 h-full squad-player-search-filters w-full' style={{ display: state.useSearchFilters ? 'block' : 'none' }}>
           <table className='w-full'>
             <tbody className='squad-attributes-stats-text'>
-              <tr className='grid grid-cols-2 mb-1'>
-                <td>league</td>
+              <tr className='grid grid-cols-3 mb-1'>
+                <td >league</td>
                 <td>
                   <select
                     className='text-black'
@@ -69,7 +56,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </select>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>club</td>
                 <td><select
                     className='text-black'
@@ -85,7 +72,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </select>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>nation</td>
                 <td><select
                     className='text-black'
@@ -100,7 +87,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </select>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>position</td>
                 <td><select
                       className='text-black'
@@ -115,7 +102,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </select>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>rating</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -140,7 +127,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>price</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -165,7 +152,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>PAC</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -190,7 +177,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>SHO</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -215,7 +202,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>PAS</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -240,7 +227,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>DRI</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -265,7 +252,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>DEF</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -290,7 +277,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>PHY</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -315,7 +302,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>Skill Moves</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -346,7 +333,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>Weak Foot</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -377,7 +364,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   </div>
                 </td>
               </tr>
-              <tr className='grid grid-cols-2 mb-1'>
+              <tr className='grid grid-cols-3 mb-1'>
                 <td>Height</td>
                 <td className='flex flex-row'>
                   <div className='flex flex-row'>
@@ -405,7 +392,20 @@ export const PlayerSearchField = ({ stateSetters }) => {
             </tbody>
           </table>
         </div>
-      </div>    
+      </div>
+      <ul className='dropdown-list w-full' style={{ display: state.showDropdown ? 'block' : 'none' }}>
+          {state.showDropdown &&
+            state.dropdownPlayers.map((player, index) => (
+              <li key={index} className="dropdown-item">
+                <button
+                  onClick={() => handleDropdownItemClick(player, stateSetters)}
+                  className="dropdown-item-button"
+                >
+                  {player.name} - {player.rating}
+                </button>
+              </li>
+            ))}
+      </ul>  
     </div>
   )
 }

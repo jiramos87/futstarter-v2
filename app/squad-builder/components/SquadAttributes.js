@@ -3,11 +3,11 @@ import { SQUAD_FORMATIONS_POSITIONS } from "../../../src/constants/formations"
 export const SquadAttributes = ({ stateSetters }) => {
   const { state, setters } = stateSetters
   return (
-    <>
-    <div>
-      <div className="flex flex-row squad-div-title-text justify-center">Squad Attributes</div>
-    </div>
-    <div className="mt-4">
+    <div className="flex flex-col justify-start rounded">
+      <div>
+        <div className="flex flex-row squad-div-title-text justify-center">Squad Attributes</div>
+      </div>
+      <div className="mt-4">
         <h1 className="text-lg mb-2">Squad Name</h1>
         <input
           type="text"
@@ -158,6 +158,6 @@ export const SquadAttributes = ({ stateSetters }) => {
           </tr>
         </tbody>
       </table>
-    </>
+    </div>
   )
 }
