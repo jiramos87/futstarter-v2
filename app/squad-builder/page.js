@@ -2,37 +2,28 @@
 
 import MainLayout from '../layouts/main_layout'
 import { RadarChart } from '../components/radar_chart'
+import { pitchStyles } from '../styles/pitch_styles'
 
 import { useSquadBuilderState } from './state'
 import {
-  handleSeePlayerDetailsClick,
-  handleCompareToClick,
   prepareRadarChartData,
+  handleSeePlayerFaceStatsClick,
+  handleSeePlayerDetailedStatsClick,
+  handleCompareClick,
 } from './helper'
 import { useSquadBuilderEffects } from './effect'
 import { PlayerSearchField } from './components/PlayerSearchField'
-import { PlayerBasicStats } from './components/PlayerBasicStats'
 import { PlayerPitch } from './components/PlayerPitch'
 import { SquadAttributes } from './components/SquadAttributes'
 import { SquadActions } from './components/SquadActions'
 import { WelcomeLogin } from './components/WelcomeLogin'
 import { SquadVerticalNav } from './components/SquadVerticalNav'
+import { PlayerStats } from './components/PlayerStats'
 
 const SquadBuilderPage = () => {
   const stateSetters = useSquadBuilderState()
   useSquadBuilderEffects(stateSetters)
   const { state } = stateSetters
-
-  const pitchStyles = {
-    backgroundImage: "url('/football-pitch.jpg')",
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: '30rem 42rem', // Set the desired size
-    backgroundPosition: 'top center', // Position at the top of the div
-    height: '42rem', // Minimum height
-    width: '30rem', // Minimum width
-    minWidth: '30rem', // Minimum width
-    minHeight: '42wrem', // Minimum height
-  };
 
   return (
     <MainLayout>
@@ -54,31 +45,35 @@ const SquadBuilderPage = () => {
           <PlayerPitch stateSetters={stateSetters} />
         </div>
 
-        <div className="flex-1 bg-blue-950 p-4" style={{ flexBasis: '25%', color: 'white' }}>
-        {state.selectedPlayer && state.playerToCompare
-          ? (<RadarChart radarData={prepareRadarChartData(state.selectedPlayer, state.playerToCompare)}/>)
-          : state.selectedPlayer && (<PlayerBasicStats stateSetters={stateSetters} />)
-        }
-        {state.selectedPlayer && (
-          <div className='mt-10'>
+        <div className="flex-1 bg-blue-950" style={{ flexBasis: '25%', color: 'white' }}>
+          <div className="flex flex-row justify-start bg-blue-600">
             <button
-              className="relative top-0 right-0 mr-2 mt-2 bg-blue-600 text-white px-2 py-1 rounded-md"
-              onClick={() => handleCompareToClick(document, stateSetters)}
+              className="relative top-0 right-0 bg-blue-600 text-white px-2 py-1 hover:bg-blue-700"
+              onClick={() => handleSeePlayerFaceStatsClick(stateSetters)}
             >
-              Compare to
+              Basic Stats
             </button>
             <button
-              className="relative top-0 right-0 mr-2 mt-2 bg-blue-600 text-white px-2 py-1 rounded-md"
-              onClick={() => handleSeePlayerDetailsClick(stateSetters)}
+              className="relative top-0 right-0 bg-blue-600 text-white px-2 py-1 hover:bg-blue-700"
+              onClick={() => handleSeePlayerDetailedStatsClick(stateSetters)}
             >
-              Player details
+              IG Stats
+            </button>
+            <button
+              className="relative top-0 right-0 bg-blue-600 text-white px-2 py-1 hover:bg-blue-700"
+              onClick={() => handleCompareClick(stateSetters)}
+            >
+              Compare
             </button>
           </div>
-        )}
+        {state.comparing || state.playerToCompare
+          ? (<RadarChart radarData={prepareRadarChartData(state.selectedPlayer, state.playerToCompare)} stateSetters={stateSetters} />)
+          : (<PlayerStats stateSetters={stateSetters} />)
+        }
         </div>
       </div>
     </MainLayout>
-  );
-};
+  )
+}
 
-export default SquadBuilderPage;
+export default SquadBuilderPage

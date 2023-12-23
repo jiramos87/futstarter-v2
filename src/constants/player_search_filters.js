@@ -142,10 +142,10 @@ export const POSITIONS = [
 ]
 
 export const getInitialPlayerSearchFilters = () => ({
-  league: [],
-  club: [],
-  nation: [],
-  position: [],
+  league: '',
+  club: '',
+  nation: '',
+  position: '',
   minRating: 0,
   maxRating: 99,
   minPrice: 0,

@@ -12,7 +12,7 @@ const HorizontalNavLinks = ({ isLoggedIn, user }) => {
           <Link
             key={link.name}
             href={href}
-            className="flex h-[30px] items-center rounded-md hover:bg-gray-700 hover:bg-opacity-50 px-3 text-sm font-medium"
+            className="flex h-[30px] items-center hover:bg-gray-700 hover:bg-opacity-50 px-3 text-sm font-medium"
           >
             <p className={`text-yellow-50`}>{link.name}</p>
           </Link>

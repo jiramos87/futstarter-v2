@@ -3,11 +3,6 @@ export const PlayerBasicStats = ({ stateSetters }) => {
   return (
     <div className="flex flex-col items-center mb-2 squad-attributes-stats-text">
       <div className='flex flex-row items-center mb-2 justify-between w-full'>
-        <div className='flex flex-col justify-center items-center' style={{ width: '30%' }}>
-          <div className='squad-player-big-rating'>{state.selectedPlayer.rating}</div>
-          <div className='squad-player-big-position'>{state.selectedPlayer.mainPosition}</div>
-          <div>{state.selectedPlayer.secondaryPositions}</div>
-        </div>
         <div className='flex flex-col justify-center items-center' style={{ width: '70%' }}>
           <div className='squad-div-title-text'>{state.selectedPlayer.name}</div>
           <div className='flex flex-row justify-between'>
@@ -15,6 +10,11 @@ export const PlayerBasicStats = ({ stateSetters }) => {
             <div>{state.selectedPlayer.club}</div>
             <div>{state.selectedPlayer.league}</div>
           </div>
+        </div>
+        <div className='flex flex-col items-center' style={{ width: '30%' }}>
+          <div className='squad-player-big-rating'>{state.selectedPlayer.rating}</div>
+          <div className='squad-player-big-position'>{state.selectedPlayer.mainPosition}</div>
+          <div>{state.selectedPlayer.secondaryPositions}</div>
         </div>
       </div>
       <table className="w-full mb-4">

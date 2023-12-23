@@ -6,7 +6,7 @@ const LoggedInNav = () => {
     <Link
       key={LOGOUT_USER.name}
       href={LOGOUT_USER.href}
-      className="flex h-[30px] grow justify-center rounded-md p-3 text-sm font-medium md:flex-none md:justify-start md:p-2 md:px-3 shadow-md"
+      className="flex h-[30px] items-center hover:bg-gray-700 hover:bg-opacity-50 px-3 text-sm font-medium"
     >
       <p className="text-yellow-50">{LOGOUT_USER.name}</p>
     </Link>

@@ -6,7 +6,7 @@ import {
   SKILL_MOVES,
   WEAK_FOOT
 } from "../../../src/constants/player_search_filters"
-import { handleDropdownItemClick, handlePlayerSearchChange, toggleUseSearchFilters } from "../helper"
+import { handleDropdownItemClick, handlePlayerSearchChange, handleSearchButtonClick, toggleUseSearchFilters } from "../helper"
 
 export const PlayerSearchField = ({ stateSetters }) => {
   const { state, setters } = stateSetters
@@ -27,7 +27,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
       </div>
 
       <div className="flex flex-col">
-        <div>
+        <div className='flex flex-row mb-1'>
           <input
             type='checkbox'
             id='use-search-filters'
@@ -36,6 +36,12 @@ export const PlayerSearchField = ({ stateSetters }) => {
             onClick={() => toggleUseSearchFilters(stateSetters)}
           />
           <label htmlFor='use-search-filters' className='ml-2'>Use search filters</label>
+          <button
+            className='ml-2 bg-blue-600 text-white px-2 py-1 rounded-md'
+            onClick={() => handleSearchButtonClick(stateSetters)}
+          >
+            Search
+          </button>
         </div>
         <div className='border-b-2 h-full squad-player-search-filters w-full' style={{ display: state.useSearchFilters ? 'block' : 'none' }}>
           <table className='w-full'>
@@ -46,7 +52,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                   <select
                     className='text-black'
                     name='league'
-                    value={state.playerSearchFilters.league[0]}
+                    value={state.playerSearchFilters.league}
                     onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, league: e.target.value })}
                   >
                     <option value=''>--</option>
@@ -61,7 +67,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                 <td><select
                     className='text-black'
                     name='club'
-                    value={state.playerSearchFilters.club[0]}
+                    value={state.playerSearchFilters.club}
                     onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, club: e.target.value })}
                   >
                     <option value=''>--</option>
@@ -77,7 +83,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                 <td><select
                     className='text-black'
                     name='nation'
-                    value={state.playerSearchFilters.nation[0]}
+                    value={state.playerSearchFilters.nation}
                     onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, nation: e.target.value })}
                   >
                     <option value=''>--</option>
@@ -92,7 +98,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                 <td><select
                       className='text-black'
                       name='position'
-                      value={state.playerSearchFilters.position[0]}
+                      value={state.playerSearchFilters.position}
                       onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, position: e.target.value })}
                     >
                       <option value=''>--</option>

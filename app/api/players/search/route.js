@@ -22,29 +22,29 @@ const parseSearchParams = (searchParams) => {
     }
   }
 
-  if (searchParams.get('rating')) {
-    parsedSearchParams.rating = searchParams.get('rating')
-  }
+  // if (searchParams.get('rating')) {
+  //   parsedSearchParams.rating = searchParams.get('rating')
+  // }
 
-  if (searchParams.get('club')) {
-    parsedSearchParams.club = searchParams.get('club')
-  }
+  // if (searchParams.get('club')) {
+  //   parsedSearchParams.club = searchParams.get('club')
+  // }
 
-  if (searchParams.get('league')) {
-    parsedSearchParams.league = searchParams.get('league')
-  }
+  // if (searchParams.get('league')) {
+  //   parsedSearchParams.league = searchParams.get('league')
+  // }
 
-  if (searchParams.get('mainPosition')) {
-    parsedSearchParams.mainPosition = searchParams.get('mainPosition')
-  }
+  // if (searchParams.get('mainPosition')) {
+  //   parsedSearchParams.mainPosition = searchParams.get('mainPosition')
+  // }
 
-  if (searchParams.get('skillMoves')) {
-    parsedSearchParams.skillMoves = searchParams.get('skillMoves')
-  }
+  // if (searchParams.get('skillMoves')) {
+  //   parsedSearchParams.skillMoves = searchParams.get('skillMoves')
+  // }
 
-  if (searchParams.get('weakFoot')) {
-    parsedSearchParams.weakFoot = searchParams.get('weakFoot')
-  }
+  // if (searchParams.get('weakFoot')) {
+  //   parsedSearchParams.weakFoot = searchParams.get('weakFoot')
+  // }
 
   return parsedSearchParams
 }

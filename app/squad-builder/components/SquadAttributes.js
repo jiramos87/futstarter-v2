@@ -3,7 +3,7 @@ import { SQUAD_FORMATIONS_POSITIONS } from "../../../src/constants/formations"
 export const SquadAttributes = ({ stateSetters }) => {
   const { state, setters } = stateSetters
   return (
-    <div className="flex flex-col justify-start rounded">
+    <div className="flex flex-col justify-start squad-attributes-div">
       <div>
         <div className="flex flex-row squad-div-title-text justify-center">Squad Attributes</div>
       </div>
@@ -34,7 +34,7 @@ export const SquadAttributes = ({ stateSetters }) => {
           </select>
         </div>
         <div className="rating-div " style={{ width: '40%' }}>
-          <h1 className="text-lg mb-2">Squad Rating</h1>
+          <h1 className="text-lg mb-2">Rating</h1>
           <p className='text-2xl flex flex-row justify-center items-center'>{state.squadRatings.average}</p>
         </div>
       </div>
@@ -48,13 +48,13 @@ export const SquadAttributes = ({ stateSetters }) => {
           <tr>
             <td>
               <div className="flex flex-col items-center">
-                <div className="squad-attributes-stats-text">Skill Moves</div>
+                <div className="squad-attributes-stats-text">SM</div>
                 <div className="squad-attributes-stats">{state.squadAttributes.generalSkillMoves}</div>
               </div>
             </td>
             <td>
               <div className="flex flex-col items-center">
-                <div className="squad-attributes-stats-text">Weak Foot</div>
+                <div className="squad-attributes-stats-text">WF</div>
                 <div className="squad-attributes-stats">{state.squadAttributes.generalWeakFoot}</div>
               </div>
             </td>

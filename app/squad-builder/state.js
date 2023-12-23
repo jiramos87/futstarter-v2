@@ -29,6 +29,8 @@ export const useSquadBuilderState = () => {
   const [showSearchField, setShowSearchField] = useState(false)
   const [showSquadActions, setShowSquadActions] = useState(false)
   const [showSquadAttributes, setShowSquadAttributes] = useState(false)
+  const [showPlayerFaceStats, setShowPlayerFaceStats] = useState(false)
+  const [showPlayerDetailedStats, setShowPlayerDetailedStats] = useState(false)
 
   const state = {
     user,
@@ -55,7 +57,9 @@ export const useSquadBuilderState = () => {
     useSearchFilters,
     showSearchField,
     showSquadActions,
-    showSquadAttributes
+    showSquadAttributes,
+    showPlayerFaceStats,
+    showPlayerDetailedStats
   }
 
   const setters = {
@@ -83,7 +87,9 @@ export const useSquadBuilderState = () => {
     setUseSearchFilters,
     setShowSearchField,
     setShowSquadActions,
-    setShowSquadAttributes
+    setShowSquadAttributes,
+    setShowPlayerFaceStats,
+    setShowPlayerDetailedStats
   }
 
   const stateSetters = {

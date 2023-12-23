@@ -2,6 +2,7 @@
 
 import React, { createContext, useState } from 'react'
 import axios from 'axios'
+import { redirect } from 'next/navigation'
 
 export const AuthContext = createContext(
   {
@@ -26,8 +27,10 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.get('http://localhost:3000/api/auth/user')
       setUser(response.data.user)
+      return response.data.user
     } catch (error) {
       setUser(null)
+      return null
     }
   }
 
@@ -39,9 +42,12 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('token', response.data.token)
         setIsLoggedIn(true)
         setError('')
-        await getUser()
+        const user = await getUser()
+
+        return user
       } else {
         setIsLoggedIn(false)
+        return null
       }
     } catch (error) {
       setIsLoggedIn(false)

@@ -37,6 +37,13 @@ export const findAllPlayerItems = async (searchConditions, options) => {
   const playersData = await models.PlayerItem.findAll(
     {
       where: searchConditions || {},
+      include: [
+        {
+          model: models.PlayerItemStats,
+          as: 'stats',
+          required: true
+        }
+      ], 
       ...options
     }
   )

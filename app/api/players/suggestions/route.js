@@ -121,7 +121,6 @@ export async function POST(request) {
 
     return Response.json({ playerItems: parsedPlayerItems }, { status: 200 })
   } catch (error) {
-    console.log('error', error)
     return Response.error({ error: error.message }, { status: error.status || 500 })
   }
 }

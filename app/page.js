@@ -1,9 +1,5 @@
 'use client'
 
-import { comingFeatureNames } from '../src/constants/features'
-
-import LikeButton from './components/like_button'
-import { mediumSizeTextListStyle } from './styles/list_styles'
 import { bigSubtitleStyle, veryBigHeaderStyle } from './styles/text_styles'
 import MainLayout from './layouts/main_layout'
 
@@ -26,17 +22,10 @@ const MainWindow = () => {
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center',
         }}
-      ></div>
-      <div className="z-10 relative">
-        <Header title="Welcome to Futstarter ⚽" />
-        <Subtitle subtitle="We are working on the following features:" />
-        <ul className={mediumSizeTextListStyle}>
-          {comingFeatureNames.map((name) => (
-            <li key={name}>{'<' + name + '>'}</li>
-          ))}
-        </ul>
-
-        <LikeButton />
+      >
+      </div>
+      <div className="z-10">
+        <Header title="Welcome to the Futstarter Squad Builder" />
       </div>
     </div>
   )
@@ -46,7 +35,8 @@ const HomePage = () => {
   return (
     <MainLayout>
       <div className="flex min-h-screen">
-        <div className="w-5/6">
+        <div className="w-full">
+          
           <MainWindow />
         </div>
       </div>

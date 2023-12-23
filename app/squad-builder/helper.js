@@ -1,16 +1,60 @@
-import axios from 'axios';
-import { getInitialSquadAttributes, getInitialSquadRatings } from '../../src/constants/squad';
-import { parseHeight } from '../../src/utils/string_util';
+import axios from 'axios'
+
+import { getInitialSquadAttributes, getInitialSquadRatings } from '../../src/constants/squad'
+import { parseHeight } from '../../src/utils/string_util'
+
+const getSearchFilterString = (searchFilters) => {
+  if (!searchFilters) return ''
+
+  let searchFilterString = ''
+
+  if (searchFilters.league) searchFilterString += `&league=${searchFilters.league}`
+  if (searchFilters.club) searchFilterString += `&club=${searchFilters.club}`
+  if (searchFilters.nation) searchFilterString += `&nation=${searchFilters.nation}`
+  if (searchFilters.position) searchFilterString += `&position=${searchFilters.position}`
+  searchFilterString += `&minRating=${searchFilters.minRating}`
+  searchFilterString += `&maxRating=${searchFilters.maxRating}`
+  searchFilterString += `&minPrice=${searchFilters.minPrice}`
+  searchFilterString += `&maxPrice=${searchFilters.maxPrice}`
+  searchFilterString += `&minPAC=${searchFilters.minPAC}`
+  searchFilterString += `&maxPAC=${searchFilters.maxPAC}`
+  searchFilterString += `&minSHO=${searchFilters.minSHO}`
+  searchFilterString += `&maxSHO=${searchFilters.maxSHO}`
+  searchFilterString += `&minPAS=${searchFilters.minPAS}`
+  searchFilterString += `&maxPAS=${searchFilters.maxPAS}`
+  searchFilterString += `&minDRI=${searchFilters.minDRI}`
+  searchFilterString += `&maxDRI=${searchFilters.maxDRI}`
+  searchFilterString += `&minDEF=${searchFilters.minDEF}`
+  searchFilterString += `&maxDEF=${searchFilters.maxDEF}`
+  searchFilterString += `&minPHY=${searchFilters.minPHY}`
+  searchFilterString += `&maxPHY=${searchFilters.maxPHY}`
+  searchFilterString += `&minSkillMoves=${searchFilters.minSkillMoves}`
+  searchFilterString += `&maxSkillMoves=${searchFilters.maxSkillMoves}`
+  searchFilterString += `&minWeakFoot=${searchFilters.minWeakFoot}`
+  searchFilterString += `&maxWeakFoot=${searchFilters.maxWeakFoot}`
+  searchFilterString += `&minHeight=${searchFilters.minHeight}`
+  searchFilterString += `&maxHeight=${searchFilters.maxHeight}`
+
+  return searchFilterString
+}
 
 export const handlePlayerSearchChange = async (e, stateSetters) => {
-  const { setters } = stateSetters
+  const { state, setters } = stateSetters
+  const { useSearchFilters, playerSearchFilters } = state
   const { setPlayerSearchString, setDropdownPlayers, setShowDropdown } = setters
   const inputPlayerName = e.target.value
 
   setPlayerSearchString(inputPlayerName)
 
   try {
-    const response = await axios.get(`http://localhost:3000/api/players/search?name=${inputPlayerName}`)
+    let url = `http://localhost:3000/api/players/search?name=${inputPlayerName}`
+
+    if (useSearchFilters) {
+      const searchFilterString = getSearchFilterString(playerSearchFilters)
+      url += searchFilterString
+    }
+
+    const response = await axios.get(url)
     setDropdownPlayers(response.data.playerItems)
     setShowDropdown(true)
   } catch (error) {
@@ -18,6 +62,28 @@ export const handlePlayerSearchChange = async (e, stateSetters) => {
     setDropdownPlayers([])
   }
 }
+
+export const handleSearchButtonClick = (stateSetters) => {
+  const { state, setters } = stateSetters
+  const { useSearchFilters, playerSearchFilters } = state
+  const { setDropdownPlayers, setShowDropdown } = setters
+
+  try {
+    let url = `http://localhost:3000/api/players/search?`
+    if (useSearchFilters) {
+      const searchFilterString = getSearchFilterString(playerSearchFilters)
+      url += searchFilterString
+    }
+
+    const response = axios.get(url)
+    setDropdownPlayers(response.data.playerItems)
+    setShowDropdown(true)
+  } catch (error) {
+    console.error('search axios error', error)
+    setDropdownPlayers([])
+  }
+}
+
 
 export const calculateSquadRating = (initialPlayers = {}, stateSetters) => {
   const { state, setters } = stateSetters
@@ -44,7 +110,7 @@ export const handleDropdownItemClick = (player, stateSetters) => {
   const { selectedPlayers, selectedPosition, comparing } = state
   const { setSelectedPlayers, setSelectedPlayer, setPlayerToCompare, setComparing, setShowDropdown } = setters
   const updatedSelectedPlayers = { ...selectedPlayers, [selectedPosition]: player }
-  
+
   if (comparing) {
     setPlayerToCompare(player)
     setComparing(false)
@@ -221,23 +287,12 @@ export const toggleUseSearchFilters = (stateSetters) => {
   setUseSearchFilters(!useSearchFilters)
 }
 
-export  const handleCompareToClick = (document, stateSetters) => {
+export  const handleCompareClick = (stateSetters) => {
   const { setters } = stateSetters
-  const { setComparing, setShowSearchField } = setters
+  const { setComparing, setShowPlayerFaceStats, setShowPlayerDetailedStats } = setters
+  setShowPlayerFaceStats(false)
+  setShowPlayerDetailedStats(false)
   setComparing(true)
-  toggleSearchField(stateSetters)
-  setShowSearchField(true)
-  const input = document.querySelector('input[name="playerName"]')
-  input && input.focus()
-}
-
-export const handleSeePlayerDetailsClick = (stateSetters) => {
-  const { setters } = stateSetters
-  const { setComparing, setPlayerToCompare } = setters
-
-  setComparing(false)
-
-  setPlayerToCompare(null)
 }
 
 export const handleSaveSquadClick = async (stateSetters) => {
@@ -265,19 +320,19 @@ export const handleSaveSquadClick = async (stateSetters) => {
   }
 }
 
-export const handleUpdateSquadClick = async () => {
+export const handleUpdateSquadClick = async (stateSetters) => {
   const { state, setters } = stateSetters
   const { user, formation, selectedPlayers, squadName, squadDescription, squadId } = state
   const { setIsSquadSaved, setInitialState } = setters
 
   try {
-    const userId = user.id;
+    const userId = user.id
     const squadData = {
       name: squadName,
       description: squadDescription,
       formation,
       players: selectedPlayers,
-    };
+    }
 
     if (squadId) {
       await axios.put(`http://localhost:3000/api/users/${userId}/squads/${squadId}`, squadData)
@@ -344,7 +399,7 @@ export const handleLoadSquad = (squadId, stateSetters) => {
 
 export const handleLoadStartSquadClick = async (session, stateSetters) => {
   const { setters } = stateSetters
-  const { setSquadId, setSquadName, setSquadDescription, setFormation, setSelectedPlayers, setInitialState, setUserSquads, setSquadRatings, setSquadAttributes } = setters
+  const { setSquadId, setSquadName, setSquadDescription, setFormation, setSelectedPlayers, setInitialState, setUserSquads, setShowSquadAttributes, setSquadRatings, setSquadAttributes } = setters
 
   try {
     const userId = session.id
@@ -358,6 +413,7 @@ export const handleLoadStartSquadClick = async (session, stateSetters) => {
       setSquadName(firstSquad.name)
       setSquadDescription(firstSquad.description)
       setFormation(firstSquad.formation)
+      handleSeePlayerFaceStatsClick(stateSetters)
       setSelectedPlayers(firstSquad.players || {})
       setInitialState({
         formation: firstSquad.formation,
@@ -367,6 +423,7 @@ export const handleLoadStartSquadClick = async (session, stateSetters) => {
       })
       calculateSquadRating(firstSquad.players, stateSetters)
       calculateSquadAttributes(firstSquad.players, stateSetters)
+      setShowSquadAttributes(true)
     }
   } catch (error) {
     setSquadId(null)
@@ -389,8 +446,6 @@ export const handleSuggestionClick = async (position, stateSetters) => {
       squad: selectedPlayers,
       playerPosition: position
     })
-
-    console.log('response', response.data.playerItems)
 
     if (response.data && response.data.playerItems) {
       toggleSearchField(stateSetters)
@@ -415,42 +470,43 @@ export const handleRemovePlayer = (position, stateSetters) => {
   calculateSquadAttributes({}, stateSetters)
 }
 
+const getPlayerRadarData = (player, borderColor, backgroundColor) => ({
+  label: player.name,
+  pointRadius: 7,
+  backgroundColor: backgroundColor,
+  borderColor: borderColor,
+  data: [
+    player.PAC,
+    player.SHO,
+    player.PAS,
+    player.DRI,
+    player.DEF,
+    player.PHY
+  ]
+})
+
 export const prepareRadarChartData = (selectedPlayer, playerToCompare) => {
-  if (selectedPlayer && playerToCompare) {
-    return {
-      labels: ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"],
-      datasets: [
-        {
-          label: selectedPlayer.name,
-          pointRadius: 7,
-          backgroundColor: "rgba(34, 202, 236, .2)",
-          borderColor: "rgba(34, 202, 236, 1)",
-          data: [
-            selectedPlayer.PAC,
-            selectedPlayer.SHO,
-            selectedPlayer.PAS,
-            selectedPlayer.DRI,
-            selectedPlayer.DEF,
-            selectedPlayer.PHY,
-          ],
-        },
-        {
-          label: playerToCompare.name,
-          backgroundColor: "rgba(255, 99, 132, .2)",
-          borderColor: "rgba(255, 99, 132, 1)",
-          data: [
-            playerToCompare.PAC,
-            playerToCompare.SHO,
-            playerToCompare.PAS,
-            playerToCompare.DRI,
-            playerToCompare.DEF,
-            playerToCompare.PHY,
-          ]
-        }
-      ]
-    }
+  const chartData = {
+    labels: ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"],
+    datasets: []
   }
-  return null
+  if (selectedPlayer) {
+    chartData.datasets.push(getPlayerRadarData(
+      selectedPlayer,
+      "rgba(34, 202, 236, 1)",
+      "rgba(34, 202, 236, .2)"
+    ))
+  }
+
+  if (playerToCompare) {
+    chartData.datasets.push(getPlayerRadarData(
+      playerToCompare,
+      "rgba(255, 99, 132, 1)",
+      "rgba(255, 99, 132, .2)"
+    ))
+  }
+
+  return chartData
 }
 
 export const toggleSearchField = (stateSetters) => {
@@ -475,4 +531,32 @@ export const toggleSquadAttributes = (stateSetters) => {
   setShowSearchField(false)
   setShowSquadActions(false)
   setShowSquadAttributes(prevState => !prevState)
+}
+
+export const handleSeePlayerFaceStatsClick = (stateSetters) => {
+  const { setters } = stateSetters
+  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare } = setters
+  setComparing(false)
+  setShowPlayerDetailedStats(false)
+  setPlayerToCompare(null)
+  setShowPlayerFaceStats(true)
+}
+
+export const handleSeePlayerDetailedStatsClick = (stateSetters) => {
+  const { setters } = stateSetters
+  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare } = setters
+  setComparing(false)
+  setPlayerToCompare(null)
+  setShowPlayerFaceStats(false)
+  setShowPlayerDetailedStats(true)
+}
+
+export const handleAddPlayerToCompareClick = (stateSetters) => {
+  const { setters } = stateSetters
+  const { setShowSearchField } = setters
+  toggleSearchField(stateSetters)
+  setShowSearchField(true)
+
+  const input = document.querySelector('input[name="playerName"]')
+  input && input.focus()
 }
