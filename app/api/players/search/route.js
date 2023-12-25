@@ -1,5 +1,4 @@
 import { Op } from 'sequelize'
-import { inspect } from 'util'
 
 import { getLoginSession } from '../../../../lib/auth'
 import { findAllPlayerItems } from '../../../../src/dao/player_item_dao'
@@ -121,17 +120,16 @@ export async function GET(request) {
     }
 
     const parsedSearchParams = parseSearchParams(searchParams)
-    console.log('parsedSearchParams', inspect(parsedSearchParams, { depth: 4 }))
+
     const foundPlayerItems = await findAllPlayerItems(
       parsedSearchParams,
-      { limit: 20, order: [['rating', 'DESC']] }
+      { limit: 40, order: [['rating', 'DESC']] }
     )
 
     const parsedPlayerItems = foundPlayerItems.map(playerItem => parsePlayerItems(playerItem))
 
     return Response.json({ playerItems: parsedPlayerItems }, { status: 200 })
   } catch (error) {
-    console.log('error', error)
     return Response.error({ error: error.message }, { status: error.status || 500 })
   }
 }

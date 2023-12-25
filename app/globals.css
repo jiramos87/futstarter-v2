@@ -29,7 +29,6 @@ body {
 .dropdown-list {
   list-style: none;
   overflow-y: scroll;
-  display: none; /* Initially hidden */
   position: relative; /* Position absolutely */
   max-height: 100%; /* Set a maximum height as a percentage of the parent height */
 }
@@ -64,6 +63,8 @@ body {
 }
 
 .card-container {
+  font-size: 2rem;
+  color: black;
   width: 5rem;
   height: 6rem;
   background-color: yellowgreen;
@@ -82,11 +83,6 @@ body {
 .card-container.clicked {
   transform: scale(1.1);
   border: 4px solid white;
-}
-
-.plus-button {
-  font-size: 2rem;
-  color: black;
 }
 
 .pressed {
@@ -175,6 +171,27 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.delete-button {
+  position: absolute;
+  z-index: 10; /* Ensure icons are above other content */
+}
+
+.delete-button {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.delete-button span {
+  color: black;
+  font-size: 1.2rem;
 }
 
 @keyframes buttonClick {

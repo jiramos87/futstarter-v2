@@ -410,8 +410,11 @@ export const PlayerSearchField = ({ stateSetters }) => {
 
         
       </div>
-      <div className="flex flex-col justify-start squad-attributes-div" style={{ height: '50%'}}>
-        <ul className='dropdown-list w-full' style={{ display: state.showDropdown ? 'block' : 'none' }}>
+      <div className="flex flex-col justify-start squad-attributes-div" style={{ display: state.showDropdown ? 'block' : 'none', height: '50%'}}>
+        <div className="flex flex-row squad-div-title-text justify-start mb-2 p-2">
+          {state.dropdownPlayers.length} players found
+        </div>
+        <ul className='dropdown-list w-full'>
             {state.showDropdown &&
               state.dropdownPlayers.map((player, index) => (
                 <li key={index} className="dropdown-item">

@@ -1,4 +1,4 @@
-import { FaLightbulb } from 'react-icons/fa'
+import { FaLightbulb, FaTimes } from 'react-icons/fa'
 
 import { SQUAD_FORMATIONS_POSITIONS } from '../../../src/constants/formations'
 import { determineFontSize } from '../../../src/utils/font_util'
@@ -38,47 +38,31 @@ export const PlayerPitch = ({ stateSetters }) => {
           >
             <div
               className={`card-container ${state.selectedPosition === position.name ? 'clicked' : ''}`}
-              style={{ width: '5rem', height: '6rem', position: 'relative' }}
+              style={{ width: '5rem', height: '6rem', position: 'relative', overflow: 'visible' }}
             >
               {state.selectedPlayers[position.name] ? (
                 <>
-                  <button className="plus-button">
+                  <button>
                     <p style={{ fontSize: determineFontSize(state.selectedPlayers[position.name].name) }}>{state.selectedPlayers[position.name].name}</p>
                     <p className="text-xl">{state.selectedPlayers[position.name].rating}</p>
                   </button>
-                  {/* Display delete button when player exists */}
+
                   <div
                     className="delete-button"
                     onClick={() => handleRemovePlayer(position.name, stateSetters)}
-                    style={{
-                      position: 'absolute',
-                      bottom: '-10px',
-                      right: '-10px',
-                      width: '30px',
-                      height: '30px',
-                      borderRadius: '50%',
-                      backgroundColor: 'red',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      cursor: 'pointer',
-                    }}
+                    style={{ bottom: '-10px', right: '-10px' }}
                   >
-                    <span style={{ color: 'black', fontSize: '1.2rem' }}>x</span>
+                    <FaTimes size={20} color="black" />
                   </div>
                 </>
               ) : (
                 <>
                   <button
-                    className="empty-card-button z-10"
+                    className="z-10"
                     onClick={() => handleSuggestionClick(position.name, stateSetters)}
-                    style={{
-                      position: 'absolute',
-                      top: '-20px',
-                      right: '-20px',
-                    }}
+                    style={{ position: 'absolute', top: '-13px', right: '-13px' }}
                   >
-                    <FaLightbulb size={40} color="yellow" />
+                    <FaLightbulb size={26} color="yellow" />
                   </button>
                   <span>+</span>
                 </>
