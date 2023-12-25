@@ -32,10 +32,12 @@ const LoginUserPage = () => {
       if (user) {
         setIsLoggedIn(true)
         router.push('/squad-builder')
+      } else {
+        setIsLoggedIn(false)
+        setError('Login failed')     
       }
-
-      setIsLoggedIn(false)
     } catch (e) {
+      setIsLoggedIn(false)
       setError(error)
     }
   }

@@ -40,10 +40,9 @@ export const AuthProvider = ({ children }) => {
 
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token)
-        setIsLoggedIn(true)
         setError('')
         const user = await getUser()
-
+        setIsLoggedIn(true)
         return user
       } else {
         setIsLoggedIn(false)

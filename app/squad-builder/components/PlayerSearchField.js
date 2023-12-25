@@ -11,23 +11,32 @@ import { handleDropdownItemClick, handlePlayerSearchChange, handleSearchButtonCl
 export const PlayerSearchField = ({ stateSetters }) => {
   const { state, setters } = stateSetters
   return (
-    <div className="flex-1 p-1" style={{ height: '50%'}}>
-      <div className="flex flex-row mb-1 align-center justify-around">
-        <div className="flex flex-row bg-gray-800 text-white rounded-md p-1 align-center justify-center h-[30px]">
-          POS: {state.selectedPosition}
+    <>
+      <div className="flex flex-col justify-start squad-attributes-div w-full px-3" style={{ height: '50%'}}>
+        <div className="flex flex-row squad-div-title-text justify-start mb-2 p-2">
+          PLAYER SEARCH
         </div>
+
         <input
           type="text"
           name="playerName"
           value={state.playerSearchString}
           onChange={(e) => handlePlayerSearchChange(e, stateSetters)}
-          placeholder="Search Player"
-          className="border border-gray-700 rounded-md w-8/12 bg-gray-800 text-white p-1 h-[30px]"
+          placeholder="Player name"
+          className="border border-gray-700 w-full bg-gray-800 text-white px-1 h-[30px] min-h-[30px]"
         />
-      </div>
 
-      <div className="flex flex-col">
-        <div className='flex flex-row mb-1'>
+        <div className="flex flex-row text-white p-1 align-start w-full">
+          <div className="squad-attributes-stats-text">
+            SELECTED POSITION:
+          </div>
+          <div className="squad-attributes-stats">
+            {state.selectedPosition}
+          </div>
+        </div>
+        
+
+        <div className='flex flex-row'>
           <input
             type='checkbox'
             id='use-search-filters'
@@ -50,7 +59,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                 <td >league</td>
                 <td>
                   <select
-                    className='text-black'
+                    className='text-black w-full col-span-2'
                     name='league'
                     value={state.playerSearchFilters.league}
                     onChange={(e) => setters.setPlayerSearchFilters({ ...state.playerSearchFilters, league: e.target.value })}
@@ -398,20 +407,24 @@ export const PlayerSearchField = ({ stateSetters }) => {
             </tbody>
           </table>
         </div>
+
+        
       </div>
-      <ul className='dropdown-list w-full' style={{ display: state.showDropdown ? 'block' : 'none' }}>
-          {state.showDropdown &&
-            state.dropdownPlayers.map((player, index) => (
-              <li key={index} className="dropdown-item">
-                <button
-                  onClick={() => handleDropdownItemClick(player, stateSetters)}
-                  className="dropdown-item-button"
-                >
-                  {player.name} - {player.rating}
-                </button>
-              </li>
-            ))}
-      </ul>  
-    </div>
+      <div className="flex flex-col justify-start squad-attributes-div" style={{ height: '50%'}}>
+        <ul className='dropdown-list w-full' style={{ display: state.showDropdown ? 'block' : 'none' }}>
+            {state.showDropdown &&
+              state.dropdownPlayers.map((player, index) => (
+                <li key={index} className="dropdown-item">
+                  <button
+                    onClick={() => handleDropdownItemClick(player, stateSetters)}
+                    className="dropdown-item-button"
+                  >
+                    {player.name} - {player.rating}
+                  </button>
+                </li>
+              ))}
+        </ul>
+      </div>
+    </>
   )
 }

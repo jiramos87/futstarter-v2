@@ -55,12 +55,21 @@ export const handlePlayerSearchChange = async (e, stateSetters) => {
     }
 
     const response = await axios.get(url)
+
     setDropdownPlayers(response.data.playerItems)
     setShowDropdown(true)
   } catch (error) {
     console.error('search axios error', error)
     setDropdownPlayers([])
   }
+}
+
+const removeFirstQuerySymbolQueryParamsString = (url) => {
+  if (url[0] === '&') {
+    return url.slice(1)
+  }
+
+  return url
 }
 
 export const handleSearchButtonClick = (stateSetters) => {
@@ -72,10 +81,12 @@ export const handleSearchButtonClick = (stateSetters) => {
     let url = `http://localhost:3000/api/players/search?`
     if (useSearchFilters) {
       const searchFilterString = getSearchFilterString(playerSearchFilters)
-      url += searchFilterString
+
+      url += removeFirstQuerySymbolQueryParamsString(searchFilterString)
     }
 
     const response = axios.get(url)
+
     setDropdownPlayers(response.data.playerItems)
     setShowDropdown(true)
   } catch (error) {
@@ -269,9 +280,13 @@ export const hasSquadChanged = (state) => {
 export const handlePositionSelection = (position, stateSetters) => {
   const { state, setters } = stateSetters
   const { selectedPlayers } = state
-  const { setSelectedPosition, setSelectedPlayer } = setters
+  const { setSelectedPosition, setSelectedPlayer, setShowSearchField } = setters
 
   setSelectedPosition(position)
+  toggleSearchField(stateSetters)
+  setShowSearchField(true)
+  const input = document.querySelector('input[name="playerName"]')
+  input && input.focus()
   if (!selectedPlayers[position]) {
     setSelectedPlayer(null)
   } else {
@@ -289,10 +304,11 @@ export const toggleUseSearchFilters = (stateSetters) => {
 
 export  const handleCompareClick = (stateSetters) => {
   const { setters } = stateSetters
-  const { setComparing, setShowPlayerFaceStats, setShowPlayerDetailedStats } = setters
+  const { setComparing, setShowPlayerFaceStats, setShowPlayerDetailedStats, setSelectedPlayerDetailsOption } = setters
   setShowPlayerFaceStats(false)
   setShowPlayerDetailedStats(false)
   setComparing(true)
+  setSelectedPlayerDetailsOption('compare')
 }
 
 export const handleSaveSquadClick = async (stateSetters) => {
@@ -365,7 +381,7 @@ export const handleLoadSquadClick = async (stateSetters) => {
 export const handleLoadSquad = (squadId, stateSetters) => {
   const { state, setters } = stateSetters
   const { userSquads } = state
-  const { setSquadId, setSquadName, setSquadDescription, setFormation, setSelectedPlayers, setInitialState, setShowLoadSquadDropdown } = setters
+  const { setSquadId, setSquadName, setSquadDescription, setFormation, setSelectedPlayers, setInitialState, setShowLoadSquadDropdown, setSelectedPlayer, setSelectedPosition } = setters
 
   if (squadId) {
     const selectedSquad = userSquads.find((squad) => squad.id === squadId)
@@ -376,6 +392,13 @@ export const handleLoadSquad = (squadId, stateSetters) => {
       setSquadDescription(selectedSquad.description)
       setFormation(selectedSquad.formation)
       setSelectedPlayers(selectedSquad.players || {})
+
+      const firstPlayer = Object.values(selectedSquad.players)[0]
+      if (firstPlayer) {
+        setSelectedPlayer(firstPlayer)
+        setSelectedPosition(Object.keys(selectedSquad.players)[0])
+      }
+
       setInitialState({
         formation: selectedSquad.formation,
         selectedPlayers: selectedSquad.players || {},
@@ -399,15 +422,15 @@ export const handleLoadSquad = (squadId, stateSetters) => {
 
 export const handleLoadStartSquadClick = async (session, stateSetters) => {
   const { setters } = stateSetters
-  const { setSquadId, setSquadName, setSquadDescription, setFormation, setSelectedPlayers, setInitialState, setUserSquads, setShowSquadAttributes, setSquadRatings, setSquadAttributes } = setters
+  const { setSquadId, setSquadName, setSquadDescription, setFormation, setSelectedPlayers, setInitialState, setUserSquads, setShowSquadAttributes, setSquadRatings, setSquadAttributes, setSelectedPlayer, setSelectedPosition } = setters
 
   try {
     const userId = session.id
     const response = await axios.get(`http://localhost:3000/api/users/${userId}/squads`)
 
     if (response.data && response.data.squads) {
-      const firstSquad = response.data.squads[0]
       const filteredSquads = response.data.squads.filter((squad) => squad !== null)
+      const firstSquad = filteredSquads[0]
       setUserSquads(filteredSquads)
       setSquadId(firstSquad.id)
       setSquadName(firstSquad.name)
@@ -415,6 +438,12 @@ export const handleLoadStartSquadClick = async (session, stateSetters) => {
       setFormation(firstSquad.formation)
       handleSeePlayerFaceStatsClick(stateSetters)
       setSelectedPlayers(firstSquad.players || {})
+      const firstPlayer = Object.values(firstSquad.players)[0]
+      if (firstPlayer) {
+        setSelectedPlayer(firstPlayer)
+        setSelectedPosition(Object.keys(firstSquad.players)[0])
+      }
+
       setInitialState({
         formation: firstSquad.formation,
         selectedPlayers: firstSquad.players || {},
@@ -511,44 +540,49 @@ export const prepareRadarChartData = (selectedPlayer, playerToCompare) => {
 
 export const toggleSearchField = (stateSetters) => {
   const { setters } = stateSetters
-  const { setShowSearchField, setShowSquadActions, setShowSquadAttributes } = setters
+  const { setShowSearchField, setShowSquadActions, setShowSquadAttributes, setSelectedSquadVerticalNavOption } = setters
   setShowSquadAttributes(false)
   setShowSquadActions(false)
+  setSelectedSquadVerticalNavOption('search')
   setShowSearchField(prevState => !prevState)
 }
 
 export const toggleSquadActions = (stateSetters) => {
   const { setters } = stateSetters
-  const { setShowSquadActions, setShowSearchField, setShowSquadAttributes } = setters
+  const { setShowSquadActions, setShowSearchField, setShowSquadAttributes, setSelectedSquadVerticalNavOption } = setters
   setShowSquadAttributes(false)
   setShowSearchField(false)
+  setSelectedSquadVerticalNavOption('actions')
   setShowSquadActions(prevState => !prevState)
 }
 
 export const toggleSquadAttributes = (stateSetters) => {
   const { setters } = stateSetters
-  const { setShowSquadAttributes, setShowSquadActions, setShowSearchField } = setters
+  const { setShowSquadAttributes, setShowSquadActions, setShowSearchField, setSelectedSquadVerticalNavOption } = setters
   setShowSearchField(false)
   setShowSquadActions(false)
+  setSelectedSquadVerticalNavOption('attributes')
   setShowSquadAttributes(prevState => !prevState)
 }
 
 export const handleSeePlayerFaceStatsClick = (stateSetters) => {
   const { setters } = stateSetters
-  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare } = setters
+  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare, setSelectedPlayerDetailsOption } = setters
   setComparing(false)
   setShowPlayerDetailedStats(false)
   setPlayerToCompare(null)
   setShowPlayerFaceStats(true)
+  setSelectedPlayerDetailsOption('basic')
 }
 
 export const handleSeePlayerDetailedStatsClick = (stateSetters) => {
   const { setters } = stateSetters
-  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare } = setters
+  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare, setSelectedPlayerDetailsOption } = setters
   setComparing(false)
   setPlayerToCompare(null)
   setShowPlayerFaceStats(false)
   setShowPlayerDetailedStats(true)
+  setSelectedPlayerDetailsOption('ig')
 }
 
 export const handleAddPlayerToCompareClick = (stateSetters) => {
@@ -559,4 +593,19 @@ export const handleAddPlayerToCompareClick = (stateSetters) => {
 
   const input = document.querySelector('input[name="playerName"]')
   input && input.focus()
+}
+
+export const handleNewSquadClick = (stateSetters) => {
+  const { setters } = stateSetters
+  const { setSquadId, setSquadName, setSquadDescription, setFormation, setSelectedPlayers, setInitialState, setShowSquadAttributes, setSquadRatings, setSquadAttributes } = setters
+
+  setSquadId(null)
+  setSquadName('')
+  setSquadDescription('')
+  setFormation('4-4-2')
+  setSelectedPlayers({})
+  setInitialState({})
+  setSquadRatings(getInitialSquadRatings())
+  setSquadAttributes(getInitialSquadAttributes())
+  setShowSquadAttributes(false)
 }

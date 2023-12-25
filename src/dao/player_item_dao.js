@@ -43,7 +43,7 @@ export const findAllPlayerItems = async (searchConditions, options) => {
           as: 'stats',
           required: true
         }
-      ], 
+      ],
       ...options
     }
   )

@@ -5,12 +5,27 @@ import { determineFontSize } from '../../../src/utils/font_util'
 import { handlePositionSelection, handleRemovePlayer, handleSuggestionClick } from '../helper'
 
 export const PlayerPitch = ({ stateSetters }) => {
-  const { state } = stateSetters
+  const { state, setters } = stateSetters
 
   return (
     <div className="bg-center">
       {state.user && (
       <>
+        <div className="formation-div" style={{ width: '60%' }}>
+          <h1 className="text-lg mb-2">Formation</h1>
+          <select
+            name="formation"
+            value={state.formation}
+            onChange={(e) => setters.setFormation(e.target.value)}
+            className="border border-gray-700 rounded-md px-3 py-2 w-75 bg-gray-800 text-white"
+          >
+            {Object.keys(SQUAD_FORMATIONS_POSITIONS).map((formation) => (
+              <option key={formation} value={formation}>
+                {formation}
+              </option>
+            ))}
+          </select>
+        </div>
         {SQUAD_FORMATIONS_POSITIONS[state.formation].map((position, index) => (
           <div
             key={index}
@@ -21,7 +36,10 @@ export const PlayerPitch = ({ stateSetters }) => {
             }}
             onClick={() => handlePositionSelection(position.name, stateSetters)}
           >
-            <div className="card-container" style={{ width: '5rem', height: '6rem', position: 'relative' }}>
+            <div
+              className={`card-container ${state.selectedPosition === position.name ? 'clicked' : ''}`}
+              style={{ width: '5rem', height: '6rem', position: 'relative' }}
+            >
               {state.selectedPlayers[position.name] ? (
                 <>
                   <button className="plus-button">

@@ -1,4 +1,5 @@
 import { Op } from 'sequelize'
+import { inspect } from 'util'
 
 import { getLoginSession } from '../../../../lib/auth'
 import { findAllPlayerItems } from '../../../../src/dao/player_item_dao'
@@ -22,29 +23,89 @@ const parseSearchParams = (searchParams) => {
     }
   }
 
-  // if (searchParams.get('rating')) {
-  //   parsedSearchParams.rating = searchParams.get('rating')
+  if (searchParams.get('league')) {
+    parsedSearchParams.league = searchParams.get('league')
+  }
+
+  if (searchParams.get('club')) {
+    parsedSearchParams.club = searchParams.get('club')
+  }
+
+  if (searchParams.get('nation')) {
+    parsedSearchParams.nation = searchParams.get('nation')
+  }
+
+  if (searchParams.get('position')) {
+    const position = searchParams.get('position')
+  
+    parsedSearchParams[Op.or] = [
+      { mainPosition: position },
+      { secondaryPositions: { [Op.substring]: position } }
+    ]
+  }
+
+  if (searchParams.get('minRating') && searchParams.get('maxRating')) {
+    parsedSearchParams.rating = {
+      [Op.between]: [Number(searchParams.get('minRating')), Number(searchParams.get('maxRating'))]
+    }
+  }
+  // if (searchParams.get('minPrice') && searchParams.get('maxPrice')) {
+  //   parsedSearchParams.price = {
+  //     [Op.between]: [Number(searchParams.get('minPrice')), Number(searchParams.get('maxPrice'))]
+  //   }
+  // }
+  if (searchParams.get('minSkillMoves') && searchParams.get('maxSkillMoves')) {
+    parsedSearchParams.skillMoves = {
+      [Op.between]: [Number(searchParams.get('minSkillMoves')), Number(searchParams.get('maxSkillMoves'))]
+    }
+  }
+  if (searchParams.get('minWeakFoot') && searchParams.get('maxWeakFoot')) {
+    parsedSearchParams.weakFoot = {
+      [Op.between]: [Number(searchParams.get('minWeakFoot')), Number(searchParams.get('maxWeakFoot'))]
+    }
+  }
+
+  // if (searchParams.get('minHeight') && searchParams.get('maxHeight')) {
+  //   parsedSearchParams.height = {
+  //     [Op.between]: [Number(searchParams.get('minHeight')), Number(searchParams.get('maxHeight'))]
+  //   }
   // }
 
-  // if (searchParams.get('club')) {
-  //   parsedSearchParams.club = searchParams.get('club')
-  // }
+  if (searchParams.get('minPAC') && searchParams.get('maxPAC')) {
+    parsedSearchParams.PAC = {
+      [Op.between]: [Number(searchParams.get('minPAC')), Number(searchParams.get('maxPAC'))]
+    }
+  }
+  
+  if (searchParams.get('minSHO') && searchParams.get('maxSHO')) {
+    parsedSearchParams.SHO = {
+      [Op.between]: [Number(searchParams.get('minSHO')), Number(searchParams.get('maxSHO'))]
+    }
+  }
 
-  // if (searchParams.get('league')) {
-  //   parsedSearchParams.league = searchParams.get('league')
-  // }
+  if (searchParams.get('minPAS') && searchParams.get('maxPAS')) {
+    parsedSearchParams.PAS = {
+      [Op.between]: [Number(searchParams.get('minPAS')), Number(searchParams.get('maxPAS'))]
+    }
+  }
 
-  // if (searchParams.get('mainPosition')) {
-  //   parsedSearchParams.mainPosition = searchParams.get('mainPosition')
-  // }
+  if (searchParams.get('minDRI') && searchParams.get('maxDRI')) {
+    parsedSearchParams.DRI = {
+      [Op.between]: [Number(searchParams.get('minDRI')), Number(searchParams.get('maxDRI'))]
+    }
+  }
 
-  // if (searchParams.get('skillMoves')) {
-  //   parsedSearchParams.skillMoves = searchParams.get('skillMoves')
-  // }
+  if (searchParams.get('minDEF') && searchParams.get('maxDEF')) {
+    parsedSearchParams.DEF = {
+      [Op.between]: [Number(searchParams.get('minDEF')), Number(searchParams.get('maxDEF'))]
+    }
+  }
 
-  // if (searchParams.get('weakFoot')) {
-  //   parsedSearchParams.weakFoot = searchParams.get('weakFoot')
-  // }
+  if (searchParams.get('minPHY') && searchParams.get('maxPHY')) {
+    parsedSearchParams.PHY = {
+      [Op.between]: [Number(searchParams.get('minPHY')), Number(searchParams.get('maxPHY'))]
+    }
+  }
 
   return parsedSearchParams
 }
@@ -60,7 +121,7 @@ export async function GET(request) {
     }
 
     const parsedSearchParams = parseSearchParams(searchParams)
-
+    console.log('parsedSearchParams', inspect(parsedSearchParams, { depth: 4 }))
     const foundPlayerItems = await findAllPlayerItems(
       parsedSearchParams,
       { limit: 20, order: [['rating', 'DESC']] }
@@ -70,6 +131,7 @@ export async function GET(request) {
 
     return Response.json({ playerItems: parsedPlayerItems }, { status: 200 })
   } catch (error) {
+    console.log('error', error)
     return Response.error({ error: error.message }, { status: error.status || 500 })
   }
 }

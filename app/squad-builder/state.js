@@ -31,6 +31,9 @@ export const useSquadBuilderState = () => {
   const [showSquadAttributes, setShowSquadAttributes] = useState(false)
   const [showPlayerFaceStats, setShowPlayerFaceStats] = useState(false)
   const [showPlayerDetailedStats, setShowPlayerDetailedStats] = useState(false)
+  const [selectedPlayerDetailsOption, setSelectedPlayerDetailsOption] = useState('basic')
+  const [selectedSquadVerticalNavOption, setSelectedSquadVerticalNavOption] = useState('attributes')
+
 
   const state = {
     user,
@@ -59,7 +62,9 @@ export const useSquadBuilderState = () => {
     showSquadActions,
     showSquadAttributes,
     showPlayerFaceStats,
-    showPlayerDetailedStats
+    showPlayerDetailedStats,
+    selectedPlayerDetailsOption,
+    selectedSquadVerticalNavOption
   }
 
   const setters = {
@@ -89,7 +94,9 @@ export const useSquadBuilderState = () => {
     setShowSquadActions,
     setShowSquadAttributes,
     setShowPlayerFaceStats,
-    setShowPlayerDetailedStats
+    setShowPlayerDetailedStats,
+    setSelectedPlayerDetailsOption,
+    setSelectedSquadVerticalNavOption
   }
 
   const stateSetters = {
