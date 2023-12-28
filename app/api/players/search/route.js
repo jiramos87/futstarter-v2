@@ -123,7 +123,7 @@ export async function GET(request) {
 
     const foundPlayerItems = await findAllPlayerItems(
       parsedSearchParams,
-      { limit: 40, order: [['rating', 'DESC']] }
+      { limit: 10, order: [['rating', 'DESC']] }
     )
 
     const parsedPlayerItems = foundPlayerItems.map(playerItem => parsePlayerItems(playerItem))

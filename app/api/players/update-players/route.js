@@ -4,12 +4,14 @@ import { getTotalPagesCount, scrapePlayerData } from "../../../../lib/scrape"
 import { bulkCreatePlayerItems } from '../../../../src/dao/player_item_dao'
 import { bulkCreatePlayerItemStats } from '../../../../src/dao/player_item_stats_dao'
 import { sleep } from '../../../../src/utils/time_util'
+import { FUTBIN_GOLD_PLAYERS_URL } from '../../../../src/constants/futbin'
 
 const parsePlayerItemCreationData = (playersData) => {
   const players = []
   const playersStats = []
   const now = new Date()
   playersData.forEach((playerData) => {
+    console.log('playerData.playerItemId', playerData.playerItemId)
     const player = {
       id: playerData.playerItemId,
       name: playerData.playerName,
@@ -40,14 +42,15 @@ const parsePlayerItemCreationData = (playersData) => {
       totalBaseStats: playerData.playerTotalBaseStats,
       totalInGameStats: playerData.playerTotalInGameStats,
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
+      imageUrl: playerData.playerImageUrl
     }
 
     const playerInGameStats = playerData.playerInGameStats
 
     const playerStats = playerInGameStats ?
       {
-        playerItemId: playerData.playerItemId,
+        playerItemId: playerInGameStats.playerItemId,
         acceleration: playerInGameStats.playerAcceleration,
         sprintSpeed: playerInGameStats.playerSprintSpeed,
         positioning: playerInGameStats.playerPositioning,
@@ -90,7 +93,7 @@ const parsePlayerItemCreationData = (playersData) => {
 }
 
 export async function POST(request) {
-  const pagesCountResponse = await getTotalPagesCount('https://www.futbin.com/players?version=gold_all')
+  const pagesCountResponse = await getTotalPagesCount(FUTBIN_GOLD_PLAYERS_URL)
   if (!pagesCountResponse.done) {
     return Response.json({ error: pagesCountResponse.error })
   }
@@ -103,14 +106,13 @@ export async function POST(request) {
 
   for (let i = 1; i <= totalPagesCount; i++) {
     console.log('page ', i)
-    const response = await scrapePlayerData('https://www.futbin.com/players?version=gold_all&page=' + i)
+    const response = await scrapePlayerData(FUTBIN_GOLD_PLAYERS_URL + '&page=' + i)
 
     if (!response.done) {
       return Response.json({ error: response.error })
     }
 
     const { players, playersStats } = parsePlayerItemCreationData(response.players)
-    console.log('playersStats[0].acceleration', playersStats[0].acceleration)
 
     accPlayerDataForJSON.push(...response.players)
 

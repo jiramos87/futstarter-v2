@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import {
   COMMON_NATIONS,
   LEAGUES,
@@ -10,6 +12,7 @@ import { handleDropdownItemClick, handlePlayerSearchChange, handleSearchButtonCl
 
 export const PlayerSearchField = ({ stateSetters }) => {
   const { state, setters } = stateSetters
+
   return (
     <>
       <div className="flex flex-col justify-start squad-attributes-div w-full px-3" style={{ height: '50%'}}>
@@ -420,9 +423,9 @@ export const PlayerSearchField = ({ stateSetters }) => {
                 <li key={index} className="dropdown-item">
                   <button
                     onClick={() => handleDropdownItemClick(player, stateSetters)}
-                    className="dropdown-item-button"
+                    className="dropdown-item-button flex flex-row"
                   >
-                    {player.name} - {player.rating}
+                    {player.imageUrl && <Image src={player.imageUrl} width={40} height={40} alt='player image' />} {player.name} - {player.rating}
                   </button>
                 </li>
               ))}

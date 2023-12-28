@@ -140,6 +140,11 @@ class PlayerItem extends Sequelize.Model {
         type: DataTypes.DATE,
         defaultValue: Sequelize.NOW,
         field: 'updated_at'
+      },
+      imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'image_url'
       }
     }, {
       sequelize,

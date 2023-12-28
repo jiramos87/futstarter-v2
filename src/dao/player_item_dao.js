@@ -41,7 +41,7 @@ export const findAllPlayerItems = async (searchConditions, options) => {
         {
           model: models.PlayerItemStats,
           as: 'stats',
-          required: true
+          required: false
         }
       ],
       ...options
