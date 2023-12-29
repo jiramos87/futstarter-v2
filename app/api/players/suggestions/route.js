@@ -112,7 +112,7 @@ export async function POST(request) {
     const foundPlayerItems = await findAllPlayerItems(
       squadAttributes,
       {
-        limit: 20,
+        limit: 10,
         order: [['rating', 'DESC']]
       }
     )

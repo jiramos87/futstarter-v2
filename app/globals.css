@@ -65,16 +65,13 @@ body {
 .card-container {
   font-size: 2rem;
   color: black;
-  width: 5rem;
-  height: 6rem;
-  background-color: yellowgreen;
-  border-radius: 8px;
+  border-radius: 7px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  overflow-y: visible;
   cursor: pointer;
   transition: transform 0.3s ease, border 0.3s ease;
 }
@@ -82,7 +79,7 @@ body {
 .card-container:hover,
 .card-container.clicked {
   transform: scale(1.1);
-  border: 4px solid white;
+  border: 6px solid white;
 }
 
 .pressed {
@@ -192,6 +189,11 @@ body {
 .delete-button span {
   color: black;
   font-size: 1.2rem;
+}
+
+.player-card {
+  position: relative;
+  z-index: 0;
 }
 
 @keyframes buttonClick {

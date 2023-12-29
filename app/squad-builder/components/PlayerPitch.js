@@ -1,8 +1,8 @@
 import { FaLightbulb, FaTimes } from 'react-icons/fa'
 
 import { SQUAD_FORMATIONS_POSITIONS } from '../../../src/constants/formations'
-import { determineFontSize } from '../../../src/utils/font_util'
 import { handlePositionSelection, handleRemovePlayer, handleSuggestionClick } from '../helper'
+import { PlayerCard } from '../../components/PlayerCard'
 
 export const PlayerPitch = ({ stateSetters }) => {
   const { state, setters } = stateSetters
@@ -31,20 +31,20 @@ export const PlayerPitch = ({ stateSetters }) => {
             key={index}
             className="absolute text-white flex flex-col items-center"
             style={{
-              top: `calc(${position.position.top} - 3rem)`,
-              left: `calc(${position.position.left} - 2.5rem)`,
+              top: `calc(${position.position.top} - 3.8rem)`,
+              left: `calc(${position.position.left} - 3.3rem)`,
+              overflow: 'visible'
             }}
             onClick={() => handlePositionSelection(position.name, stateSetters)}
           >
             <div
               className={`card-container ${state.selectedPosition === position.name ? 'clicked' : ''}`}
-              style={{ width: '5rem', height: '6rem', position: 'relative', overflow: 'visible' }}
+              style={{ width: '6.7rem', height: '8rem', position: 'relative', overflow: 'visible' }}
             >
               {state.selectedPlayers[position.name] ? (
                 <>
-                  <button>
-                    <p style={{ fontSize: determineFontSize(state.selectedPlayers[position.name].name) }}>{state.selectedPlayers[position.name].name}</p>
-                    <p className="text-xl">{state.selectedPlayers[position.name].rating}</p>
+                  <button className="h-full w-full flex flex-col items-center justify-center" style={{ overflow: 'visible' }}>
+                    <PlayerCard player={state.selectedPlayers[position.name]} size={9.4} />
                   </button>
 
                   <div
@@ -64,7 +64,7 @@ export const PlayerPitch = ({ stateSetters }) => {
                   >
                     <FaLightbulb size={26} color="yellow" />
                   </button>
-                  <span>+</span>
+                  <span className='text-white'>+</span>
                 </>
               )}
             </div>
