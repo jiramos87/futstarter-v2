@@ -12,8 +12,8 @@ const MainLayout = ({ children }) => {
   return (
     <div className="flex flex-col h-screen">
       <TopHorizontalNav isLoggedIn={isLoggedIn} user={user} /> {/* Render the new top navigation */}
-      <div className="flex flex-1 overflow-auto">
-        <div className="w-full max-h-full overflow-auto">
+      <div className="flex flex-1">
+        <div className="main-style">
           {children}
         </div>
       </div>

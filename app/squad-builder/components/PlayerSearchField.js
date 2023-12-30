@@ -15,7 +15,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
 
   return (
     <>
-      <div className="flex flex-col justify-start squad-attributes-div w-full px-3" style={{ height: '50%'}}>
+      <div style={{ height: '45%'}}>
         <div className="flex flex-row squad-div-title-text justify-start mb-2 p-2">
           PLAYER SEARCH
         </div>
@@ -26,7 +26,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
           value={state.playerSearchString}
           onChange={(e) => handlePlayerSearchChange(e, stateSetters)}
           placeholder="Player name"
-          className="border border-gray-700 w-full bg-gray-800 text-white px-1 h-[30px] min-h-[30px]"
+          className="player-search-input"
         />
 
         <div className="flex flex-row text-white p-1 align-start w-full">
@@ -49,7 +49,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
           />
           <label htmlFor='use-search-filters' className='ml-2'>Use search filters</label>
           <button
-            className='ml-2 bg-blue-600 text-white px-2 py-1 rounded-md'
+            className='player-search-button'
             onClick={() => handleSearchButtonClick(stateSetters)}
           >
             Search
@@ -413,7 +413,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
 
         
       </div>
-      <div className="flex flex-col justify-start squad-attributes-div" style={{ display: state.showDropdown ? 'block' : 'none', height: '50%'}}>
+      <div style={{ display: state.showDropdown ? 'block' : 'none', height: '50%'}}>
         <div className="flex flex-row squad-div-title-text justify-start mb-2 p-2">
           {state.dropdownPlayers.length} players found
         </div>
@@ -423,7 +423,7 @@ export const PlayerSearchField = ({ stateSetters }) => {
                 <li key={index} className="dropdown-item">
                   <button
                     onClick={() => handleDropdownItemClick(player, stateSetters)}
-                    className="dropdown-item-button flex flex-row"
+                    className="dropdown-item-button"
                   >
                     {player.imageUrl && <Image src={player.imageUrl} width={40} height={40} alt='player image' />} {player.name} - {player.rating}
                   </button>

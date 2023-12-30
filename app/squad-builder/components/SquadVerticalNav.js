@@ -5,9 +5,9 @@ import { toggleSearchField, toggleSquadActions, toggleSquadAttributes } from '..
 export const SquadVerticalNav = ({ stateSetters }) => {
   const { state } = stateSetters
   return (
-    <div className="flex flex-col h-full" style={{ backgroundColor: '#4d88ff' }}>
+    <div className="squad-vertical-navbar">
       <button
-        className={`text-3xl hover:text-gray-400 h-16 p-2 flex items-center justify-center ${state.selectedSquadVerticalNavOption === 'actions' ? 'text-white' : 'text-gray-400'}`}
+        className={`${state.selectedSquadVerticalNavOption === 'actions' ? 'squad-vertical-nav-link-selected' : 'squad-vertical-nav-link'}`}
         onClick={() => {
           toggleSquadActions(stateSetters)
         }}
@@ -15,7 +15,7 @@ export const SquadVerticalNav = ({ stateSetters }) => {
         <FaFile />
       </button>
       <button
-        className={`text-3xl hover:text-gray-400 h-16 p-2 flex items-center justify-center ${state.selectedSquadVerticalNavOption === 'search' ? 'text-white' : 'text-gray-400'}`}
+        className={`${state.selectedSquadVerticalNavOption === 'search' ? 'squad-vertical-nav-link-selected' : 'squad-vertical-nav-link'}`}
         onClick={() => {
           toggleSearchField(stateSetters)
         }}
@@ -24,7 +24,7 @@ export const SquadVerticalNav = ({ stateSetters }) => {
       </button>
 
       <button
-        className={`text-3xl hover:text-gray-400 h-16 p-2 flex items-center justify-center ${state.selectedSquadVerticalNavOption === 'attributes' ? 'text-white' : 'text-gray-400'}`}
+        className={`${state.selectedSquadVerticalNavOption === 'attributes' ? 'squad-vertical-nav-link-selected' : 'squad-vertical-nav-link'}`}
         onClick={() => {
           toggleSquadAttributes(stateSetters)
         }}

@@ -69,7 +69,7 @@ export const RadarChart = ({ radarData, stateSetters }) => {
   return (
     <div>
       <button
-        className="relative top-0 right-0 bg-blue-600 text-white px-2 py-1 hover:bg-blue-700"
+        className="compare-to-button"
         onClick={() => handleAddPlayerToCompareClick(stateSetters)}
       >
         Add Player

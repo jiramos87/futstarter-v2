@@ -1,8 +1,6 @@
-import { SQUAD_FORMATIONS_POSITIONS } from "../../../src/constants/formations"
 import { useState } from 'react';
 import { IoIosArrowForward, IoIosArrowDown } from 'react-icons/io';
 
-// Collapsible component for individual sections
 const CollapsibleSection = ({ title, content }) => {
   const [showContent, setShowContent] = useState(false);
 
@@ -13,7 +11,7 @@ const CollapsibleSection = ({ title, content }) => {
   return (
     <div>
       <div
-        className="rating-div hover:bg-gray-600 px-5 py-0 flex items-center"
+        className="collapsible-squad-attributes"
         style={{
           width: '100%',
           cursor: 'pointer',
@@ -51,7 +49,7 @@ export const SquadAttributes = ({ stateSetters }) => {
   const { state } = stateSetters;
 
   return (
-    <div className="flex flex-col justify-start squad-attributes-div px-3">
+    <div>
       <div className="flex flex-row squad-div-title-text justify-start mb-4 p-2">
         SQUAD ATTRIBUTES
       </div>
@@ -60,7 +58,7 @@ export const SquadAttributes = ({ stateSetters }) => {
       <CollapsibleSection
         title="RATINGS"
         content={
-          <div className="rating-div flex flex-row px-4" style={{ width: '100%', marginTop: '10px' }}>
+          <div className="flex flex-row px-4" style={{ width: '100%', marginTop: '10px' }}>
             <div className="squad-attributes-stats-text">Global</div>
             <p className="squad-attributes-stats">{state.squadRatings.average}</p>
             {/* Content to be displayed when the rating is clicked (open) */}

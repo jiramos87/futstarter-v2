@@ -42,3 +42,17 @@ export const parseHeight = (heightString) => {
   }
   return null
 }
+
+const compositeShortNames = [
+  'Neymar'
+]
+
+export const getPlayerLastName = (name) => {
+  console.log('name', name)
+  const words = name.split(' ')
+  if (compositeShortNames.includes(words[0])) {
+    return name
+  }
+
+  return words.length > 1 ? words.slice(1).join(' ') : name
+}

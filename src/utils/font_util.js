@@ -1,7 +1,7 @@
-export const determineFontSize = (name) => {
+export const determinePlayerNameFontSize = (name) => {
   if (name.length > 10) {
-    return '0.8rem'
+    return '0.5rem'
   } else {
-    return '1rem'
+    return '0.7rem'
   }
 }

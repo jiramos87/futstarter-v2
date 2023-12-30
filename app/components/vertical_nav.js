@@ -3,7 +3,7 @@ import NavLinks from './nav_links'
 
 const VerticalNav = ({ isLoggedIn, user }) => {
   return (
-    <nav className="bg-blue-900 w-1/6 p-4">
+    <nav className="vertical-navbar">
       <div className="my-8">
         <NavHeader isLoggedIn={isLoggedIn} user={user} />
       </div>

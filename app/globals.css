@@ -1,11 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
 
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --dark-green: #004643;
+  --dark-green-lighter: #006d6a;
+  --black-green: #000e0d;
+  --light-green: #7be5d5cd;
+  --yellow-orange: #F9BC60;
+  --yellow-orange-darker: #d5a256;
+  --red: #E16162;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,34 +26,37 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(to bottom, transparent, var(--dark-green)) var(--light-green);
 }
+
+/* body {
+  color: var(--light-green);
+  background: linear-gradient(to bottom, transparent, var(--dark-green)) var(--light-green);
+} */
 
 .dropdown-list {
   list-style: none;
   overflow-y: scroll;
-  position: relative; /* Position absolutely */
-  max-height: 100%; /* Set a maximum height as a percentage of the parent height */
+  position: relative;
+  max-height: 100%;
 }
 
 .dropdown-item {
-  background-color: #001f3f;
+  background-color: var(--dark-green);
   transition: background-color 0.2s;
 }
 
 .dropdown-item:hover {
-  background-color: #0074d9;
+  background-color: var(--yellow-orange);
 }
 
 .dropdown-item-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   background: none;
   border: none;
-  color: white;
+  color: var(--light-green);
   padding: 8px;
   cursor: pointer;
   width: 100%;
@@ -58,7 +69,7 @@ body {
 }
 
 .dropdown-item-button:active {
-  background-color: #001f3f;
+  background-color: var(--dark-green);
   transition: background-color 0.05s;
 }
 
@@ -86,7 +97,7 @@ body {
   animation: buttonClick 0.s;
 }
 
-.squad-attributes-div {
+.squad-tools-div {
   position: relative;
   top: 0;
   left: 0;
@@ -194,6 +205,388 @@ body {
 .player-card {
   position: relative;
   z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-card-rating {
+  position: absolute;
+  z-index: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  left: 20%;
+  top: 10%;
+}
+
+.player-card-image-container {
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+}
+
+.player-card-attribute-text {
+  position: relative;
+  font-size: 0.4rem;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+.player-card-attribute-value-text {
+  position: relative;
+  font-size: 0.6rem;
+  font-weight: bold;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+.player-card-attribute-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-player-button {
+  color: var(--yellow-orange);
+  border: 2px solid gray;
+  border-radius: 10%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.horizontal-nav-link {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.horizontal-nav-link:hover {
+  background-color: rgba(55, 65, 81, 0.5);
+}
+
+.horizontal-nav-link-text {
+  color: #ffffff;
+}
+
+.vertical-nav-link {
+  display: flex;
+  height: 48px;
+  flex-grow: 1;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.375rem;
+  background-image: linear-gradient(to right, var(--yellow-orange), var(--dark-green));
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.vertical-nav-link:hover {
+  background-image: linear-gradient(to right, var(--light-green), var(--dark-green));
+}
+
+.compare-to-button {
+  position: relative;
+  top: 0;
+  right: 0;
+  background-color: var(--yellow-orange); 
+  color: black;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  transition: background-color 0.3s ease;
+}
+
+.compare-to-button:hover {
+  background-color: var(--yellow-orange-darker);
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--dark-green-lighter);
+  color: #ffffff;
+  width: 100%;
+  padding: 0;
+}
+
+.top-nav-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.vertical-navbar {
+  background-color: var(--dark-green);
+  width: 16.66667%;
+  padding: 1rem;
+}
+
+.submit-button {
+  background-color: var(--yellow-orange); 
+  color: black;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  margin: 0.5rem;
+}
+
+.squad-builder-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: var(--black-green);
+}
+
+.squad-vertical-navbar {
+  color: #ffffff;
+  flex: 1;
+  background-color: var(--dark-green-lighter);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.squad-tool-container {
+  color: #ffffff;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--dark-green);
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-height: max-content;
+  overflow-y: hidden;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  justify-content: flex-start;
+}
+
+.player-details-container {
+  height: 100%;
+  overflow: hidden;
+}
+
+.player-detail-selector-buttons {
+  color: #ffffff;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  background-color: var(--black-green);
+}
+
+.player-details-button {
+  position: relative;
+  top: 0;
+  right: 0;
+  background-color: var(--yellow-orange); 
+  color: black;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  transition: background-color 0.1s ease;
+}
+  /* Styles for hover state */
+.player-details-button:hover {
+  background-color: var(--yellow-orange-darker);
+}
+
+.player-selected-details {
+  height: 100%;
+  background-color: var(--black-green);
+  color: #ffffff;
+} 
+
+.details-button-selected {
+  position: relative;
+  top: 0;
+  right: 0;
+  background-color: var(--yellow-orange-darker); 
+  color: black;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  transition: background-color 0.1s ease;
+}
+
+.position-name-container {
+  border-radius: 0.375rem;
+  background-color: var(--dark-green);
+  color: #ffffff;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.player-card-button {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.player-search-input {
+  border: 1px solid #4b5563;
+  width: 100%;
+  background-color: #2d2d2d;
+  color: #ffffff;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  height: 30px;
+  min-height: 30px;
+}
+
+.player-search-button {
+  margin-left: 0.5rem;
+  background-color: var(--yellow-orange); 
+  color: black;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-radius: 0.375rem;
+}
+
+.new-squad-button {
+  background-color: var(--yellow-orange); 
+  color: black; /* Corresponds to text-white in Tailwind */
+  padding-left: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-right: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-top: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  padding-bottom: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  border-radius: 0.375rem; /* Corresponds to rounded-md in Tailwind */
+  margin-top: 1rem; /* Corresponds to mt-4 in Tailwind */
+}
+
+.load-squad-button {
+  background-color: var(--yellow-orange); 
+  color: black; /* Corresponds to text-white in Tailwind */
+  padding-left: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-right: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-top: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  padding-bottom: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  border-radius: 0.375rem; /* Corresponds to rounded-md in Tailwind */
+  margin-top: 1rem; /* Corresponds to mt-4 in Tailwind */
+}
+
+.save-squad-button {
+  background-color: var(--yellow-orange); 
+  color: black;/* Corresponds to text-white in Tailwind */
+  padding-left: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-right: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-top: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  padding-bottom: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  border-radius: 0.375rem; /* Corresponds to rounded-md in Tailwind */
+  margin-top: 1rem; /* Corresponds to mt-4 in Tailwind */
+}
+
+.select-squad-button {
+  border: 1px solid #4b5563;
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 100%;
+  background-color: #2d2d2d;
+  color: #ffffff;
+  margin-top: 1rem;
+  z-index: 10;
+}
+
+.squad-name-input {
+  border: 1px solid #4b5563;
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 100%;
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+.collapsible-squad-attributes {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.collapsible-squad-attributes:hover {
+  background-color: #4b5563;
+}
+
+.player-pitch-container {
+  /* flex: 1; */
+  position: relative;
+  background-color: var(--black-green);
+  background-image: url('/football-pitch-perspective.png');
+  background-repeat: no-repeat;
+  background-size: 52rem 46rem;
+  background-position: top center;
+  height: 46rem;
+  width: 52rem;
+  min-height: 44rem;
+  min-width: 48rem;
+}
+
+.main-style {
+  width: 100%;
+  max-height: 100%;
+}
+
+.squad-vertical-nav-link {
+  color: gray;
+  font-size: 1.875rem; /* Equivalent to text-3xl in Tailwind */
+  padding: 0.5rem; /* Equivalent to p-2 in Tailwind */
+  height: 4rem; /* Equivalent to h-16 in Tailwind */
+  display: flex;
+  align-items: center; /* Equivalent to items-center in Tailwind */
+  justify-content: center; /* Equivalent to justify-center in Tailwind */
+}
+
+.squad-vertical-nav-link-selected {
+  color: white;
+  font-size: 1.875rem; /* Equivalent to text-3xl in Tailwind */
+  padding: 0.5rem; /* Equivalent to p-2 in Tailwind */
+  height: 4rem; /* Equivalent to h-16 in Tailwind */
+  display: flex;
+  align-items: center; /* Equivalent to items-center in Tailwind */
+  justify-content: center; /* Equivalent to justify-center in Tailwind */
+}
+
+.squad-vertical-nav-link:hover,
+.squad-vertical-nav-link-selected:hover {
+  color: #a0aec0; /* Equivalent to hover:text-gray-400 in Tailwind */
 }
 
 @keyframes buttonClick {

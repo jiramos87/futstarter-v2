@@ -21,13 +21,13 @@ const SquadBuilderPage = () => {
 
   return (
     <MainLayout>
-      <div className="flex h-full w-full bg-blue-900">
-        <div className="flex-1 bg-blue-900 p-0" style={{ flexBasis: '5%', color: 'white' }}>
+      <div className="squad-builder-container">
+        <div style={{ flexBasis: '5%' }}>
           <SquadVerticalNav stateSetters={stateSetters} />
         </div>
         
         {state.user && (
-        <div className="flex-1 bg-blue-950 p-0" style={{ flexBasis: '20%', color: 'white' }}>
+        <div className="squad-tool-container" style={{ flexBasis: '20%' }}>
           {state.showSquadActions && <SquadActions stateSetters={stateSetters} />}
           {state.showSearchField && <PlayerSearchField stateSetters={stateSetters} />}
           {state.showSquadAttributes && <SquadAttributes stateSetters={stateSetters} />}
@@ -35,11 +35,11 @@ const SquadBuilderPage = () => {
         )}
         {!state.user && (<><WelcomeLogin /></>)}
         
-        <div className="flex-2 relative" style={{ ...pitchStyles, flexBasis: '50%' }}>
+        <div className="player-pitch-container" style={{ flexBasis: '50%' }}>
           <PlayerPitch stateSetters={stateSetters} />
         </div>
 
-        <div className="flex-1 bg-blue-950" style={{ flexBasis: '25%', color: 'white' }}>
+        <div style={{ flexBasis: '25%' }}>
           <PlayerDetails stateSetters={stateSetters} />
         </div>
       </div>

@@ -1,10 +1,11 @@
 export const pitchStyles = {
-  backgroundImage: "url('/football-pitch.jpg')",
+  backgroundImage: "url('/football-pitch-perspective.png')",
   backgroundRepeat: 'no-repeat',
-  backgroundSize: '32rem 46 rem', // Set the desired size
+  backgroundSize: '48rem 44rem', // Set the desired size
   backgroundPosition: 'top center', // Position at the top of the div
-  height: '46rem', // Minimum height
-  width: '32rem', // Minimum width
-  minWidth: '32rem', // Minimum width
-  minHeight: '46wrem', // Minimum height
+  height: '44rem', // Minimum height
+  width: '48rem', // Minimum width
+  minWidth: '48rem', // Minimum width
+  minHeight: '44rem', // Minimum height,
+  backgroundColor: 'black'
 }

@@ -11,7 +11,7 @@ export const PlayerPitch = ({ stateSetters }) => {
     <div className="bg-center">
       {state.user && (
       <>
-        <div className="formation-div" style={{ width: '60%' }}>
+        <div className="formation-div" style={{ width: '30%' }}>
           <h1 className="text-lg mb-2">Formation</h1>
           <select
             name="formation"
@@ -43,8 +43,8 @@ export const PlayerPitch = ({ stateSetters }) => {
             >
               {state.selectedPlayers[position.name] ? (
                 <>
-                  <button className="h-full w-full flex flex-col items-center justify-center" style={{ overflow: 'visible' }}>
-                    <PlayerCard player={state.selectedPlayers[position.name]} size={9.4} />
+                  <button className="player-card-button">
+                    <PlayerCard player={state.selectedPlayers[position.name]} size={10} />
                   </button>
 
                   <div
@@ -64,11 +64,11 @@ export const PlayerPitch = ({ stateSetters }) => {
                   >
                     <FaLightbulb size={26} color="yellow" />
                   </button>
-                  <span className='text-white'>+</span>
+                  <span className='add-player-button'>+</span>
                 </>
               )}
             </div>
-            <div className="rounded-md bg-gray-800 text-white py-1 px-2 mt-2" style={{ fontSize: '0.75rem' }}>
+            <div className="position-name-container">
               {position.name}
             </div>
           </div>

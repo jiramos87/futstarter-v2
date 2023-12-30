@@ -7,10 +7,6 @@ const Header = ({ title }) => {
   return <h1 className={veryBigHeaderStyle}>{title ? title : "Default title"}</h1>
 }
 
-const Subtitle = ({ subtitle }) => {
-  return <h2 className={bigSubtitleStyle}>{subtitle ? subtitle : "Default subtitle"}</h2>
-}
-
 const MainWindow = () => {
   return (
     <div className="flex flex-col items-center justify-center h-full relative">

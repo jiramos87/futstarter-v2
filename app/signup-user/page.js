@@ -64,7 +64,7 @@ const SignUpUserPage = () => {
             className="border border-gray-300 rounded-md p-2 m-2"
             style={{ color: 'black' }}
           />
-          <button type="submit" className="bg-blue-500 text-white rounded-md p-2 m-2">
+          <button type="submit" className="submit-button">
             Sign Up
           </button>
         </form>

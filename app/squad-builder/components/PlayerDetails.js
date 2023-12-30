@@ -7,31 +7,33 @@ export const PlayerDetails = ({ stateSetters }) => {
   const { state } = stateSetters
 
   return (
-    <div>
-      <div className="flex flex-row justify-start bg-blue-600">
+    <div className="player-details-container">
+      <div className="player-detail-selector-buttons">
         <button
-          className={`relative top-0 right-0 bg-blue-600 text-white px-2 py-1 hover:bg-blue-700 ${state.selectedPlayerDetailsOption === 'basic' ? 'bg-blue-700' : ''}`}
+          className={`${state.selectedPlayerDetailsOption === 'basic' ? 'details-button-selected' : 'player-details-button '}`}
           onClick={() => handleSeePlayerFaceStatsClick(stateSetters)}
         >
           Basic Stats
         </button>
         <button
-          className={`relative top-0 right-0 bg-blue-600 text-white px-2 py-1 hover:bg-blue-700 ${state.selectedPlayerDetailsOption === 'ig' ? 'bg-blue-700' : ''}`}
+          className={`${state.selectedPlayerDetailsOption === 'ig' ? 'details-button-selected' : 'player-details-button '}`}
           onClick={() => handleSeePlayerDetailedStatsClick(stateSetters)}
         >
           IG Stats
         </button>
         <button
-          className={`relative top-0 right-0 bg-blue-600 text-white px-2 py-1 hover:bg-blue-700 ${state.selectedPlayerDetailsOption === 'compare' ? 'bg-blue-700' : ''}`}
+          className={`${state.selectedPlayerDetailsOption === 'compare' ? 'details-button-selected' : 'player-details-button '}`}
           onClick={() => handleCompareClick(stateSetters)}
         >
           Compare
         </button>
       </div>
-      {state.comparing || state.playerToCompare
-        ? (<RadarChart radarData={prepareRadarChartData(state.selectedPlayer, state.playerToCompare)} stateSetters={stateSetters} />)
-        : (<PlayerStats stateSetters={stateSetters} />)
-      }
+      <div className="player-selected-details" >
+        {state.comparing || state.playerToCompare
+          ? (<RadarChart radarData={prepareRadarChartData(state.selectedPlayer, state.playerToCompare)} stateSetters={stateSetters} />)
+          : (<PlayerStats stateSetters={stateSetters} />)
+        }
+      </div>
     </div>
   )
 }

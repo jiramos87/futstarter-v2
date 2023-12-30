@@ -7,16 +7,16 @@ const LoggedOutNav = () => {
       <Link
         key={LOGIN_USER.name}
         href={LOGIN_USER.href}
-        className="flex h-[30px] items-center hover:bg-gray-700 hover:bg-opacity-50 px-3 text-sm font-medium"
+        className="horizontal-nav-link"
         >
-        <p className="text-yellow-50">{LOGIN_USER.name}</p>
+        <p className="horizontal-nav-link-text">{LOGIN_USER.name}</p>
       </Link>
       <Link
         key={SIGNUP_USER.name}
         href={SIGNUP_USER.href}
-        className="flex h-[30px] items-center hover:bg-gray-700 hover:bg-opacity-50 px-3 text-sm font-medium"
+        className="horizontal-nav-link"
         >
-        <p className="text-yellow-50">{SIGNUP_USER.name}</p>
+        <p className="horizontal-nav-link-text">{SIGNUP_USER.name}</p>
       </Link>
     </div>
   )

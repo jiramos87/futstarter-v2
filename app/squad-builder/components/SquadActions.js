@@ -3,26 +3,26 @@ import { handleLoadSquad, handleLoadSquadClick, handleNewSquadClick, handleSaveS
 export const SquadActions = ({ stateSetters }) => {
   const { state, setters } = stateSetters
   return (
-    <div className="flex flex-col justify-start squad-attributes-div px-3" style={{ height: '50%'}}>
+    <div style={{ height: '50%'}}>
       <div className="flex flex-row squad-div-title-text justify-start mb-4 p-2">
        SQUAD ACTIONS
       </div>
       <button
         onClick={() => handleNewSquadClick(stateSetters)}
-        className="bg-green-500 text-white px-4 py-2 rounded-md mt-4"
+        className="new-squad-button"
       >
         New Squad
       </button>
       <button
         onClick={() => handleLoadSquadClick(stateSetters)}
-        className="bg-yellow-500 text-white px-4 py-2 rounded-md mt-4"
+        className="load-squad-button"
       >
         Load Squad
       </button>
       {state.showLoadSquadDropdown && (
       <div className="dropdown-menu">
         <select
-          className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white mt-4 z-10"
+          className="select-squad-button"
           onChange={(e) => handleLoadSquad(parseInt(e.target.value), stateSetters)}
         >
           <option value="">Select Squad</option>
@@ -45,10 +45,10 @@ export const SquadActions = ({ stateSetters }) => {
           name="squadName"
           value={state.squadName}
           onChange={(e) => setters.setSquadName(e.target.value)}
-          className="border border-gray-700 rounded-md px-3 py-2 w-full bg-gray-800 text-white"
+          className="squad-name-input"
         />
       </div>
-      <button onClick={() => { state.squadId ? handleUpdateSquadClick(stateSetters) : handleSaveSquadClick(stateSetters)}} className="bg-blue-600 text-white px-4 py-2 rounded-md mt-4">
+      <button onClick={() => { state.squadId ? handleUpdateSquadClick(stateSetters) : handleSaveSquadClick(stateSetters)}} className="save-squad-button">
         Save Squad
       </button>
       {state.isSquadSaved && state.squadId && <span className="text-green-500 ml-2">✔</span>}
