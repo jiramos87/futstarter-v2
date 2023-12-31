@@ -3,8 +3,6 @@ import { Op } from 'sequelize'
 import { findAllPlayerItems } from '../../../../src/dao/player_item_dao'
 import { parsePlayerItems } from '../../helpers/player_helper'
 
-import { inspect } from 'util'
-
 const applySquadAttributes = (squad, searchConditions) => {
   if (!squad || Object.values(squad).length === 0) return null
 

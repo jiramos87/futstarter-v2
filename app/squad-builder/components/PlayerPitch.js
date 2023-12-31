@@ -5,7 +5,7 @@ import { handlePositionSelection, handleRemovePlayer, handleSetFormation, handle
 import { PlayerCard } from '../../components/PlayerCard'
 
 export const PlayerPitch = ({ stateSetters }) => {
-  const { state, setters } = stateSetters
+  const { state } = stateSetters
 
   return (
     <div className="bg-center">
@@ -41,16 +41,16 @@ export const PlayerPitch = ({ stateSetters }) => {
               className={`card-container ${state.selectedPosition === position.name ? 'clicked' : ''}`}
               style={{ width: '6.7rem', height: '8rem', position: 'relative', overflow: 'visible' }}
             >
-              {state.selectedPlayers[position.name]
+              {state.selectedPlayers[index]
               ? (
                 <>
                   <button className="player-card-button">
-                    <PlayerCard player={state.selectedPlayers[position.name]} size={10} />
+                    <PlayerCard player={state.selectedPlayers[index].player} size={10} />
                   </button>
 
                   <div
                     className="delete-button"
-                    onClick={() => handleRemovePlayer(position.name, stateSetters)}
+                    onClick={() => handleRemovePlayer(index, stateSetters)}
                     style={{ bottom: '-10px', right: '-10px' }}
                   >
                     <FaTimes size={20} color="black" />
