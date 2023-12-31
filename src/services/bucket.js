@@ -22,10 +22,9 @@ export const uploadPlayerImageToS3 = async (imageBuffer, playerId) => {
 export const checkIfImageExists = async (playerId) => {
   try {
     const response = await s3.headObject({ Bucket: PLAYERS_IMAGES_BUCKET, Key: `${playerId}.png` }).promise()
-    console.log('response', response)
+
     return true
   } catch (error) {
-    console.log('error', error.code)
     if (error.code === 'NotFound') {
       return false
     }

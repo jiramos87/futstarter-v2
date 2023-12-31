@@ -48,7 +48,6 @@ const compositeShortNames = [
 ]
 
 export const getPlayerLastName = (name) => {
-  console.log('name', name)
   const words = name.split(' ')
   if (compositeShortNames.includes(words[0])) {
     return name

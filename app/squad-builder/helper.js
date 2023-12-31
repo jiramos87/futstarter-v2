@@ -2,6 +2,7 @@ import axios from 'axios'
 
 import { getInitialSquadAttributes, getInitialSquadRatings } from '../../src/constants/squad'
 import { parseHeight } from '../../src/utils/string_util'
+import { SQUAD_FORMATIONS_POSITIONS } from '../../src/constants/formations'
 
 const getSearchFilterString = (searchFilters) => {
   if (!searchFilters) return ''
@@ -129,6 +130,7 @@ export const handleDropdownItemClick = (player, stateSetters) => {
     setSelectedPlayers(updatedSelectedPlayers)
     setSelectedPlayer(player)
   }
+
   calculateSquadRating({}, stateSetters)
   calculateSquadAttributes({}, stateSetters)
   setShowDropdown(false)
@@ -608,4 +610,41 @@ export const handleNewSquadClick = (stateSetters) => {
   setSquadRatings(getInitialSquadRatings())
   setSquadAttributes(getInitialSquadAttributes())
   setShowSquadAttributes(false)
+}
+
+const getNewSquadPositions = (newFormation, state) => {
+  const { selectedPlayers } = state
+
+  const currentPositions = Object.keys(selectedPlayers)
+
+  const newPositions = SQUAD_FORMATIONS_POSITIONS[newFormation].map((position) => position.name)
+
+  const newSelectedPlayers = {}
+
+  for (let i = 0; i < newPositions.length; i++) {
+    const newPosition = newPositions[i]
+    const currentPosition = currentPositions[i]
+
+    if (currentPosition) {
+      newSelectedPlayers[newPosition] = selectedPlayers[currentPosition]
+    } else {
+      newSelectedPlayers[newPosition] = null
+    }
+  }
+  
+  return newSelectedPlayers
+}
+
+export const handleSetFormation = (formation, stateSetters) => {
+  const { state, setters } = stateSetters
+  const { setFormation, setSelectedPlayers } = setters
+
+  const currentFormation = state.formation
+
+  if (currentFormation === formation) return
+
+  const newSelectedPlayers = getNewSquadPositions(formation, state)
+
+  setFormation(formation)
+  setSelectedPlayers(newSelectedPlayers)
 }

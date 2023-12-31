@@ -1,7 +1,7 @@
 import { FaLightbulb, FaTimes } from 'react-icons/fa'
 
 import { SQUAD_FORMATIONS_POSITIONS } from '../../../src/constants/formations'
-import { handlePositionSelection, handleRemovePlayer, handleSuggestionClick } from '../helper'
+import { handlePositionSelection, handleRemovePlayer, handleSetFormation, handleSuggestionClick } from '../helper'
 import { PlayerCard } from '../../components/PlayerCard'
 
 export const PlayerPitch = ({ stateSetters }) => {
@@ -16,7 +16,7 @@ export const PlayerPitch = ({ stateSetters }) => {
           <select
             name="formation"
             value={state.formation}
-            onChange={(e) => setters.setFormation(e.target.value)}
+            onChange={(e) => handleSetFormation(e.target.value, stateSetters)}
             className="border border-gray-700 rounded-md px-3 py-2 w-75 bg-gray-800 text-white"
           >
             {Object.keys(SQUAD_FORMATIONS_POSITIONS).map((formation) => (
@@ -41,7 +41,8 @@ export const PlayerPitch = ({ stateSetters }) => {
               className={`card-container ${state.selectedPosition === position.name ? 'clicked' : ''}`}
               style={{ width: '6.7rem', height: '8rem', position: 'relative', overflow: 'visible' }}
             >
-              {state.selectedPlayers[position.name] ? (
+              {state.selectedPlayers[position.name]
+              ? (
                 <>
                   <button className="player-card-button">
                     <PlayerCard player={state.selectedPlayers[position.name]} size={10} />
@@ -55,7 +56,8 @@ export const PlayerPitch = ({ stateSetters }) => {
                     <FaTimes size={20} color="black" />
                   </div>
                 </>
-              ) : (
+              )
+              : (
                 <>
                   <button
                     className="z-10"
