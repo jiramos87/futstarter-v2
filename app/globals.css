@@ -381,7 +381,8 @@ body {
 
 .player-details-container {
   height: 100%;
-  overflow: hidden;
+  min-width: 30rem;
+  overflow: scroll;
 }
 
 .player-detail-selector-buttons {
@@ -555,8 +556,8 @@ body {
   background-position: top center;
   height: 46rem;
   width: 52rem;
-  min-height: 44rem;
-  min-width: 48rem;
+  min-height: 40rem;
+  min-width: 44rem;
 }
 
 .main-style {
@@ -587,6 +588,74 @@ body {
 .squad-vertical-nav-link:hover,
 .squad-vertical-nav-link-selected:hover {
   color: #a0aec0; /* Equivalent to hover:text-gray-400 in Tailwind */
+}
+
+.select-suggestion-compare-limit {
+  color: #ffffff;
+  background-color: var(--dark-green);
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.player-suggestion-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.player-suggestion-table-header-cell {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 2rem;
+  cursor: pointer;
+}
+
+.player-suggestion-table-header-cell:hover {
+  background-color: #4b5563;
+}
+
+.player-suggestion-table-header-name-cell {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 10rem;
+  cursor: pointer;
+}
+
+.player-suggestion-table-header-name-cell:hover {
+  background-color: #4b5563;
+}
+
+.player-suggestion-table-cell {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 2rem;
+}
+
+.player-suggestion-table-name-cell {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 10rem;
+  max-width: 10rem;
+}
+
+.player-suggestion-table-row {
+  border-bottom: 1px solid #4b5563;
+  cursor: pointer;
+}
+
+.player-suggestion-table-row:hover {
+  background-color: #4b5563;
 }
 
 @keyframes buttonClick {

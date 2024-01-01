@@ -27,7 +27,7 @@ const SquadBuilderPage = () => {
         </div>
         
         {state.user && (
-        <div className="squad-tool-container" style={{ flexBasis: '20%' }}>
+        <div className="squad-tool-container" style={{ flexBasis: '14%' }}>
           {state.showSquadActions && <SquadActions stateSetters={stateSetters} />}
           {state.showSearchField && <PlayerSearchField stateSetters={stateSetters} />}
           {state.showSquadAttributes && <SquadAttributes stateSetters={stateSetters} />}
@@ -35,7 +35,7 @@ const SquadBuilderPage = () => {
         )}
         {!state.user && (<><WelcomeLogin /></>)}
         
-        <div className="player-pitch-container" style={{ flexBasis: '50%' }}>
+        <div className="player-pitch-container" style={{ flexBasis: '56%' }}>
           <PlayerPitch stateSetters={stateSetters} />
         </div>
 

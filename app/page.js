@@ -1,6 +1,6 @@
 'use client'
 
-import { bigSubtitleStyle, veryBigHeaderStyle } from './styles/text_styles'
+import { veryBigHeaderStyle } from './styles/text_styles'
 import MainLayout from './layouts/main_layout'
 
 const Header = ({ title }) => {

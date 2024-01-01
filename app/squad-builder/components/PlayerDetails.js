@@ -1,7 +1,8 @@
 import { RadarChart } from "../../components/radar_chart"
-import { handleCompareClick, handleSeePlayerDetailedStatsClick, handleSeePlayerFaceStatsClick, prepareRadarChartData } from "../helper"
+import { handleCompareClick, handleSeePlayerDetailedStatsClick, handleSeePlayerFaceStatsClick, handleSeePlayerSuggestionsCompare, prepareRadarChartData } from "../helper"
 
 import { PlayerStats } from "./PlayerStats"
+import { PlayerSuggestionsCompare } from "./PlayerSuggestionsCompare"
 
 export const PlayerDetails = ({ stateSetters }) => {
   const { state } = stateSetters
@@ -27,10 +28,19 @@ export const PlayerDetails = ({ stateSetters }) => {
         >
           Compare
         </button>
+        <button
+          className={`${state.selectedPlayerDetailsOption === 'suggestions' ? 'details-button-selected' : 'player-details-button '}`}
+          onClick={async () => await handleSeePlayerSuggestionsCompare(stateSetters)}
+        >
+          Suggestions
+        </button>
       </div>
       <div className="player-selected-details" >
+        {(state.selectedPlayer && state.showPlayerSuggestionsCompare) &&
+          ( <PlayerSuggestionsCompare stateSetters={stateSetters} /> )
+        }
         {state.comparing || state.playerToCompare
-          ? (<RadarChart radarData={prepareRadarChartData(state.selectedPlayer, state.playerToCompare)} stateSetters={stateSetters} />)
+          ? (<RadarChart radarData={prepareRadarChartData(state.selectedPlayer.player, state.playerToCompare)} stateSetters={stateSetters} />)
           : (<PlayerStats stateSetters={stateSetters} />)
         }
       </div>

@@ -33,7 +33,20 @@ export const useSquadBuilderState = () => {
   const [showPlayerDetailedStats, setShowPlayerDetailedStats] = useState(false)
   const [selectedPlayerDetailsOption, setSelectedPlayerDetailsOption] = useState('basic')
   const [selectedSquadVerticalNavOption, setSelectedSquadVerticalNavOption] = useState('attributes')
-
+  const [showPlayerSuggestionsCompare, setShowPlayerSuggestionsCompare] = useState(false)
+  const [suggestionCompareList, setSuggestionCompareList] = useState([])
+  const [suggestionCompareParams, setSuggestionCompareParams] = useState({})
+  const [suggestionCompareLimit, setSuggestionCompareLimit] = useState(5)
+  const [suggestionCompareOrders, setSuggestionCompareOrders] = useState({
+    'name': 'asc',
+    'rating': 'desc',
+    'PAC': 'desc',
+    'SHO': 'desc',
+    'PAS': 'desc',
+    'DRI': 'desc',
+    'DEF': 'desc',
+    'PHY': 'desc'
+  })
 
   const state = {
     user,
@@ -64,7 +77,12 @@ export const useSquadBuilderState = () => {
     showPlayerFaceStats,
     showPlayerDetailedStats,
     selectedPlayerDetailsOption,
-    selectedSquadVerticalNavOption
+    selectedSquadVerticalNavOption,
+    showPlayerSuggestionsCompare,
+    suggestionCompareList,
+    suggestionCompareParams,
+    suggestionCompareLimit,
+    suggestionCompareOrders
   }
 
   const setters = {
@@ -96,7 +114,12 @@ export const useSquadBuilderState = () => {
     setShowPlayerFaceStats,
     setShowPlayerDetailedStats,
     setSelectedPlayerDetailsOption,
-    setSelectedSquadVerticalNavOption
+    setSelectedSquadVerticalNavOption,
+    setShowPlayerSuggestionsCompare,
+    setSuggestionCompareList,
+    setSuggestionCompareParams,
+    setSuggestionCompareLimit,
+    setSuggestionCompareOrders
   }
 
   const stateSetters = {

@@ -2,12 +2,12 @@ import { useEffect } from 'react'
 
 import { getLoginSessionFromDocumentToken, getTokenFromDocumentCookie } from '../../lib/client-cookies'
 
-import { handleLoadStartSquadClick, hasSquadChanged } from './helper'
+import { findSuggestionsToCompare, handleLoadStartSquadClick, hasSquadChanged } from './helper'
 
 export const useSquadBuilderEffects = (stateSetters) => {
   const { state, setters } = stateSetters
   const { setUser, setError, setIsSquadSaved } = setters
-  const { formation, selectedPlayers, squadName, squadDescription, squadId } = state
+  const { formation, selectedPlayers, selectedPosition, squadName, squadDescription, squadId, suggestionCompareLimit } = state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,5 +33,17 @@ export const useSquadBuilderEffects = (stateSetters) => {
     }
   }, [formation, selectedPlayers, squadName, squadDescription])
 
+
+
+  useEffect(() => {
+     const findSuggestions = async () => {
+       await findSuggestionsToCompare('rating', stateSetters, 'desc')
+     }
+
+      findSuggestions()
+  } , [suggestionCompareLimit, selectedPosition])
+
   return
+
+
 }

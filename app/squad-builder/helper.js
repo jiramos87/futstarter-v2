@@ -104,7 +104,7 @@ export const calculateSquadRating = (initialPlayers = {}, stateSetters) => {
 
   const usedPlayers = Object.values(initialPlayers).length > 0 ? initialPlayers : selectedPlayers
 
-  const players = Object.values(usedPlayers).filter((player) => player !== null)
+  const players = Object.values(usedPlayers).filter((pos) => pos !== null).map((pos) => pos.player)
 
   if (players.length === 0) {
     setSquadRatings({ average: 0, PAC: 0, SHO: 0, PAS: 0, DRI: 0, DEF: 0, PHY: 0 })
@@ -122,9 +122,8 @@ export const handleDropdownItemClick = (player, stateSetters) => {
   const { selectedPlayers, selectedPosition, comparing, formation } = state
   const { setSelectedPlayers, setSelectedPlayer, setPlayerToCompare, setComparing, setShowDropdown } = setters
 
-  const playerIndex = SQUAD_FORMATIONS_POSITIONS[formation].findIndex((position) => position.name === selectedPosition)
-  console.log('player', player)
-  console.log('playerIndex', playerIndex)
+  const playerIndex = SQUAD_FORMATIONS_POSITIONS[formation].indexOf(SQUAD_FORMATIONS_POSITIONS[formation].find((pos) => pos.name === selectedPosition))
+
   const updatedSelectedPlayers = { ...selectedPlayers, [playerIndex]: { POS: selectedPosition, player } }
 
   if (comparing) {
@@ -132,7 +131,7 @@ export const handleDropdownItemClick = (player, stateSetters) => {
     setComparing(false)
   } else {
     setSelectedPlayers(updatedSelectedPlayers)
-    setSelectedPlayer(player)
+    setSelectedPlayer({ POS: selectedPosition, player })
   }
 
   calculateSquadRating({}, stateSetters)
@@ -178,8 +177,10 @@ export   const calculateSquadAttributes = (initialPlayers = {}, stateSetters) =>
   const { setSquadAttributes } = setters
   const usedPlayers = Object.values(initialPlayers).length > 0 ? initialPlayers : selectedPlayers
 
-  const players = Object.keys(usedPlayers).filter((key) => key !== null).map((key) => {
-    return {...usedPlayers[key], position: key }
+  const filteredUserPlayers = Object.values(usedPlayers).filter((pos) => pos !== null)
+
+  const players = filteredUserPlayers.map((pos) => {
+    return {...pos.player, position: pos.POS }
   })
 
   const initialSquadAttributes = getInitialSquadAttributes()
@@ -283,7 +284,7 @@ export const hasSquadChanged = (state) => {
   )
 }
 
-export const handlePositionSelection = (position, stateSetters) => {
+export const handlePositionSelection = async (position, stateSetters) => {
   const { state, setters } = stateSetters
   const { selectedPlayers, formation } = state
   const { setSelectedPosition, setSelectedPlayer, setShowSearchField } = setters
@@ -294,13 +295,16 @@ export const handlePositionSelection = (position, stateSetters) => {
   const input = document.querySelector('input[name="playerName"]')
   input && input.focus()
 
-  const playerIndex = SQUAD_FORMATIONS_POSITIONS[formation].findIndex((position) => position.name === position)
+  const playerIndex = SQUAD_FORMATIONS_POSITIONS[formation].indexOf(SQUAD_FORMATIONS_POSITIONS[formation].find((pos) => pos.name === position))
+
   const playerInPosition = selectedPlayers[playerIndex]
 
   if (!playerInPosition) {
     setSelectedPlayer(null)
   } else {
     setSelectedPlayer(playerInPosition)
+
+    if (state.showPlayerSuggestionsCompare) await findSuggestionsToCompare('rating', stateSetters, 'desc')
   }
 }
 
@@ -314,11 +318,26 @@ export const toggleUseSearchFilters = (stateSetters) => {
 
 export  const handleCompareClick = (stateSetters) => {
   const { setters } = stateSetters
-  const { setComparing, setShowPlayerFaceStats, setShowPlayerDetailedStats, setSelectedPlayerDetailsOption } = setters
+  const { setComparing, setShowPlayerFaceStats, setShowPlayerDetailedStats, setSelectedPlayerDetailsOption, setShowPlayerSuggestionsCompare } = setters
   setShowPlayerFaceStats(false)
   setShowPlayerDetailedStats(false)
+  setShowPlayerSuggestionsCompare(false)
   setComparing(true)
   setSelectedPlayerDetailsOption('compare')
+}
+
+export const handleSeePlayerSuggestionsCompare = async (stateSetters) => {
+  const { setters } = stateSetters
+  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setSelectedPlayerDetailsOption, setShowPlayerSuggestionsCompare, setComparing, setPlayerToCompare } = setters
+
+  await findSuggestionsToCompare('rating', stateSetters)
+
+  setComparing(false)
+  setPlayerToCompare(null)
+  setShowPlayerFaceStats(false)
+  setShowPlayerDetailedStats(false)
+  setShowPlayerSuggestionsCompare(true)
+  setSelectedPlayerDetailsOption('suggestions')
 }
 
 export const handleSaveSquadClick = async (stateSetters) => {
@@ -403,10 +422,10 @@ export const handleLoadSquad = (squadId, stateSetters) => {
       setFormation(selectedSquad.formation)
       setSelectedPlayers(selectedSquad.players || {})
 
-      const firstPlayer = Object.values(selectedSquad.players)[0]
+      const firstPlayer = Object.values(selectedSquad.players)[0].player
       if (firstPlayer) {
         setSelectedPlayer(firstPlayer)
-        setSelectedPosition(Object.keys(selectedSquad.players)[0])
+        setSelectedPosition(Object.values(selectedSquad.players)[0].POS)
       }
 
       setInitialState({
@@ -449,9 +468,10 @@ export const handleLoadStartSquadClick = async (session, stateSetters) => {
       handleSeePlayerFaceStatsClick(stateSetters)
       setSelectedPlayers(firstSquad.players || {})
       const firstPlayer = Object.values(firstSquad.players)[0]
+
       if (firstPlayer) {
         setSelectedPlayer(firstPlayer)
-        setSelectedPosition(Object.keys(firstSquad.players)[0])
+        setSelectedPosition(firstPlayer.POS)
       }
 
       setInitialState({
@@ -494,6 +514,32 @@ export const handleSuggestionClick = async (position, stateSetters) => {
     }
   } catch (error) {
     console.error('Error getting suggestion:', error)
+  }
+}
+
+export const findSuggestionsToCompare = async (sortingAttribute, stateSetters, order = null) => {
+  const { state, setters } = stateSetters
+  const { suggestionCompareLimit, suggestionCompareOrders, selectedPosition } = state
+  const { setSuggestionCompareList, setSuggestionCompareOrders } = setters
+
+  try {
+    const response = await axios.get(`http://localhost:3000/api/players/suggestions-compare`, {
+      params: {
+        playerName: state.selectedPlayer.player.name,
+        position: selectedPosition,
+        sort: sortingAttribute,
+        order: suggestionCompareOrders[sortingAttribute],
+        limit: suggestionCompareLimit
+      }
+    })
+
+    if (response.data && response.data.playerItems) {
+      setSuggestionCompareList(response.data.playerItems)
+      setSuggestionCompareOrders({ ...suggestionCompareOrders, [sortingAttribute]: order || (suggestionCompareOrders[sortingAttribute] === 'asc' ? 'desc' : 'asc') })
+    }
+  } catch (error) {
+    console.error('Error getting suggestions to compare:', error)
+    setSuggestionCompareList([])
   }
 }
 
@@ -577,21 +623,23 @@ export const toggleSquadAttributes = (stateSetters) => {
 
 export const handleSeePlayerFaceStatsClick = (stateSetters) => {
   const { setters } = stateSetters
-  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare, setSelectedPlayerDetailsOption } = setters
+  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare, setSelectedPlayerDetailsOption, setShowPlayerSuggestionsCompare } = setters
   setComparing(false)
   setShowPlayerDetailedStats(false)
   setPlayerToCompare(null)
   setShowPlayerFaceStats(true)
+  setShowPlayerSuggestionsCompare(false)
   setSelectedPlayerDetailsOption('basic')
 }
 
 export const handleSeePlayerDetailedStatsClick = (stateSetters) => {
   const { setters } = stateSetters
-  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare, setSelectedPlayerDetailsOption } = setters
+  const { setShowPlayerFaceStats, setShowPlayerDetailedStats, setComparing, setPlayerToCompare, setSelectedPlayerDetailsOption, setShowPlayerSuggestionsCompare } = setters
   setComparing(false)
   setPlayerToCompare(null)
   setShowPlayerFaceStats(false)
   setShowPlayerDetailedStats(true)
+  setShowPlayerSuggestionsCompare(false)
   setSelectedPlayerDetailsOption('ig')
 }
 

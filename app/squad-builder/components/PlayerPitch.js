@@ -35,7 +35,7 @@ export const PlayerPitch = ({ stateSetters }) => {
               left: `calc(${position.position.left} - 3.3rem)`,
               overflow: 'visible'
             }}
-            onClick={() => handlePositionSelection(position.name, stateSetters)}
+            onClick={async () => await handlePositionSelection(position.name, stateSetters)}
           >
             <div
               className={`card-container ${state.selectedPosition === position.name ? 'clicked' : ''}`}
