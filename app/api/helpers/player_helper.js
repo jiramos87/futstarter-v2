@@ -30,6 +30,16 @@ const getDetailedStats = (playerItem) => ({
   aggression: playerItem.stats.aggression
 })
 
+export const parsePlayerPrice = (price) => {
+  if (price[price.length - 1] === 'K') {
+    return Number(price.slice(0, price.length - 1)) * 1000
+  } else if (price[price.length - 1] === 'M') {
+    return Number(price.slice(0, price.length - 1)) * 1000000
+  } else {
+    return Number(price)
+  }
+}
+
 export const parsePlayerItems = (playerItem) => {
   let parsedPlayer = { 
     playerItemId: playerItem.id,
@@ -39,6 +49,7 @@ export const parsePlayerItems = (playerItem) => {
     nation: playerItem.nation,
     league: playerItem.league,
     mainPosition: playerItem.mainPosition,
+    secondaryPositions: playerItem.secondaryPositions,
     skillMoves: playerItem.skillMoves,
     weakFoot: playerItem.weakFoot,
     height: playerItem.height,
@@ -50,7 +61,14 @@ export const parsePlayerItems = (playerItem) => {
     DRI: playerItem.DRI,
     DEF: playerItem.DEF,
     PHY: playerItem.PHY,
-    imageUrl: playerItem.imageUrl
+    imageUrl: playerItem.imageUrl,
+    price: playerItem.price,
+    nationId: playerItem.nationId,
+    nationImageUrl: playerItem.nationImageUrl,
+    clubId: playerItem.clubId,
+    clubImageUrl: playerItem.clubImageUrl,
+    leagueId: playerItem.leagueId,
+    leagueImageUrl: playerItem.leagueImageUrl
   }
 
   if (playerItem.stats) {

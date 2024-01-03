@@ -100,7 +100,7 @@ export const handleSearchButtonClick = (stateSetters) => {
 export const calculateSquadRating = (initialPlayers = {}, stateSetters) => {
   const { state, setters } = stateSetters
   const { selectedPlayers, squadRatings } = state
-  const { setSquadRatings } = setters
+  const { setSquadRatings, setSquadPrice } = setters
 
   const usedPlayers = Object.values(initialPlayers).length > 0 ? initialPlayers : selectedPlayers
 
@@ -276,6 +276,23 @@ export   const calculateSquadAttributes = (initialPlayers = {}, stateSetters) =>
   setSquadAttributes(processedSquadAttributes)
 }
 
+export const calculateSquadPrice = (stateSetters) => {
+  const { state, setters } = stateSetters
+  const { selectedPlayers } = state
+  const { setSquadPrice } = setters
+
+  const players = Object.values(selectedPlayers).filter((pos) => pos !== null).map((pos) => pos.player)
+
+  if (players.length === 0) {
+    setSquadPrice(0)
+    return
+  }
+
+  const totalPrice = players.reduce((accumulator, player) => accumulator + player.price, 0)
+
+  setSquadPrice(totalPrice)
+}
+
 export const hasSquadChanged = (state) => {
   const { initialState, formation, selectedPlayers, squadName, squadDescription } = state
 
@@ -422,7 +439,8 @@ export const handleLoadSquad = (squadId, stateSetters) => {
       setFormation(selectedSquad.formation)
       setSelectedPlayers(selectedSquad.players || {})
 
-      const firstPlayer = Object.values(selectedSquad.players)[0].player
+      const firstPlayer = Object.values(selectedSquad.players)[0]
+
       if (firstPlayer) {
         setSelectedPlayer(firstPlayer)
         setSelectedPosition(Object.values(selectedSquad.players)[0].POS)

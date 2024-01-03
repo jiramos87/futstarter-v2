@@ -1,20 +1,8 @@
 import { Op } from "sequelize"
-import { inspect } from "util"
 
 import { findAllPlayerItems } from "../../../../src/dao/player_item_dao"
 import { parsePlayerItems } from "../../helpers/player_helper"
-
-const parsePlayerPosition = (playerPosition) => {
-  if (!playerPosition) return null
-
-  if (['LST', 'RST', 'ST'].includes(playerPosition)) return 'ST'
-  if (['LCAM', 'RCAM', 'CAM'].includes(playerPosition)) return 'CAM'
-  if (['LCM', 'RCM', 'CCM', 'CM'].includes(playerPosition)) return 'CM'
-  if (['LDM', 'RDM', 'CCDM', 'CDM'].includes(playerPosition)) return 'CDM'
-  if (['LCB', 'RCB', 'CCB', 'CB'].includes(playerPosition)) return 'CB'
-  
-  return playerPosition
-}
+import { parsePlayerPosition } from "../suggestions/route"
 
 const getPlayerFilters = (searchParams) => {
   const playerPosition = searchParams.get('position')

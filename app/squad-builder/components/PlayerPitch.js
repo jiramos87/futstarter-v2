@@ -12,6 +12,12 @@ export const PlayerPitch = ({ stateSetters }) => {
       {state.user && (
       <>
         <div className="formation-div" style={{ width: '30%' }}>
+          <div>
+            <h1 className="text-lg mb-2">Squad Name: {state.squadName}</h1>
+          </div>
+          <div>
+            <h1 className="text-lg mb-2">Squad price: {state.squadPrice}</h1>
+          </div>
           <h1 className="text-lg mb-2">Formation</h1>
           <select
             name="formation"

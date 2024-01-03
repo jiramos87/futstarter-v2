@@ -51,7 +51,7 @@ export const SquadActions = ({ stateSetters }) => {
       <button onClick={() => { state.squadId ? handleUpdateSquadClick(stateSetters) : handleSaveSquadClick(stateSetters)}} className="save-squad-button">
         Save Squad
       </button>
-      {state.isSquadSaved && state.squadId && <span className="text-green-500 ml-2">✔</span>}
+      {state.isSquadSaved && state.squadId && <span className="save-squad-ticket">✔</span>}
     </div>
   )
 }

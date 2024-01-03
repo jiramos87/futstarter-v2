@@ -145,6 +145,46 @@ class PlayerItem extends Sequelize.Model {
         type: DataTypes.STRING,
         allowNull: true,
         field: 'image_url'
+      },
+      nationId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'nation_id'
+      },
+      nationImageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'nation_image_url'
+      },
+      clubId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'club_id'
+      },
+      clubImageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'club_image_url'
+      },
+      leagueId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'league_id'
+      },
+      leagueImageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'league_image_url'
+      },
+      playStylePlusId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'playstyle_plus_id'
+      },
+      playStylePlusImageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'playstyle_plus_image_url'
       }
     }, {
       sequelize,

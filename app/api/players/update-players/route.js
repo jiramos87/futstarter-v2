@@ -11,7 +11,6 @@ const parsePlayerItemCreationData = (playersData) => {
   const playersStats = []
   const now = new Date()
   playersData.forEach((playerData) => {
-    console.log('playerData.playerItemId', playerData.playerItemId)
     const player = {
       id: playerData.playerItemId,
       name: playerData.playerName,
@@ -20,7 +19,7 @@ const parsePlayerItemCreationData = (playersData) => {
       league: playerData.playerLeague,
       version: playerData.playerVersion,
       rating: playerData.playerRating,
-      price: playerData.playerPrice,
+      price: playerData.playerParsedPrice,
       priceChange: playerData.playerPriceChange,
       accelType: playerData.playerAccelerationType,
       mainPosition: playerData.playerMainPosition,
@@ -43,7 +42,15 @@ const parsePlayerItemCreationData = (playersData) => {
       totalInGameStats: playerData.playerTotalInGameStats,
       createdAt: now,
       updatedAt: now,
-      imageUrl: playerData.playerImageUrl
+      imageUrl: playerData.playerImageUrl,
+      nationId: playerData.playerNationId,
+      nationImageUrl: playerData.playerNationLogoUrl,
+      clubId: playerData.playerClubId,
+      clubImageUrl: playerData.playerClubLogoUrl,
+      leagueId: playerData.playerLeagueId,
+      leagueImageUrl: playerData.playerLeagueLogoUrl,
+      playStylePlusId: playerData.playerPlayStylePlusId
+      // playStylePlusImageUrl: playerData.playerPlayStylePlusLogoUrl,
     }
 
     const playerInGameStats = playerData.playerInGameStats
@@ -104,7 +111,7 @@ export async function POST(request) {
 
   const accPlayerDataForJSON = []
 
-  for (let i = 1; i <= totalPagesCount; i++) {
+  for (let i = 11; i <= totalPagesCount; i++) {
     console.log('page ', i)
     const response = await scrapePlayerData(FUTBIN_GOLD_PLAYERS_URL + '&page=' + i)
 

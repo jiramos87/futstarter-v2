@@ -25,7 +25,16 @@ export const bulkCreatePlayerItems = async (playersData) => {
         'popularity',
         'totalBaseStats',
         'totalInGameStats',
-        'updatedAt'
+        'updatedAt',
+        'imageUrl',
+        'nationId',
+        'nationImageUrl',
+        'clubId',
+        'clubImageUrl',
+        'leagueId',
+        'leagueImageUrl',
+        'playStylePlusId',
+        'playStylePlusImageUrl'
       ],
     }
   )
