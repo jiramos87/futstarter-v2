@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { BsArrowUp, BsArrowDown, BsArrowRepeat } from 'react-icons/bs';
 
 import { findSuggestionsToCompare, handleDropdownItemClick } from "../helper"
+import { getPlayerLastName } from '../../../src/utils/string_util';
 
 const getStatColor = (stat, selectePlayerStat) => {
   if (stat > selectePlayerStat) {
@@ -11,6 +12,26 @@ const getStatColor = (stat, selectePlayerStat) => {
     return 'rgb(3, 99, 38)';
   } else {
     return 'rgb(134, 145, 138)';
+  }
+}
+
+const determineSuggestionPriceFontSize = (price) => {
+  if (price > 1000000) {
+    return '0.7rem'
+  } else if (price > 100000) {
+    return '0.8rem'
+  } else if (price > 10000) {
+    return '0.9rem'
+  } else {
+    return '1rem'
+  }
+}
+
+const determinePlayerNameFontSize = (name) => {
+  if (name.length > 10) {
+    return '0.8rem'
+  } else {
+    return '1rem'
   }
 }
 
@@ -46,6 +67,7 @@ export const PlayerSuggestionsCompare = ({ stateSetters }) => {
         <table className="player-suggestion-table">
           <thead className="player-suggestion-table-header">
             <tr className="player-suggestion-table-header-row">
+              <th className="player-suggestion-table-header-cell"></th>
               <th className="player-suggestion-table-header-name-cell">Name</th>
               <th className="player-suggestion-table-header-cell">OVR</th>
               <th className="player-suggestion-table-header-cell">PAC</th>
@@ -54,27 +76,28 @@ export const PlayerSuggestionsCompare = ({ stateSetters }) => {
               <th className="player-suggestion-table-header-cell">DRI</th>
               <th className="player-suggestion-table-header-cell">DEF</th>
               <th className="player-suggestion-table-header-cell">PHY</th>
-              <th className="player-suggestion-table-header-cell">Price</th>
+              <th className="player-suggestion-table-header-cell-price">Price</th>
             </tr>
           </thead>
           <tbody>
               <tr className="player-suggestion-table-row">
+                <td className="exchange-icon-cell"></td>
                 <td className="player-suggestion-table-name-cell">
                   <div className="flex flex-row items-center">
                     <Image src={state.selectedPlayer.player.imageUrl} width={32} height={32} alt='player image' />
-                    <div>
-                      {state.selectedPlayer.player.name}
+                    <div style={{ fontSize: determinePlayerNameFontSize(getPlayerLastName(state.selectedPlayer.player.name))}}>
+                      {getPlayerLastName(state.selectedPlayer.player.name)}
                     </div>
                   </div>
                 </td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(state.selectedPlayer.player.rating)}}>{state.selectedPlayer.player.rating}</td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(state.selectedPlayer.player.PAC)}}>{state.selectedPlayer.player.PAC}</td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(state.selectedPlayer.player.SHO)}}>{state.selectedPlayer.player.SHO}</td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(state.selectedPlayer.player.PAS)}}>{state.selectedPlayer.player.PAS}</td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(state.selectedPlayer.player.DRI)}}>{state.selectedPlayer.player.DRI}</td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(state.selectedPlayer.player.DEF)}}>{state.selectedPlayer.player.DEF}</td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(state.selectedPlayer.player.PHY)}}>{state.selectedPlayer.player.PHY}</td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(state.selectedPlayer.player.price)}}>{state.selectedPlayer.player.price}</td>
+                <td className="player-suggestion-table-cell">{state.selectedPlayer.player.rating}</td>
+                <td className="player-suggestion-table-cell">{state.selectedPlayer.player.PAC}</td>
+                <td className="player-suggestion-table-cell">{state.selectedPlayer.player.SHO}</td>
+                <td className="player-suggestion-table-cell">{state.selectedPlayer.player.PAS}</td>
+                <td className="player-suggestion-table-cell">{state.selectedPlayer.player.DRI}</td>
+                <td className="player-suggestion-table-cell">{state.selectedPlayer.player.DEF}</td>
+                <td className="player-suggestion-table-cell">{state.selectedPlayer.player.PHY}</td>
+                <td className="player-suggestion-table-cell-price" style={{ fontSize: determineSuggestionPriceFontSize(state.selectedPlayer.player.price)}}>{state.selectedPlayer.player.price}</td>
               </tr>
             </tbody>
         </table>
@@ -131,7 +154,7 @@ export const PlayerSuggestionsCompare = ({ stateSetters }) => {
                 PHY
               </th>
               <th
-                className="player-suggestion-table-header-cell"
+                className="player-suggestion-table-header-cell-price"
                 onClick={() => findSuggestionsToCompare('price', stateSetters)}
               >
                 Price
@@ -146,25 +169,25 @@ export const PlayerSuggestionsCompare = ({ stateSetters }) => {
                     className="exchange-button"
                     onClick={() => handleDropdownItemClick(player, stateSetters)}
                   >
-                    <BsArrowRepeat size={20} />
+                    <BsArrowRepeat size={17} />
                   </button>
                 </td>
                 <td className="player-suggestion-table-name-cell">
                   <div className="flex flex-row items-center">
                     <Image src={player.imageUrl} width={32} height={32} alt='player image' />
-                    <div className="player-suggestion-table-cell-text">
-                      {player.name}
+                    <div style={{ fontSize: determinePlayerNameFontSize(getPlayerLastName(player.name))}}>
+                      {getPlayerLastName(player.name)}
                     </div>
                   </div>
                 </td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(player.rating, state.selectedPlayer.player.rating)}}>{player.rating}</td>
+                <td className="player-suggestion-table-cell" style={{ color: getStatColor(player.rating, state.selectedPlayer.player.rating)}}><>{player.rating}</></td>
                 <td className="player-suggestion-table-cell" style={{ color: getStatColor(player.PAC, state.selectedPlayer.player.PAC)}}>{player.PAC}</td>
                 <td className="player-suggestion-table-cell" style={{ color: getStatColor(player.SHO, state.selectedPlayer.player.SHO)}}>{player.SHO}</td>
                 <td className="player-suggestion-table-cell" style={{ color: getStatColor(player.PAS, state.selectedPlayer.player.PAS)}}>{player.PAS}</td>
                 <td className="player-suggestion-table-cell" style={{ color: getStatColor(player.DRI, state.selectedPlayer.player.DRI)}}>{player.DRI}</td>
                 <td className="player-suggestion-table-cell" style={{ color: getStatColor(player.DEF, state.selectedPlayer.player.DEF)}}>{player.DEF}</td>
                 <td className="player-suggestion-table-cell" style={{ color: getStatColor(player.PHY, state.selectedPlayer.player.PHY)}}>{player.PHY}</td>
-                <td className="player-suggestion-table-cell" style={{ color: getStatColor(player.price, state.selectedPlayer.player.price)}}>{player.price}</td>
+                <td className="player-suggestion-table-cell-price" style={{ color: getStatColor(player.price, state.selectedPlayer.player.price), fontSize: determineSuggestionPriceFontSize(player.price)}}>{player.price}</td>
               </tr>
             ))}
           </tbody>

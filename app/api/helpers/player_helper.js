@@ -62,7 +62,7 @@ export const parsePlayerItems = (playerItem) => {
     DEF: playerItem.DEF,
     PHY: playerItem.PHY,
     imageUrl: playerItem.imageUrl,
-    price: playerItem.price,
+    price: Number(playerItem.price),
     nationId: playerItem.nationId,
     nationImageUrl: playerItem.nationImageUrl,
     clubId: playerItem.clubId,

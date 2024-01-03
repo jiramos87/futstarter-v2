@@ -633,6 +633,25 @@ body {
 }
 
 .player-suggestion-table-header-cell {
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 2rem;
+  cursor: pointer;
+}
+
+
+.player-suggestion-table-header-cell-price {
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   padding-top: 0.4rem;
@@ -646,11 +665,14 @@ body {
 }
 
 .player-suggestion-table-header-name-cell {
+  font-size: 0.9rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
   width: 10rem;
+  min-width: 10rem;
+  max-width: 10rem;
   cursor: pointer;
 }
 
@@ -659,14 +681,34 @@ body {
 }
 
 .player-suggestion-table-cell {
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
   width: 2rem;
+  max-width: 2rem;
+}
+
+.player-suggestion-table-cell-price {
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 4rem;
+  max-width: 4rem;
 }
 
 .player-suggestion-table-name-cell {
+  font-size: 0.9rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   padding-top: 0.4rem;
@@ -675,7 +717,15 @@ body {
   max-width: 10rem;
 }
 
+.player-suggestion-table-header-row {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #4b5563;
+}
+
 .player-suggestion-table-row {
+  display: flex;
+  flex-direction: row;
   border-bottom: 1px solid #4b5563;
   cursor: pointer;
 }
@@ -704,6 +754,10 @@ body {
 
 .player-details-next-button:hover {
   background-color: var(--yellow-orange-darker);
+}
+
+.exchange-icon-cell {
+  width: 2rem;
 }
 
 @keyframes buttonClick {

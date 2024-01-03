@@ -123,7 +123,7 @@ export const handleDropdownItemClick = (player, stateSetters) => {
   const { setSelectedPlayers, setSelectedPlayer, setPlayerToCompare, setComparing, setShowDropdown } = setters
 
   const playerIndex = SQUAD_FORMATIONS_POSITIONS[formation].indexOf(SQUAD_FORMATIONS_POSITIONS[formation].find((pos) => pos.name === selectedPosition))
-
+  console.log('playerIndex', playerIndex)
   const updatedSelectedPlayers = { ...selectedPlayers, [playerIndex]: { POS: selectedPosition, player } }
 
   if (comparing) {
@@ -136,6 +136,7 @@ export const handleDropdownItemClick = (player, stateSetters) => {
 
   calculateSquadRating({}, stateSetters)
   calculateSquadAttributes({}, stateSetters)
+  calculateSquadPrice(stateSetters)
   setShowDropdown(false)
 }
 
@@ -289,7 +290,7 @@ export const calculateSquadPrice = (stateSetters) => {
   }
 
   const totalPrice = players.reduce((accumulator, player) => accumulator + player.price, 0)
-
+  console.log('totalPrice', totalPrice)
   setSquadPrice(totalPrice)
 }
 
@@ -465,6 +466,7 @@ export const handleLoadSquad = (squadId, stateSetters) => {
 
   calculateSquadRating({}, stateSetters)
   calculateSquadAttributes({}, stateSetters)
+  calculateSquadPrice(stateSetters)
 }
 
 export const handleLoadStartSquadClick = async (session, stateSetters) => {
@@ -500,6 +502,7 @@ export const handleLoadStartSquadClick = async (session, stateSetters) => {
       })
       calculateSquadRating(firstSquad.players, stateSetters)
       calculateSquadAttributes(firstSquad.players, stateSetters)
+      calculateSquadPrice(stateSetters)
       setShowSquadAttributes(true)
     }
   } catch (error) {
@@ -571,6 +574,7 @@ export const handleRemovePlayer = (playerIndex, stateSetters) => {
   setSelectedPlayer(null)
   calculateSquadRating({}, stateSetters)
   calculateSquadAttributes({}, stateSetters)
+  calculateSquadPrice(stateSetters)
 }
 
 const getPlayerRadarData = (player, borderColor, backgroundColor) => ({
