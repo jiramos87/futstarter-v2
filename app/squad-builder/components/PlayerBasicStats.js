@@ -1,4 +1,13 @@
 import Image from 'next/image'
+import { StarRating } from '../../components/Stars'
+
+const determinePlayerLogoAttributeFontSize = (attribute) => {
+  if (attribute.length > 10) {
+    return '0.7rem'
+  } else {
+    return '0.9rem'
+  }
+}
 
 export const PlayerBasicStats = ({ stateSetters }) => {
   const { state } = stateSetters
@@ -24,16 +33,16 @@ export const PlayerBasicStats = ({ stateSetters }) => {
           <div className='squad-div-title'>
             {player.name}
           </div>
-          <div className='flex flex-row justify-center'>
-            <div className='player-basic-stats-logos'>
+          <div className='grid grid-cols-3'>
+            <div className='player-basic-stats-logos' style={{ fontSize: determinePlayerLogoAttributeFontSize(player.nation)}}>
               <Image src={player.nationImageUrl} width={32} height={32} alt='player nation image' />
               {player.nation}
             </div>
-            <div className='player-basic-stats-logos'>
+            <div className='player-basic-stats-logos' style={{ fontSize: determinePlayerLogoAttributeFontSize(player.club) }}>
               <Image src={player.clubImageUrl} width={32} height={32} alt='player club image' />
               {player.club}
             </div>
-            <div className='player-basic-stats-logos'>
+            <div className='player-basic-stats-logos' style={{ fontSize: determinePlayerLogoAttributeFontSize(player.league) }}>
               <Image src={player.leagueImageUrl} width={32} height={32} alt='player league image' />
               {player.league}
             </div>
@@ -44,27 +53,27 @@ export const PlayerBasicStats = ({ stateSetters }) => {
           <tbody>
             <tr>
               <td>
-                <div className="flex flex-col items-center">
-                  <div className="squad-attributes-stats-text">Skill Moves</div>
-                  <div className="squad-attributes-stats">{player.skillMoves}</div>
-                  <div className="squad-attributes-stats-text">Weak Foot</div>
-                  <div className="squad-attributes-stats">{player.weakFoot}</div>
-                </div>
+              <div className="flex flex-col items-center">
+                <div className="squad-attributes-stats-text">SKILL MOVES</div>
+                <StarRating value={player.skillMoves} />
+                <div className="squad-attributes-stats-text">WEAK FOOT</div>
+                <StarRating value={player.weakFoot} />
+              </div>
               </td>
               <td>
                 <div className="flex flex-col items-center">
-                  <div className="squad-attributes-stats-text">Att WR</div> 
+                  <div className="squad-attributes-stats-text">ATT WR</div> 
                   <div className="squad-attributes-stats">{player.attackWorkRate}</div>
-                  <div className="squad-attributes-stats-text">Def WR</div>
+                  <div className="squad-attributes-stats-text">DEF WR</div>
                   <div className="squad-attributes-stats">{player.defenseWorkRate}</div>
                 </div>
               </td>
               <td>
                 <div className="flex flex-col items-center">
-                  <div className="squad-attributes-stats-text">Height</div>
+                  <div className="squad-attributes-stats-text">HEIGHT</div>
                   <div className="squad-attributes-stats">{player.height}</div>
-                  <div className="squad-attributes-stats-text">Weight</div>
-                  <div className="squad-attributes-stats">{player.weight}</div>
+                  <div className="squad-attributes-stats-text">WEIGHT</div>
+                  <div className="squad-attributes-stats">{player.weight} kg</div>
                 </div>
               </td>
             </tr>

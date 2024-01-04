@@ -48,6 +48,7 @@ export const useSquadBuilderState = () => {
     'PHY': 'desc'
   })
   const [squadPrice, setSquadPrice] = useState(0)
+  const [direction, setDirection] = useState(0)
 
   const state = {
     user,
@@ -84,7 +85,8 @@ export const useSquadBuilderState = () => {
     suggestionCompareParams,
     suggestionCompareLimit,
     suggestionCompareOrders,
-    squadPrice
+    squadPrice,
+    direction
   }
 
   const setters = {
@@ -122,7 +124,8 @@ export const useSquadBuilderState = () => {
     setSuggestionCompareParams,
     setSuggestionCompareLimit,
     setSuggestionCompareOrders,
-    setSquadPrice
+    setSquadPrice,
+    setDirection
   }
 
   const stateSetters = {

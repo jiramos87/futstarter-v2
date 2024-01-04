@@ -37,7 +37,6 @@ const determinePlayerNameFontSize = (name) => {
 
 export const PlayerSuggestionsCompare = ({ stateSetters }) => {
   const { state, setters } = stateSetters
-
   // const { suggestionCompareOrders } = state
 
   // const renderSortArrow = (attr) => {
@@ -68,6 +67,7 @@ export const PlayerSuggestionsCompare = ({ stateSetters }) => {
           <thead className="player-suggestion-table-header">
             <tr className="player-suggestion-table-header-row">
               <th className="player-suggestion-table-header-cell"></th>
+              <th className="player-suggestion-table-header-cell"></th>
               <th className="player-suggestion-table-header-name-cell">Name</th>
               <th className="player-suggestion-table-header-cell">OVR</th>
               <th className="player-suggestion-table-header-cell">PAC</th>
@@ -82,6 +82,9 @@ export const PlayerSuggestionsCompare = ({ stateSetters }) => {
           <tbody>
               <tr className="player-suggestion-table-row">
                 <td className="exchange-icon-cell"></td>
+                <td className="exchange-icon-cell flex flex-col justify-center items-center">
+                  <Image src={state.selectedPlayer.player.nationImageUrl} width={32} height={32} alt='player image' />
+                </td>
                 <td className="player-suggestion-table-name-cell">
                   <div className="flex flex-row items-center">
                     <Image src={state.selectedPlayer.player.imageUrl} width={32} height={32} alt='player image' />
@@ -104,6 +107,7 @@ export const PlayerSuggestionsCompare = ({ stateSetters }) => {
         <table className="player-suggestion-table">
           <thead className="player-suggestion-table-header">
             <tr className="player-suggestion-table-header-row">
+              <th className="player-suggestion-table-header-cell"></th>
               <th className="player-suggestion-table-header-cell"></th>
               <th 
                 className="player-suggestion-table-header-name-cell"
@@ -171,6 +175,9 @@ export const PlayerSuggestionsCompare = ({ stateSetters }) => {
                   >
                     <BsArrowRepeat size={17} />
                   </button>
+                </td>
+                <td className="exchange-icon-cell flex flex-col justify-center items-center">
+                  <Image src={player.nationImageUrl} width={32} height={32} alt='player image' />
                 </td>
                 <td className="player-suggestion-table-name-cell">
                   <div className="flex flex-row items-center">

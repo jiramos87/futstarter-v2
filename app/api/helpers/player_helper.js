@@ -40,6 +40,11 @@ export const parsePlayerPrice = (price) => {
   }
 }
 
+const parseWeight = (weight) => {
+  const weightInKg = weight.slice(weight.indexOf('(') + 1, weight.indexOf('kg'))
+  return Number(weightInKg)
+}
+
 export const parsePlayerItems = (playerItem) => {
   let parsedPlayer = { 
     playerItemId: playerItem.id,
@@ -53,6 +58,7 @@ export const parsePlayerItems = (playerItem) => {
     skillMoves: playerItem.skillMoves,
     weakFoot: playerItem.weakFoot,
     height: playerItem.height,
+    weight: parseWeight(playerItem.weight),
     attackWorkRate: playerItem.attackWorkRate,
     defenseWorkRate: playerItem.defenseWorkRate,
     PAC: playerItem.PAC,

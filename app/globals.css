@@ -204,7 +204,7 @@ body {
 
 .delete-button {
   position: absolute;
-  z-index: 10; /* Ensure icons are above other content */
+  z-index: 15; /* Ensure icons are above other content */
 }
 
 .delete-button {
@@ -232,13 +232,32 @@ body {
   justify-content: center;
 }
 
-.player-card-rating {
+.player-card-rating-position {
   position: absolute;
   z-index: 0;
-  font-size: 1.2rem;
-  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
   left: 20%;
   top: 10%;
+  height: 5%;
+  max-height: 5%;
+}
+
+.player-card-rating {
+  position: relative;
+  z-index: 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+  height: 1.2rem;
+}
+
+.player-card-position {
+  position: relative;
+  z-index: 0;
+  font-size: 0.8rem;
+  height: 0.9rem;
 }
 
 .player-card-image-container {
@@ -249,24 +268,47 @@ body {
   bottom: 0;
 }
 
+.player-card-bottom-data {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  top: 65%;
+}
+
 .player-card-attribute-text {
   position: relative;
   font-size: 0.4rem;
+  height: 0.4rem;
   font-family: 'Roboto Condensed', sans-serif;
 }
 
 .player-card-attribute-value-text {
   position: relative;
   font-size: 0.6rem;
+  height: 0.6rem;
   font-weight: bold;
   font-family: 'Roboto Condensed', sans-serif;
 }
 
 .player-card-attribute-div {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  height: 17%;
+}
+
+.player-card-nation-club-league-div {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 15%;
+  gap: 0.2rem;
 }
 
 .add-player-button {
@@ -393,8 +435,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  max-height: max-content;
-  overflow-y: hidden;
+  max-height: 100%;
+  overflow-y: scroll;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   justify-content: flex-start;
@@ -403,7 +445,8 @@ body {
 .player-details-container {
   height: 100%;
   min-width: 30rem;
-  overflow: scroll;
+  max-height: 100%;
+  overflow-y: scroll;
 }
 
 .player-detail-selector-buttons {
@@ -431,12 +474,6 @@ body {
 .player-details-button:hover {
   background-color: var(--yellow-orange-darker);
 }
-
-.player-selected-details {
-  height: 100%;
-  background-color: var(--black-green);
-  color: #ffffff;
-} 
 
 .details-button-selected {
   position: relative;
@@ -743,7 +780,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
 }
 
 .player-details-next-button {
@@ -758,6 +795,33 @@ body {
 
 .exchange-icon-cell {
   width: 2rem;
+}
+
+.player-selected-details {
+  width: 100%; /* Set the width here */
+  height: 100%;
+  background-color: var(--black-green);
+  color: #ffffff;
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+}
+
+/* Transition when moving to the next player */
+.player-selected-details.exiting-forward {
+  transform: translateX(0);
+}
+
+/* Transition when moving to the previous player */
+.player-selected-details.exiting-back {
+  transform: translateX(0);
+}
+
+.player-selected-details.entering-forward {
+  transform: translateX(-100%);
+}
+
+.player-selected-details.entering-back {
+  transform: translateX(100%);
 }
 
 @keyframes buttonClick {

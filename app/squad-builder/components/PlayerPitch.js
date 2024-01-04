@@ -56,7 +56,7 @@ export const PlayerPitch = ({ stateSetters }) => {
 
                   <div
                     className="delete-button"
-                    onClick={() => handleRemovePlayer(index, stateSetters)}
+                    onClick={(e) => handleRemovePlayer(index, stateSetters, e)}
                     style={{ bottom: '-10px', right: '-10px' }}
                   >
                     <FaTimes size={20} color="black" />

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { IoIosArrowForward, IoIosArrowDown } from 'react-icons/io';
+import Image from 'next/image';
 
 const CollapsibleSection = ({ title, content }) => {
   const [showContent, setShowContent] = useState(false);
@@ -58,9 +59,35 @@ export const SquadAttributes = ({ stateSetters }) => {
       <CollapsibleSection
         title="RATINGS"
         content={
-          <div className="flex flex-row px-4" style={{ width: '100%', marginTop: '10px' }}>
-            <div className="squad-attributes-stats-text">Global</div>
-            <p className="squad-attributes-stats">{state.squadRatings.average}</p>
+          <div className="flex flex-col px-4" style={{ width: '100%', marginTop: '10px' }}>
+            <div className="flex flex-row px-4">
+              <div className="squad-attributes-stats-text">OVR</div>
+              <p className="squad-attributes-stats">{state.squadRatings.average}</p>
+            </div>
+            <div className="flex flex-row px-4">
+              <div className="squad-attributes-stats-text">PAC</div>
+              <p className="squad-attributes-stats">{state.squadRatings.PAC}</p>
+            </div>
+            <div className="flex flex-row px-4">
+              <div className="squad-attributes-stats-text">SHO</div>
+              <p className="squad-attributes-stats">{state.squadRatings.SHO}</p>
+            </div>
+            <div className="flex flex-row px-4">
+              <div className="squad-attributes-stats-text">PAS</div>
+              <p className="squad-attributes-stats">{state.squadRatings.PAS}</p>
+            </div>
+            <div className="flex flex-row px-4">
+              <div className="squad-attributes-stats-text">DRI</div>
+              <p className="squad-attributes-stats">{state.squadRatings.DRI}</p>
+            </div>
+            <div className="flex flex-row px-4">
+              <div className="squad-attributes-stats-text">DEF</div>
+              <p className="squad-attributes-stats">{state.squadRatings.DEF}</p>
+            </div>
+            <div className="flex flex-row px-4">
+              <div className="squad-attributes-stats-text">PHY</div>
+              <p className="squad-attributes-stats">{state.squadRatings.PHY}</p>
+            </div>    
             {/* Content to be displayed when the rating is clicked (open) */}
           </div>
         }
@@ -122,9 +149,12 @@ export const SquadAttributes = ({ stateSetters }) => {
                 <div className="flex flex-col items-start squad-attributes-chem-stats-text">
                 {Object.keys(state.squadAttributes.clubs).map((club) => (
                   <div className="flex flex-row w-full align-start" key={club}>
-                    {club}:
+                    <div className="flex flex-row items-center">
+                      <Image src={`/clubs/${state.squadAttributes.clubs[club].id}.png`} width={20} height={20} alt='club image' />
+                      {club}:
+                    </div>
                     <div className="ml-2 squad-attributes-chem-stats-values-text">
-                      {state.squadAttributes.clubs[club]}
+                      {state.squadAttributes.clubs[club].count}
                     </div>
                   </div>
                 ))}
@@ -138,9 +168,12 @@ export const SquadAttributes = ({ stateSetters }) => {
                 <div className="flex flex-col items-start squad-attributes-chem-stats-text">
                 {Object.keys(state.squadAttributes.leagues).map((league) => (
                   <div className="flex flex-row w-full align-start" key={league}>
-                    {league}:
+                    <div className="flex flex-row items-center">
+                      <Image src={`/leagues/${state.squadAttributes.leagues[league].id}.png`} width={20} height={20} alt='league image' />
+                      {league}:
+                    </div>
                     <div className="ml-2 squad-attributes-chem-stats-values-text">
-                      {state.squadAttributes.leagues[league]}
+                      {state.squadAttributes.leagues[league].count}
                     </div>
                   </div>
                 ))}
@@ -151,9 +184,17 @@ export const SquadAttributes = ({ stateSetters }) => {
               <CollapsibleSection
                 title="NATIONS"
                 content={
-                  <div className="flex flex-col items-start">
+                  <div className="flex flex-col items-start squad-attributes-chem-stats-text">
                     {Object.keys(state.squadAttributes.nations).map((nation) => (
-                      <div key={nation}>{nation}: {state.squadAttributes.nations[nation]}</div>
+                      <div className="flex flex-row w-full align-start" key={nation}>
+                        <div className="flex flex-row items-center">
+                          <Image src={`/nations/${state.squadAttributes.nations[nation].id}.png`} width={20} height={20} alt='nation image' />
+                          {nation}:
+                        </div>
+                        <div className="ml-2 squad-attributes-chem-stats-values-text">
+                          {state.squadAttributes.nations[nation].count}
+                        </div>
+                      </div>
                     ))}
                   </div>
                 }

@@ -114,7 +114,26 @@ export const calculateSquadRating = (initialPlayers = {}, stateSetters) => {
   const totalRating = players.reduce((accumulator, player) => accumulator + player.rating, 0)
   const averageRating = totalRating / players.length
   const roundedRating = Math.round(averageRating * 100) / 100
-  setSquadRatings({ ...squadRatings, average: roundedRating })
+  const totalPAC = players.reduce((accumulator, player) => accumulator + player.PAC, 0)
+  const averagePAC = totalPAC / players.length
+  const PAC = Math.round(averagePAC * 100) / 100
+  const totalSHO = players.reduce((accumulator, player) => accumulator + player.SHO, 0)
+  const averageSHO = totalSHO / players.length
+  const SHO = Math.round(averageSHO * 100) / 100
+  const totalPAS = players.reduce((accumulator, player) => accumulator + player.PAS, 0)
+  const averagePAS = totalPAS / players.length
+  const PAS = Math.round(averagePAS * 100) / 100
+  const totalDRI = players.reduce((accumulator, player) => accumulator + player.DRI, 0)
+  const averageDRI = totalDRI / players.length
+  const DRI = Math.round(averageDRI * 100) / 100
+  const totalDEF = players.reduce((accumulator, player) => accumulator + player.DEF, 0)
+  const averageDEF = totalDEF / players.length
+  const DEF = Math.round(averageDEF * 100) / 100
+  const totalPHY = players.reduce((accumulator, player) => accumulator + player.PHY, 0)
+  const averagePHY = totalPHY / players.length
+  const PHY = Math.round(averagePHY * 100) / 100
+
+  setSquadRatings({ ...squadRatings, average: roundedRating, PAC, SHO, PAS, DRI, DEF, PHY })
 }
 
 export const handleDropdownItemClick = (player, stateSetters) => {
@@ -123,7 +142,7 @@ export const handleDropdownItemClick = (player, stateSetters) => {
   const { setSelectedPlayers, setSelectedPlayer, setPlayerToCompare, setComparing, setShowDropdown } = setters
 
   const playerIndex = SQUAD_FORMATIONS_POSITIONS[formation].indexOf(SQUAD_FORMATIONS_POSITIONS[formation].find((pos) => pos.name === selectedPosition))
-  console.log('playerIndex', playerIndex)
+
   const updatedSelectedPlayers = { ...selectedPlayers, [playerIndex]: { POS: selectedPosition, player } }
 
   if (comparing) {
@@ -202,21 +221,21 @@ export   const calculateSquadAttributes = (initialPlayers = {}, stateSetters) =>
     if (!player.playerItemId) return accumulator
     const { clubs, leagues, nations } = accumulator
 
-    const { club, league, nation, attackWorkRate, defenseWorkRate, skillMoves, weakFoot, height } = player
+    const { club, clubId, league, leagueId, nation, nationId, attackWorkRate, defenseWorkRate, skillMoves, weakFoot, height } = player
+
+    if (nation) {
+      nations[nation] = nations[nation]|| { count: 0, id: nationId }
+      nations[nation].count += 1
+    }
 
     if (club) {
-      clubs[club] = clubs[club] || 0
-      clubs[club] += 1
+      clubs[club] = clubs[club] || { count: 0, id: clubId }
+      clubs[club].count += 1
     }
 
     if (league) {
-      leagues[league] = leagues[league] || 0
-      leagues[league] += 1
-    }
-
-    if (nation) {
-      nations[nation] = nations[nation]|| 0
-      nations[nation] += 1
+      leagues[league] = leagues[league] || { count: 0, id: leagueId }
+      leagues[league].count += 1
     }
 
     accumulator.clubs = clubs
@@ -290,7 +309,7 @@ export const calculateSquadPrice = (stateSetters) => {
   }
 
   const totalPrice = players.reduce((accumulator, player) => accumulator + player.price, 0)
-  console.log('totalPrice', totalPrice)
+
   setSquadPrice(totalPrice)
 }
 
@@ -305,7 +324,7 @@ export const hasSquadChanged = (state) => {
 export const handlePositionSelection = async (position, stateSetters) => {
   const { state, setters } = stateSetters
   const { selectedPlayers, formation } = state
-  const { setSelectedPosition, setSelectedPlayer, setShowSearchField } = setters
+  const { setSelectedPosition, setSelectedPlayer, setShowSearchField, setDirection } = setters
 
   setSelectedPosition(position)
   toggleSearchField(stateSetters)
@@ -316,7 +335,7 @@ export const handlePositionSelection = async (position, stateSetters) => {
   const playerIndex = SQUAD_FORMATIONS_POSITIONS[formation].indexOf(SQUAD_FORMATIONS_POSITIONS[formation].find((pos) => pos.name === position))
 
   const playerInPosition = selectedPlayers[playerIndex]
-
+  setDirection(0)
   if (!playerInPosition) {
     setSelectedPlayer(null)
   } else {
@@ -564,7 +583,8 @@ export const findSuggestionsToCompare = async (sortingAttribute, stateSetters, o
   }
 }
 
-export const handleRemovePlayer = (playerIndex, stateSetters) => {
+export const handleRemovePlayer = (playerIndex, stateSetters, event) => {
+  event.stopPropagation()
   const { state, setters } = stateSetters
   const { selectedPlayers } = state
   const { setSelectedPlayers, setSelectedPlayer } = setters
