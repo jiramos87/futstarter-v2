@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 import { getInitialSquadAttributes, getInitialSquadRatings } from '../../src/constants/squad'
-import { parseHeight } from '../../src/utils/string_util'
 import { SQUAD_FORMATIONS_POSITIONS } from '../../src/constants/formations'
 
 const getSearchFilterString = (searchFilters) => {
@@ -244,7 +243,7 @@ export   const calculateSquadAttributes = (initialPlayers = {}, stateSetters) =>
 
     accumulator.generalSkillMoves += skillMoves
     accumulator.generalWeakFoot += weakFoot
-    if (height) accumulator.generalHeight += parseHeight(height)
+    if (height) accumulator.generalHeight += height
     accumulator.generalAttWorkRate.push(attackWorkRate)
     accumulator.generalDefWorkRate.push(defenseWorkRate)
 

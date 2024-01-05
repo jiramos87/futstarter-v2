@@ -39,7 +39,7 @@ const SquadBuilderPage = () => {
           <PlayerPitch stateSetters={stateSetters} />
         </div>
 
-        <div style={{ flexBasis: '25%' }}>
+        <div className="player-details-container" style={{ flexBasis: '25%' }}>
           <PlayerDetails stateSetters={stateSetters} />
         </div>
       </div>
