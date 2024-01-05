@@ -45,6 +45,15 @@ const parseWeight = (weight) => {
   return Number(weightInKg)
 }
 
+export const parseHeight = (heightString) => {
+  const regex = /(\d+)cm/
+  const match = heightString.match(regex)
+  if (match && match[1]) {
+    return parseInt(match[1], 10)
+  }
+  return null
+}
+
 export const parsePlayerItems = (playerItem) => {
   let parsedPlayer = { 
     playerItemId: playerItem.id,
@@ -57,7 +66,7 @@ export const parsePlayerItems = (playerItem) => {
     secondaryPositions: playerItem.secondaryPositions,
     skillMoves: playerItem.skillMoves,
     weakFoot: playerItem.weakFoot,
-    height: playerItem.height,
+    height: parseHeight(playerItem.height),
     weight: parseWeight(playerItem.weight),
     attackWorkRate: playerItem.attackWorkRate,
     defenseWorkRate: playerItem.defenseWorkRate,
