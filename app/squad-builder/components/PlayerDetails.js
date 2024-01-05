@@ -39,7 +39,7 @@ export const PlayerDetails = ({ stateSetters }) => {
   }
 
   return (
-    <div className="player-details-container flex flex-col">
+    <div className="player-details flex flex-col">
       <div className="flex flex-col justify-center items-center">
         <div className="player-detail-selector-buttons">
           <button
