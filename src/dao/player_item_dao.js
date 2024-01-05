@@ -25,10 +25,37 @@ export const bulkCreatePlayerItems = async (playersData) => {
         'popularity',
         'totalBaseStats',
         'totalInGameStats',
-        'updatedAt'
+        'updatedAt',
+        'imageUrl',
+        'nationId',
+        'nationImageUrl',
+        'clubId',
+        'clubImageUrl',
+        'leagueId',
+        'leagueImageUrl',
+        'playStylePlusId',
+        'playStylePlusImageUrl'
       ],
     }
   )
 
   return playerData
+}
+
+export const findAllPlayerItems = async (searchConditions, options) => {
+  const playersData = await models.PlayerItem.findAll(
+    {
+      where: searchConditions || {},
+      include: [
+        {
+          model: models.PlayerItemStats,
+          as: 'stats',
+          required: false
+        }
+      ],
+      ...options
+    }
+  )
+
+  return playersData
 }

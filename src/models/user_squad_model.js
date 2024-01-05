@@ -26,6 +26,10 @@ class UserSquad extends Sequelize.Model {
           key: 'id'
         },
         field: 'user_id'
+      },
+      active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true
       }
     }, {
       sequelize,

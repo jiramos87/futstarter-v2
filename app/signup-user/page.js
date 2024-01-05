@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useContext } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { AuthContext } from '../components/auth/auth_provider'
 import MainLayout from '../layouts/main_layout'
 
 const SignUpUserPage = () => {
+  const router = useRouter()
   const { signup, setError } = useContext(AuthContext).actions
   const { error } = useContext(AuthContext).state
 
@@ -27,6 +29,7 @@ const SignUpUserPage = () => {
       const { userName, email, password } = formValues
 
       await signup({ userName, email, password })
+      router.push('/squad-builder')
     } catch (e) {
       setError(error)
     }
@@ -61,7 +64,7 @@ const SignUpUserPage = () => {
             className="border border-gray-300 rounded-md p-2 m-2"
             style={{ color: 'black' }}
           />
-          <button type="submit" className="bg-blue-500 text-white rounded-md p-2 m-2">
+          <button type="submit" className="submit-button">
             Sign Up
           </button>
         </form>

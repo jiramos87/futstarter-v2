@@ -1,50 +1,47 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
 import MainLayout from '../layouts/main_layout'
-import { getLoginSessionFromDocumentToken, getTokenFromDocumentCookie } from '../../lib/client-cookies'
+import { pitchStyles } from '../styles/pitch_styles'
+
+import { useSquadBuilderState } from './state'
+
+import { useSquadBuilderEffects } from './effect'
+import { PlayerSearchField } from './components/PlayerSearchField'
+import { PlayerPitch } from './components/PlayerPitch'
+import { SquadAttributes } from './components/SquadAttributes'
+import { SquadActions } from './components/SquadActions'
+import { WelcomeLogin } from './components/WelcomeLogin'
+import { SquadVerticalNav } from './components/SquadVerticalNav'
+import { PlayerDetails } from './components/PlayerDetails'
 
 const SquadBuilderPage = () => {
-  const [user, setUser] = useState(null)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let token = getTokenFromDocumentCookie()
-        const session = await getLoginSessionFromDocumentToken(token)
-
-        if (session) {
-          setUser(session)
-        }
-      } catch (error) {
-        console.error(error)
-        setError(error.message)
-      }
-    }
-    fetchData()
-  }, [])
+  const stateSetters = useSquadBuilderState()
+  useSquadBuilderEffects(stateSetters)
+  const { state } = stateSetters
 
   return (
     <MainLayout>
-      <div className="flex flex-col items-center justify-center min-h-screen py-2">
-        <h1 className="text-6xl font-bold">Squad Builder</h1>
-        {user && (
-          <>
-            <p>Your session:</p>
-            <pre style={{ maxWidth: '100%', overflow: 'auto' }}>
-              {/* display user data */}
-              {JSON.stringify(user, null, 2)}
-            </pre>
-          </>
+      <div className="squad-builder-container">
+        <div style={{ flexBasis: '5%' }}>
+          <SquadVerticalNav stateSetters={stateSetters} />
+        </div>
+        
+        {state.user && (
+        <div className="squad-tool-container" style={{ flexBasis: '14%' }}>
+          {state.showSquadActions && <SquadActions stateSetters={stateSetters} />}
+          {state.showSearchField && <PlayerSearchField stateSetters={stateSetters} />}
+          {state.showSquadAttributes && <SquadAttributes stateSetters={stateSetters} />}
+        </div>
         )}
-        {error && (
-          <>
-            <p>Error:</p>
-            <pre>{JSON.stringify(error, null, 2)}</pre>
-          </>
-        )}
+        {!state.user && (<><WelcomeLogin /></>)}
+        
+        <div className="player-pitch-container" style={{ flexBasis: '56%' }}>
+          <PlayerPitch stateSetters={stateSetters} />
+        </div>
+
+        <div style={{ flexBasis: '25%' }}>
+          <PlayerDetails stateSetters={stateSetters} />
+        </div>
       </div>
     </MainLayout>
   )

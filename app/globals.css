@@ -1,11 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
 
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --dark-green: #004643;
+  --dark-green-lighter: #006d6a;
+  --black-green: #000e0d;
+  --light-green: #7be5d5cd;
+  --yellow-orange: #F9BC60;
+  --yellow-orange-darker: #d5a256;
+  --red: #E16162;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,10 +26,816 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(to bottom, transparent, var(--dark-green)) var(--light-green);
+}
+
+/* body {
+  color: var(--light-green);
+  background: linear-gradient(to bottom, transparent, var(--dark-green)) var(--light-green);
+} */
+
+.dropdown-list {
+  list-style: none;
+  overflow-y: scroll;
+  position: relative;
+  max-height: 100%;
+}
+
+.dropdown-item {
+  background-color: var(--dark-green);
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: var(--yellow-orange);
+}
+
+.dropdown-item-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: none;
+  border: none;
+  color: var(--light-green);
+  padding: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.1s;
+}
+
+.dropdown-item-button:focus {
+  outline: none;
+}
+
+.dropdown-item-button:active {
+  background-color: var(--dark-green);
+  transition: background-color 0.05s;
+}
+
+.card-container {
+  font-size: 2rem;
+  color: black;
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-y: visible;
+  cursor: pointer;
+  transition: transform 0.3s ease, border 0.3s ease;
+}
+
+.card-container:hover,
+.card-container.clicked {
+  transform: scale(1.1);
+  border: 6px solid var(--yellow-orange);
+}
+
+.pressed {
+  animation: buttonClick 0.s;
+}
+
+.squad-tools-div {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-height: max-content;
+  overflow-y: scroll;
+}
+
+.squad-attribute-type-text {
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.squad-attributes-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 5rem;
+  width: 100%;
+  height: 100%;
+  color: rgb(186, 237, 33);
+}
+
+.squad-attributes-stats-text {
+  font-size: 0.8rem;
+}
+
+.squad-attributes-chem-stats-text {
+  font-size: 0.8rem;
+}
+
+.squad-attributes-chem-stats-values-text {
+  font-size: 0.8rem;
+  color: rgb(186, 237, 33);
+}
+
+.squad-attributes-category-text {
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.squad-div-title {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.6rem;
+  font-weight: bold;
+  align-items: center;
+}
+
+.squad-div-title-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.player-basic-stats-presentation-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  transition: transform 0.3s ease, border 0.3s ease;
+}
+
+.squad-player-big-rating {
+  font-size: 3.4rem;
+  font-weight: bold;
+}
+
+.squad-player-big-position {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.squad-player-secondary-position {
+  font-size: 1.2rem;
+}
+
+.squad-player-search-filters {
+  top: 0;
+  max-height: 20rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.player-attributes-detailed-stats-text {
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.formation-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.delete-button {
+  position: absolute;
+  z-index: 15; /* Ensure icons are above other content */
+}
+
+.delete-button {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.delete-button span {
+  color: black;
+  font-size: 1.2rem;
+}
+
+.player-card {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-card-rating-position {
+  position: absolute;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  left: 20%;
+  top: 10%;
+  height: 5%;
+  max-height: 5%;
+}
+
+.player-card-rating {
+  position: relative;
+  z-index: 0;
+  font-size: 1.1rem;
+  font-weight: bold;
+  height: 1.2rem;
+}
+
+.player-card-position {
+  position: relative;
+  z-index: 0;
+  font-size: 0.8rem;
+  height: 0.9rem;
+}
+
+.player-card-image-container {
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+}
+
+.player-card-bottom-data {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  top: 65%;
+}
+
+.player-card-attribute-text {
+  position: relative;
+  font-size: 0.4rem;
+  height: 0.4rem;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+.player-card-attribute-value-text {
+  position: relative;
+  font-size: 0.6rem;
+  height: 0.6rem;
+  font-weight: bold;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+.player-card-attribute-div {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 17%;
+}
+
+.player-card-nation-club-league-div {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 15%;
+  gap: 0.2rem;
+}
+
+.add-player-button {
+  color: var(--yellow-orange);
+  border: 2px solid gray;
+  border-radius: 10%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.horizontal-nav-link {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.horizontal-nav-link:hover {
+  background-color: var(--yellow-orange);
+}
+
+.horizontal-nav-link-text {
+  color: #ffffff;
+}
+
+.vertical-nav-link {
+  display: flex;
+  height: 48px;
+  flex-grow: 1;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.375rem;
+  background-image: linear-gradient(to right, var(--yellow-orange), var(--dark-green));
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.vertical-nav-link:hover {
+  background-image: linear-gradient(to right, var(--light-green), var(--dark-green));
+}
+
+.compare-to-button {
+  position: relative;
+  top: 0;
+  right: 0;
+  background-color: var(--yellow-orange); 
+  color: black;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  transition: background-color 0.3s ease;
+}
+
+.compare-to-button:hover {
+  background-color: var(--yellow-orange-darker);
+}
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--dark-green-lighter);
+  color: #ffffff;
+  width: 100%;
+  padding: 0;
+}
+
+.top-nav-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 1rem;
+}
+
+.vertical-navbar {
+  background-color: var(--dark-green);
+  width: 16.66667%;
+  padding: 1rem;
+}
+
+.submit-button {
+  background-color: var(--yellow-orange); 
+  color: black;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  margin: 0.5rem;
+}
+
+.squad-builder-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: var(--black-green);
+}
+
+.squad-vertical-navbar {
+  color: var(--yellow-orange); 
+  flex: 1;
+  background-color: var(--dark-green-lighter);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.squad-tool-container {
+  color: #ffffff;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--dark-green);
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  justify-content: flex-start;
+}
+
+.player-details-container {
+  height: 100%;
+  min-width: 30rem;
+  max-height: 100%;
+  overflow-y: scroll;
+}
+
+.player-detail-selector-buttons {
+  color: #ffffff;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: var(--black-green);
+}
+
+.player-details-button {
+  position: relative;
+  top: 0;
+  right: 0;
+  background-color: var(--yellow-orange); 
+  color: black;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  transition: background-color 0.1s ease;
+}
+  /* Styles for hover state */
+.player-details-button:hover {
+  background-color: var(--yellow-orange-darker);
+}
+
+.details-button-selected {
+  position: relative;
+  top: 0;
+  right: 0;
+  background-color: var(--yellow-orange-darker); 
+  color: black;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  transition: background-color 0.1s ease;
+}
+
+.position-name-container {
+  border-radius: 0.375rem;
+  background-color: var(--dark-green);
+  color: #ffffff;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.player-card-button {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.player-search-input {
+  border: 1px solid #4b5563;
+  width: 100%;
+  background-color: #2d2d2d;
+  color: #ffffff;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  height: 30px;
+  min-height: 30px;
+}
+
+.player-search-button {
+  margin-left: 0.5rem;
+  background-color: var(--yellow-orange); 
+  color: black;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-radius: 0.375rem;
+}
+
+.new-squad-button {
+  background-color: var(--yellow-orange); 
+  color: black; /* Corresponds to text-white in Tailwind */
+  padding-left: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-right: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-top: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  padding-bottom: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  border-radius: 0.375rem; /* Corresponds to rounded-md in Tailwind */
+  margin-top: 1rem; /* Corresponds to mt-4 in Tailwind */
+}
+
+.load-squad-button {
+  background-color: var(--yellow-orange); 
+  color: black; /* Corresponds to text-white in Tailwind */
+  padding-left: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-right: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-top: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  padding-bottom: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  border-radius: 0.375rem; /* Corresponds to rounded-md in Tailwind */
+  margin-top: 1rem; /* Corresponds to mt-4 in Tailwind */
+}
+
+.save-squad-button {
+  background-color: var(--yellow-orange); 
+  color: black;/* Corresponds to text-white in Tailwind */
+  padding-left: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-right: 1rem; /* Corresponds to px-4 in Tailwind */
+  padding-top: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  padding-bottom: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  border-radius: 0.375rem; /* Corresponds to rounded-md in Tailwind */
+  margin-top: 1rem; /* Corresponds to mt-4 in Tailwind */
+}
+
+.select-squad-button {
+  border: 1px solid #4b5563;
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 100%;
+  background-color: #2d2d2d;
+  color: #ffffff;
+  margin-top: 1rem;
+  z-index: 10;
+}
+
+.squad-name-input {
+  border: 1px solid #4b5563;
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  width: 100%;
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+.collapsible-squad-attributes {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.collapsible-squad-attributes:hover {
+  background-color: var(--yellow-orange);
+}
+
+.player-pitch-container {
+  /* flex: 1; */
+  position: relative;
+  background-color: var(--black-green);
+  background-image: url('/football-pitch-perspective.png');
+  background-repeat: no-repeat;
+  background-size: 52rem 46rem;
+  background-position: top center;
+  height: 46rem;
+  width: 52rem;
+  min-height: 40rem;
+  min-width: 44rem;
+}
+
+.main-style {
+  width: 100%;
+  max-height: 100%;
+}
+
+.squad-vertical-nav-link {
+  color: gray;
+  font-size: 1.875rem; /* Equivalent to text-3xl in Tailwind */
+  padding: 0.5rem; /* Equivalent to p-2 in Tailwind */
+  height: 4rem; /* Equivalent to h-16 in Tailwind */
+  display: flex;
+  align-items: center; /* Equivalent to items-center in Tailwind */
+  justify-content: center; /* Equivalent to justify-center in Tailwind */
+}
+
+.squad-vertical-nav-link-selected {
+  color: var(--yellow-orange); 
+  font-size: 1.875rem; /* Equivalent to text-3xl in Tailwind */
+  padding: 0.5rem; /* Equivalent to p-2 in Tailwind */
+  height: 4rem; /* Equivalent to h-16 in Tailwind */
+  display: flex;
+  align-items: center; /* Equivalent to items-center in Tailwind */
+  justify-content: center; /* Equivalent to justify-center in Tailwind */
+}
+
+.squad-vertical-nav-link:hover,
+.squad-vertical-nav-link-selected:hover {
+  color: var(--yellow-orange); /* Equivalent to hover:text-gray-400 in Tailwind */
+}
+
+.select-suggestion-compare-limit {
+  color: #ffffff;
+  background-color: var(--dark-green);
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.player-suggestion-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.player-suggestion-table-header {
+  border-bottom: 1px solid #4b5563;
+  width: 100%;
+}
+
+.player-suggestion-table-header-cell {
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 2rem;
+  cursor: pointer;
+}
+
+
+.player-suggestion-table-header-cell-price {
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 2rem;
+  cursor: pointer;
+}
+
+.player-suggestion-table-header-cell:hover {
+  background-color: var(--yellow-orange);
+}
+
+.player-suggestion-table-header-name-cell {
+  font-size: 0.9rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 10rem;
+  min-width: 10rem;
+  max-width: 10rem;
+  cursor: pointer;
+}
+
+.player-suggestion-table-header-name-cell:hover {
+  background-color: var(--yellow-orange);
+}
+
+.player-suggestion-table-cell {
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 2rem;
+  max-width: 2rem;
+}
+
+.player-suggestion-table-cell-price {
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 4rem;
+  max-width: 4rem;
+}
+
+.player-suggestion-table-name-cell {
+  font-size: 0.9rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  width: 10rem;
+  max-width: 10rem;
+}
+
+.player-suggestion-table-header-row {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #4b5563;
+}
+
+.player-suggestion-table-row {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #4b5563;
+  cursor: pointer;
+}
+
+.player-suggestion-table-row:hover {
+  background-color: #303741;
+}
+
+.save-squad-ticket {
+  color: var(--yellow-orange)
+}
+
+.player-basic-stats-logos {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.player-details-next-button {
+  background-color: var(--yellow-orange); 
+  color: black;
+  border-radius: 0.375rem;
+}
+
+.player-details-next-button:hover {
+  background-color: var(--yellow-orange-darker);
+}
+
+.exchange-icon-cell {
+  width: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-selected-details {
+  width: 100%; /* Set the width here */
+  height: 100%;
+  background-color: var(--black-green);
+  color: #ffffff;
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+}
+
+/* Transition when moving to the next player */
+.player-selected-details.exiting-forward {
+  transform: translateX(0);
+}
+
+/* Transition when moving to the previous player */
+.player-selected-details.exiting-back {
+  transform: translateX(0);
+}
+
+.player-selected-details.entering-forward {
+  transform: translateX(-100%);
+}
+
+.player-selected-details.entering-back {
+  transform: translateX(100%);
+}
+
+@keyframes buttonClick {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

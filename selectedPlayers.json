@@ -1,0 +1,26 @@
+{
+  "0": {
+    "POS": "GK", 
+    "playerData": {
+      "DEF": 46,
+      "DRI": 93,
+      "PAC": 85,
+      "PAS": 76,
+      "PHY": 90,
+      "SHO": 89,
+      "club": "Real Madrid",
+      "name": "Thibaut Courtois",
+      "height": "199cm | 6'6\"",
+      "league": "LALIGA EA SPORTS",
+      "nation": "Belgium",
+      "rating": 90,
+      "imageUrl": "https://futstarter-players.s3.sa-east-1.amazonaws.com/41.png",
+      "weakFoot": 3,
+      "skillMoves": 1,
+      "mainPosition": "GK",
+      "playerItemId": 41,
+      "attackWorkRate": "M",
+      "defenseWorkRate": "M"
+    }
+  }
+}
