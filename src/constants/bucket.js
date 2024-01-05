@@ -1,0 +1,1 @@
+export const PLAYERS_IMAGES_BUCKET = process.env.PLAYERS_IMAGES_BUCKET || ''

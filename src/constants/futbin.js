@@ -1,0 +1,2 @@
+export const FUTBIN_GOLD_SPECIALS_PLAYERS_URL = 'https://www.futbin.com/players?version=gold_all'
+export const FUTBIN_GOLD_PLAYERS_URL = 'https://www.futbin.com/players?page=1&version=gold_rare&pos_type=all'

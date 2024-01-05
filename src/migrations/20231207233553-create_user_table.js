@@ -9,15 +9,15 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true
       },
-      firstName: {
+      first_name: {
         type: Sequelize.STRING(50),
-        allowNull: false
+        allowNull: true
       },
-      lastName: {
+      last_name: {
         type: Sequelize.STRING(50),
-        allowNull: false
+        allowNull: true
       },
-      userName: {
+      user_name: {
         type: Sequelize.STRING(50),
         allowNull: false
       },
@@ -26,8 +26,13 @@ module.exports = {
         allowNull: false
       },
       password: {
-        type: Sequelize.STRING(50),
+        type: Sequelize.STRING(500),
         allowNull: false
+      },
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        defaultValue: Sequelize.NOW
       }
     })
   },

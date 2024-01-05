@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Futstarter
+This is a Next.js project developed using Node and React.
 
 ## Getting Started
+Clone this repository and navigate to the project directory. Install the required dependencies:
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+    npm install
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Initialize the database:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+    npx sequelize-cli db:migrate --to 20240102205402-add_logos_to_player_item.js
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+
+To fetch and save player data, images, nation, club, and league logos, make a POST request to the endpoint:
+
+    POST /players/update-players
+
+This will execute a **Puppeteer** scraper. Note that the images are currently saved locally in the project folder. To utilize **AWS S3** for image storage, modify the image saving method in scrape.js.
+
+Continue database migration:
+
+    npx sequelize-cli db:migrate
+
+
+Start the server:
+
+    npm run dev
+
+
+This will launch the application. Create a user account using your email and password to begin building squads and analyzing in-game statistics.
+
+Contact Information
+* Developer: Javier Ramos
+* Email: [jiramos87@gmail.com](jiramos87@gmail.com)
+* Since: December 2023
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+For additional information on Next.js:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+[Next.js Documentation](https://nextjs.org/docs)
+[Learn Next.js](https://nextjs.org/learn)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+To deploy your Next.js app:
+[Next.js Deployment Documentation](https://nextjs.org/docs/pages/building-your-application/deploying)
 
-## Deploy on Vercel
+Feedback and contributions are welcome! Feel free to explore the Futstarter GitHub repository.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
