@@ -28,7 +28,9 @@ const determineSuggestionPriceFontSize = (price) => {
 }
 
 const determinePlayerNameFontSize = (name) => {
-  if (name.length > 10) {
+  if (name.length > 15) {
+    return '0.7rem'
+  } else if (name.length > 10) {
     return '0.8rem'
   } else {
     return '1rem'

@@ -795,6 +795,10 @@ body {
 
 .exchange-icon-cell {
   width: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }
 
 .player-selected-details {
