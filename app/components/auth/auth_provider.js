@@ -58,7 +58,9 @@ export const AuthProvider = ({ children }) => {
     try {
       localStorage.removeItem('token')
       setIsLoggedIn(false)
+      setUser(null)
     } catch (error) {
+      setUser(null)
       setIsLoggedIn(false)
     }
   }

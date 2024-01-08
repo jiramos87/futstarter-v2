@@ -14,8 +14,8 @@ export const PlayerSearchField = ({ stateSetters }) => {
   const { state, setters } = stateSetters
 
   return (
-    <>
-      <div style={{ height: '45%'}}>
+    <div className="squad-player-search-field">
+      <div>
         <div className="flex flex-row squad-div-title-text justify-start mb-2 p-2">
           PLAYER SEARCH
         </div>
@@ -55,9 +55,9 @@ export const PlayerSearchField = ({ stateSetters }) => {
             Search
           </button>
         </div>
-        <div className='border-b-2 h-full squad-player-search-filters w-full' style={{ display: state.useSearchFilters ? 'block' : 'none' }}>
+        <div className='border-b-2 squad-player-search-filters' style={{ display: state.useSearchFilters ? 'block' : 'none' }}>
           <table className='w-full'>
-            <tbody className='squad-attributes-stats-text'>
+            <tbody>
               <tr className='grid grid-cols-3 mb-1'>
                 <td >league</td>
                 <td>
@@ -410,14 +410,13 @@ export const PlayerSearchField = ({ stateSetters }) => {
             </tbody>
           </table>
         </div>
-
-        
       </div>
-      <div style={{ display: state.showDropdown ? 'block' : 'none', height: '50%'}}>
+
+      <div style={{ display: state.showDropdown ? 'block' : 'none' }}>
         <div className="flex flex-row squad-div-title-text justify-start mb-2 p-2">
           {state.dropdownPlayers.length} players found
         </div>
-        <ul className='dropdown-list w-full'>
+        <ul className='dropdown-list'>
             {state.showDropdown &&
               state.dropdownPlayers.map((player, index) => (
                 <li key={index} className="dropdown-item">
@@ -431,6 +430,6 @@ export const PlayerSearchField = ({ stateSetters }) => {
               ))}
         </ul>
       </div>
-    </>
+    </div>
   )
 }

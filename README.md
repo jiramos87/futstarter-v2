@@ -1,5 +1,5 @@
 # Futstarter
-This is a Next.js project developed using Node and React.
+This is a Next.js project developed using Node and React. It is a EA FC/FIFA FUT game mode companion app that allow its users to create, save and edit squads using a variety of tools for analizying different statistics and aspects of the in-game performance of the players.
 
 ## Getting Started
 Clone this repository and navigate to the project directory. Install the required dependencies:

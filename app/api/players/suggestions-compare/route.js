@@ -2,7 +2,7 @@ import { Op } from "sequelize"
 
 import { findAllPlayerItems } from "../../../../src/dao/player_item_dao"
 import { parsePlayerItems } from "../../helpers/player_helper"
-import { parsePlayerPosition } from "../suggestions/route"
+import { parsePlayerPosition } from "../../../../src/helpers/player"
 
 const getPlayerFilters = (searchParams) => {
   const playerPosition = searchParams.get('position')

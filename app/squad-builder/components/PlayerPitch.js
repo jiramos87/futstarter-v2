@@ -51,7 +51,7 @@ export const PlayerPitch = ({ stateSetters }) => {
               ? (
                 <>
                   <button className="player-card-button">
-                    <PlayerCard player={state.selectedPlayers[index].player} size={10} />
+                    <PlayerCard selectedPlayer={state.selectedPlayers[index]} size={10} />
                   </button>
 
                   <div

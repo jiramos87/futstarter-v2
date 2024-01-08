@@ -72,7 +72,7 @@ const removeFirstQuerySymbolQueryParamsString = (url) => {
   return url
 }
 
-export const handleSearchButtonClick = (stateSetters) => {
+export const handleSearchButtonClick = async (stateSetters) => {
   const { state, setters } = stateSetters
   const { useSearchFilters, playerSearchFilters } = state
   const { setDropdownPlayers, setShowDropdown } = setters
@@ -85,10 +85,11 @@ export const handleSearchButtonClick = (stateSetters) => {
       url += removeFirstQuerySymbolQueryParamsString(searchFilterString)
     }
 
-    const response = axios.get(url)
-
-    setDropdownPlayers(response.data.playerItems)
-    setShowDropdown(true)
+    const response = await axios.get(url)
+    if (response.data && response.data.playerItems) {
+      setDropdownPlayers(response.data.playerItems)
+      setShowDropdown(true)
+    }
   } catch (error) {
     console.error('search axios error', error)
     setDropdownPlayers([])
@@ -99,7 +100,7 @@ export const handleSearchButtonClick = (stateSetters) => {
 export const calculateSquadRating = (initialPlayers = {}, stateSetters) => {
   const { state, setters } = stateSetters
   const { selectedPlayers, squadRatings } = state
-  const { setSquadRatings, setSquadPrice } = setters
+  const { setSquadRatings } = setters
 
   const usedPlayers = Object.values(initialPlayers).length > 0 ? initialPlayers : selectedPlayers
 
@@ -295,12 +296,14 @@ export   const calculateSquadAttributes = (initialPlayers = {}, stateSetters) =>
   setSquadAttributes(processedSquadAttributes)
 }
 
-export const calculateSquadPrice = (stateSetters) => {
+export const calculateSquadPrice = (stateSetters, initialPlayers = {}) => {
   const { state, setters } = stateSetters
   const { selectedPlayers } = state
   const { setSquadPrice } = setters
 
-  const players = Object.values(selectedPlayers).filter((pos) => pos !== null).map((pos) => pos.player)
+  const usedPlayers = Object.values(initialPlayers).length > 0 ? initialPlayers : selectedPlayers
+
+  const players = Object.values(usedPlayers).filter((pos) => pos !== null).map((pos) => pos.player)
 
   if (players.length === 0) {
     setSquadPrice(0)
@@ -589,11 +592,12 @@ export const handleRemovePlayer = (playerIndex, stateSetters, event) => {
   const { setSelectedPlayers, setSelectedPlayer } = setters
 
   const updatedSelectedPlayers = { ...selectedPlayers, [playerIndex]: null }
-  setSelectedPlayers(updatedSelectedPlayers)
+
   setSelectedPlayer(null)
-  calculateSquadRating({}, stateSetters)
-  calculateSquadAttributes({}, stateSetters)
-  calculateSquadPrice(stateSetters)
+  setSelectedPlayers(updatedSelectedPlayers)
+  calculateSquadRating(updatedSelectedPlayers, stateSetters)
+  calculateSquadAttributes(updatedSelectedPlayers, stateSetters)
+  calculateSquadPrice(stateSetters, updatedSelectedPlayers)
 }
 
 const getPlayerRadarData = (player, borderColor, backgroundColor) => ({
