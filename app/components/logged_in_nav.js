@@ -1,15 +1,11 @@
-import Link from "next/link"
-import { LOGOUT_USER } from "../../src/constants/resources"
-
-const LoggedInNav = () => {
+const LoggedInNav = ({ context }) => {
   return (
-    <Link
-      key={LOGOUT_USER.name}
-      href={LOGOUT_USER.href}
-      className="horizontal-nav-link"
-    >
-      <p className="horizontal-nav-link-text">{LOGOUT_USER.name}</p>
-    </Link>
+    <div
+        onClick={() => context.actions.logout()}
+        className="horizontal-nav-link"
+      >
+        <p className="horizontal-nav-link-text">Logout</p>
+    </div>
   )
 }
 

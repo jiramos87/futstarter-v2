@@ -2,6 +2,7 @@ import { Op } from 'sequelize'
 
 import { findAllPlayerItems } from '../../../../src/dao/player_item_dao'
 import { parsePlayerItems } from '../../helpers/player_helper'
+import { parsePlayerPosition } from '../../../../src/helpers/player'
 
 const applySquadAttributes = (squad, searchConditions) => {
   if (!squad || Object.values(squad).length === 0) return null
@@ -64,20 +65,6 @@ const applySquadAttributes = (squad, searchConditions) => {
 
   searchConditions[Op.and].push({ name: { [Op.notIn]: squadNamesArray } })
 }
-
-export const parsePlayerPosition = (playerPosition) => {
-  if (!playerPosition) return null
-
-  if (['LST', 'RST', 'ST'].includes(playerPosition)) return 'ST'
-  if (['LF', 'RF', 'CF'].includes(playerPosition)) return 'CF'
-  if (['LCAM', 'RCAM', 'CAM'].includes(playerPosition)) return 'CAM'
-  if (['LCM', 'RCM', 'CCM', 'CM'].includes(playerPosition)) return 'CM'
-  if (['LDM', 'RDM', 'CCDM', 'CDM'].includes(playerPosition)) return 'CDM'
-  if (['LCB', 'RCB', 'CCB', 'CB'].includes(playerPosition)) return 'CB'
-  
-  return playerPosition
-}
-
 
 const getPlayerFilters = (req) => {
   const { squad, playerPosition } = req
