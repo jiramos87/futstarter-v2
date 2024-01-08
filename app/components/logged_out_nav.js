@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { LOGIN_USER, SIGNUP_USER } from "../../src/constants/resources"
 
-const LoggedOutNav = () => {
+const LoggedOutNav = ({ context }) => {
   return (
     <div className="flex flex-row gap-4">
       <Link

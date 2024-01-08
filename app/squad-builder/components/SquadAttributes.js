@@ -50,7 +50,7 @@ export const SquadAttributes = ({ stateSetters }) => {
   const { state } = stateSetters;
 
   return (
-    <div>
+    <div className='squad-attributes-container'>
       <div className="flex flex-row squad-div-title-text justify-start mb-4 p-2">
         SQUAD ATTRIBUTES
       </div>

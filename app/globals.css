@@ -37,8 +37,9 @@ body {
 .dropdown-list {
   list-style: none;
   overflow-y: scroll;
-  position: relative;
+  overflow-x: hidden;
   max-height: 100%;
+  z-index: 10;
 }
 
 .dropdown-item {
@@ -95,16 +96,6 @@ body {
 
 .pressed {
   animation: buttonClick 0.s;
-}
-
-.squad-tools-div {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  max-height: max-content;
-  overflow-y: scroll;
 }
 
 .squad-attribute-type-text {
@@ -183,11 +174,22 @@ body {
   font-size: 1.2rem;
 }
 
+.squad-player-search-field {
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: start;
+}
+
 .squad-player-search-filters {
   top: 0;
-  max-height: 20rem;
+  max-height: 15rem;
   overflow-y: scroll;
   overflow-x: hidden;
+  font-size: 0.8rem;
+  z-index: 10;
 }
 
 .player-attributes-detailed-stats-text {
@@ -415,6 +417,8 @@ body {
 .squad-builder-container {
   display: flex;
   height: 100%;
+  min-height: 100%;
+  max-height: 100%;
   width: 100%;
   background-color: var(--black-green);
 }
@@ -431,7 +435,6 @@ body {
 
 .squad-tool-container {
   color: #ffffff;
-  flex: 1;
   display: flex;
   flex-direction: column;
   background-color: var(--dark-green);
@@ -439,12 +442,9 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  max-height: 100%;
-  overflow-y: scroll;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-  justify-content: flex-start;
+  overflow-y: scroll;
 }
 
 .player-details-container {
@@ -609,6 +609,17 @@ body {
   width: 100%;
   background-color: #2d2d2d;
   color: #ffffff;
+}
+
+.squad-attributes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: start;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* height: 100%; */
 }
 
 .collapsible-squad-attributes {

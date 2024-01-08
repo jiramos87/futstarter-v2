@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import { getLoginSessionFromDocumentToken, getTokenFromDocumentCookie } from '../../lib/client-cookies'
 
-import { calculateSquadAttributes, calculateSquadPrice, calculateSquadRating, findSuggestionsToCompare, handleLoadStartSquadClick, hasSquadChanged } from './helper'
+import { calculateSquadPrice, findSuggestionsToCompare, handleLoadStartSquadClick, hasSquadChanged } from './helper'
 
 export const useSquadBuilderEffects = (stateSetters) => {
   const { state, setters } = stateSetters

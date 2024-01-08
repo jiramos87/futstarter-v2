@@ -2,8 +2,11 @@ import Image from 'next/image'
 
 import { determinePlayerNameFontSize } from '../../src/utils/font_util'
 import { getPlayerLastName } from '../../src/utils/string_util'
+import { parsePlayerPosition } from '../../src/helpers/player'
 
-export const PlayerCard = ({ player, size }) => {
+export const PlayerCard = ({ selectedPlayer, size }) => {
+  const { player, POS } = selectedPlayer
+
   const cardWidth = size
   const cardHeight = size * 1.2
   return (
@@ -23,7 +26,7 @@ export const PlayerCard = ({ player, size }) => {
       <div className='flex flex-col justify-end' style={{ height: `${cardHeight*0.62}rem` }}>
         <div className='player-card-rating-position'>
           <p className="player-card-rating">{player.rating}</p>
-          <p className="player-card-position">{player.mainPosition}</p>
+          <p className="player-card-position">{parsePlayerPosition(POS)}</p>
         </div>
         
 

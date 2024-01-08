@@ -82,28 +82,32 @@ export const SAUDI_PRO_LEAGUE_CLUBS = []
 
 export const LEAGUES = [
   'Premier League',
-  'LaLiga',
-  'Serie A',
+  'Barclays WSL',
+  'LALIGA EA SPORTS',
+  'Serie A TIM',
+  'Calcio A Femminile',
   'Bundesliga',
-  'Ligue 1',
+  'GPFBL',
+  'Ligue 1 Uber Eats',
+  'D1 Arkema',
   'Eredivisie',
-  'Liga NOS',
+  'Liga Portugal',
   'CSL',
   'MLS',
-  'Saudi Pro League'
+  'ROSHN Saudi League'
 ]
 
 export const LEAGUE_CLUBS = {
   'Premier League': PREMIER_LEAGUE_CLUBS,
-  'LaLiga': LA_LIGA_CLUBS,
-  'Serie A': SERIE_A_CLUBS,
+  'LALIGA EA SPORTS': LA_LIGA_CLUBS,
+  'Serie A TIM': SERIE_A_CLUBS,
   'Bundesliga': BUNDESLIGA_CLUBS,
-  'Ligue 1': LIGUE_1_CLUBS,
+  'Ligue 1 Uber Eats': LIGUE_1_CLUBS,
   'Eredivisie': EREDIVISIE_CLUBS,
-  'Liga NOS': LIGA_NOS_CLUBS,
+  'Liga Portugal': LIGA_NOS_CLUBS,
   'CSL': CSL_CLUBS,
   'MLS': MLS_CLUBS,
-  'Saudi Pro League': SAUDI_PRO_LEAGUE_CLUBS
+  'ROSHN Saudi League': SAUDI_PRO_LEAGUE_CLUBS
 }
 
 export const COMMON_NATIONS = [
